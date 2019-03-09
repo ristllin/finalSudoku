@@ -5,6 +5,11 @@
  *      Author: Roy Darnell and Shahar Eshed
  */
 
-int main(int argc, char* argv[]){
+#include <stdio.h>
+#include <stdlib.h>
 
+
+int main(int argc, char* argv[]){
+	printf("hello world");
+	return 0;
 }
