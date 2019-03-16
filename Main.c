@@ -22,10 +22,10 @@ int main(int argc, char* argv[]){
 	int user_command[4];
 	while(1){
 		userInput(board,m,n,state, user_command);
-		execute(board, user_command, m, n, mark_errors,ctrl_z,state);
+		execute(board, user_command, m, n, mark_errors,ctrl_z,state,ctrl_z_current);
 		printBoard(board);
-		/*last step?*/
-		/* check solution + notify user */
+		/*last step? + validation*/
+
 	}
 
 

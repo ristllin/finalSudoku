@@ -14,5 +14,10 @@ void userInput(int* board,int m,int n,int state, int* user_command){
 	 * - Parameters range
 	 * - Follow error hierarchy according to implementation doc.
 	 * Otherwise returns relevant error*/
+	/*initiate variables*/
+	/*get user input*/
+	/*split to variables (validate amount)*/
+	/*validate by order*/
+	/*update user_command*/
 
 }
