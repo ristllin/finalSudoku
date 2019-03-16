@@ -14,7 +14,8 @@ int* guess_board; /* int[N][N] used temporarily for guesses and hints*/
 int m; /*board's width*/
 int n; /* board's length*/
 int mark_errors;
-int* ctrl_z;
+int* ctrl_z; /*list of player moves, starts and ends with "-2" cells, "-1" states reset board*/
+int* ctrl_z_current; /*pointer to current place in ctrl_z list*/
 int state; /* 0 => init, 1 => solve, 2 => solve */
 
 int main(int argc, char* argv[]){
