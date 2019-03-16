@@ -24,6 +24,8 @@ int main(int argc, char* argv[]){
 		userInput(board,m,n,state, user_command);
 		execute(board, user_command, m, n, mark_errors,ctrl_z,state);
 		printBoard(board);
+		/*last step?*/
+		/* check solution + notify user */
 	}
 
 
