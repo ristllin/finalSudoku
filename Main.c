@@ -9,7 +9,8 @@
 #include <stdlib.h>
 /* Global Variables: */
 
-int* board; /* int[N][N]*/
+int* board; /* int[N][N] playing board*/
+int* guess_board; /* int[N][N] used temporarily for guesses and hints*/
 int m; /*board's width*/
 int n; /* board's length*/
 int mark_errors;
