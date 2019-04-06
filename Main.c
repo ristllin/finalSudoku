@@ -19,13 +19,12 @@ int* ctrl_z_current; /*pointer to current place in ctrl_z list*/
 int state; /* 0 => init, 1 => solve, 2 => solve */
 
 int main(int argc, char* argv[]){
-	int user_command[4];
+	int user_command[4]; /*[command,x,y,z]*/
 	while(1){
 		userInput(board,m,n,state, user_command);
 		execute(board, user_command, m, n, mark_errors,ctrl_z,state,ctrl_z_current);
 		printBoard(board);
 		/*last step? + validation*/
-
 	}
 
 
