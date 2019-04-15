@@ -238,7 +238,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 			}
 			if(value1<0 || value1>m){ // m = lines
-				printf("Error = %s %d", FIRSTPARAMETERERROR, m);
+				printf("Error = %s %d \n", FIRSTPARAMETERERROR, m);
 				continue;
 			}
 			//value 2
@@ -250,7 +250,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				continue;
 			}
 			if(value2<0 || value2>n){ // n = rows
-				printf("Error = %s %d", FIRSTPARAMETERERROR, n);
+				printf("Error = %s %d\n", FIRSTPARAMETERERROR, n);
 				continue;
 			}
 			//value 3
@@ -262,7 +262,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				continue;
 			}
 			if(value3<0 || value3>(m*n)){ // alphabat size = m*n
-				printf("Error = %s %d", FIRSTPARAMETERERROR, m*n);
+				printf("Error = %s %d \n", FIRSTPARAMETERERROR, m*n);
 				continue;
 			}
 			user_command[0]= 1;
