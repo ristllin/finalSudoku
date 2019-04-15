@@ -5,7 +5,7 @@
  *      Author: shahare
  */
 
-void execute(int* board, int* user_command, int m, int n, int* mark_errors,int* ctrl_z,int* state, int* ctrl_z_current){
+void execute(int* board, int* user_command, char* user_path, int m, int n, int* mark_errors,int* ctrl_z,int* state, int* ctrl_z_current){
 
 }
 

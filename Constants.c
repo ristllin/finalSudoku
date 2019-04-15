@@ -5,10 +5,12 @@
  *      Author: Roy Darnell
  */
 
-const char* OPENNING = "'-_-=Welcome to SudokuFun=-_-'";
-const char* INVALIDCOMMANDERROR = "No such command exists";
-const char* EXCESSPARAMSERROR = "Too many parameters were entered";
-const char* MISSINGPARAMSERROR = "Missing parameters"; /*make for each function seperate error?*/
+const char* OPENNING = "'-_-=Welcome to SudokuFun=-_-' \n";
+const char* ENTERCOMMAND = "Please enter a command \n";
+const char* TOOMANYCHARACTERS = " too many characters were entered in a single line \n";
+const char* INVALIDCOMMANDERROR = "No such command exists\n";
+const char* EXCESSPARAMSERROR = "Too many parameters were entered \n";
+const char* MISSINGPARAMSERROR = "Missing parameters \n"; /*make for each function seperate error?*/
 const char* FIRSTPARAMETERERROR = "First parameter out of range or incorrect, parameter should be between 1 and "; /*add after message max range*/
 const char* SECONDPARAMETERERROR = "Second parameter out of range or incorrect, parameter should be between 1 and "; /*add after message max range*/
 const char* THIRDPARAMETERERROR = "Third parameter out of range or incorrect, parameter should be between 1 and "; /*add after message max range*/
@@ -22,3 +24,23 @@ const char* WRONGSTATEERROR = "Function unavailable in current state";
 const char* INVALIDBOARDERROR = "Board is invalid for command"; /*e.g. erroneous for auto-fill*/
 const char* EXECUTIONERROR = "Command finished unsuccessfully"; /*e.g. save command failed to save*/
 const char* COMMANDLENGTHERROR = "Invalid command length, please enter a command under 256 chars";
+const char* COMMANDSOLVE = "solve";
+const char* COMMANDEDIT = "edit";
+const char* COMMANDMARKERRORS = "mark_errors";
+const char* COMMANDPRINTBOARD = "print_board";
+const char* COMMANDSET = "set";
+const char* COMMANDVALIDATE = "validate";
+const char* COMMANDGUESS = "guess";
+const char* COMMANDGENERATE = "generate";
+const char* COMMANDUNDO = "undo";
+const char* COMMANDREDO = "redo";
+const char* COMMANDSAVE = "save";
+const char* COMMANDHINT = "hint";
+const char* COMMANDGUESSHINT = "guess_hint";
+const char* COMMANDNUMSOLUTIONS = "num_solutions";
+const char* COMMANDAUTFILL = "autofill";
+const char* COMMANDRESET = "reset";
+const char* COMMANDEXIT = "exit";
+const char* NOTINT = "The given string did not consist solely of digit characters.";
+
+const int MAXBUFFERSIZE = 256;
