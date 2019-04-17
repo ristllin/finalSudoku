@@ -23,3 +23,5 @@ const char* INVALIDBOARDERROR = "Board is invalid for command"; /*e.g. erroneous
 const char* EXECUTIONERROR = "Command finished unsuccessfully"; /*e.g. save command failed to save*/
 const char* COMMANDLENGTHERROR = "Invalid command length, please enter a command under 256 chars";
 const char* WINNING = "Horray! well done, you won!";
+const char* CURRUPTFILEFORMAT = "Invalid file format";
+const char* INVALIDFILEPATH = "Invalid File Path";

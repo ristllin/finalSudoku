@@ -22,7 +22,7 @@ void options_for_location(int x,int y, int n, int m, int* board, int* options){
 
 void seperator(int n,int m){
 	int i;
-	for (i = 0;i < 4*n+m+1;i++){
+	for (i = 0;i < 4*(n*m)+m+1;i++){
 		printf("-");
 	}
 	printf("\n");
