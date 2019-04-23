@@ -21,7 +21,7 @@ int is_finished(int n, int m, int* board){
 	return 1;
 }
 
-int optionForLocation(int n, int m, int x, int y, int* board, int* legal_options){
+int optionsForLocation(int n, int m, int x, int y, int* board, int* legal_options){
 	/*function description: returns which options are legal for cell (x,y) {starting from 0} in the given board.
 	 * using N integers in an array, stating with 1\0, according to their place, whether or not a number is legal to that position.
 	 * args: legal options, an N long array, "calloced" in advance!
@@ -85,4 +85,30 @@ void seperator(int n,int m){
 		printf("-");
 	}
 	printf("\n");
+}
+
+void copyBoard(int* origin, int* target, int N){
+	/*function description: copies board of length N to target board
+	 * args:origin - board to copy from, target - board to copy to. N = m*n
+	 * return:
+	 */
+	int i = 0; for (i=0;i<(N*N*2);i++){target[i] = origin[i];}
+}
+
+int singleOption(int* options,int N){
+	/*function description: checks if only 1 value in the given array is 1.
+	 * args: N size of array
+	 * return: 0 if more than one cell size is 1 (and not 0) or no cells with value, otherwise, returns index of single cell with value.
+	 */
+	int rslt,i = 0;
+	for (i=0;i<N;i++){
+		if (options[i] != 0) {
+			if (rslt != 0) { /*more than single cell with value*/
+				return 0;
+			} else { /*first cell with value*/
+				rslt = i;
+			}
+		}
+	}
+	return rslt;
 }

@@ -20,7 +20,7 @@ void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int
 			set(x,y,z,state,ctrl_z,ctrl_z_current);
 			break;
 		case 2:
-			autoFill(board,state);
+			autoFill(n,m,board,state);
 			break;
 		case 3:
 			markErrors(x,mark_errors,state);
@@ -93,13 +93,32 @@ void set(int x, int y, int z, int* state, int* ctrl_z, int* ctrl_z_current){
 
 }
 
-void autoFill(int* board, int* state){
+void autoFill(int n, int m, int* board, int* state){
 	/*function description: Automatically fill "obvious" values � cells which contain a single legal value.
 	 * state: solve
-	 * args:
+	 * args: board - changes current board
 	 * return:
 	 */
-
+	int* temp_board,legal_options; int x,y,location;
+	const N = n*m;
+	temp_board = (int*)calloc(N*N*2,sizeof(int));
+	legal_options = (int*)calloc(N,sizeof(int));
+	copyBoard(board,temp_board,N);
+	for (x=0;x<N;x++){
+		for (y=0;y<N;y++){
+			location = (x+y*N)*2;
+			if (temp_board[location] == 0){ /*if cell is empty*/
+				if (optionsForLocation(n,m,x,y,temp_board,legal_options) == 1){ /*"obvious" solution for cell*/
+					if (singleOption(legal_options) != 0){
+						board[location] = singleOption(legal_options,N)+1; /*returns index of cell, +1 to fix*/
+					}
+				}
+			}
+		}
+	}
+	//if cell has 1 option, change origin cell to
+	free(legal_options);
+	free(temp_board);
 }
 
 void markErrors(int x, int* mark_errors, int* state){
