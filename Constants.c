@@ -25,3 +25,4 @@ const char* COMMANDLENGTHERROR = "Invalid command length, please enter a command
 const char* WINNING = "Horray! well done, you won!";
 const char* CURRUPTFILEFORMAT = "Invalid file format";
 const char* INVALIDFILEPATH = "Invalid File Path";
+const char* NOMOREMOVES = "No more moves were previously made";

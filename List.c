@@ -7,25 +7,30 @@
 /* Doubly Linked List implementation */
 #include<stdio.h>
 #include<stdlib.h>
+#include "List.h"
 
 struct Node  {
+	int x;
+	int y;
 	int data;
 	struct Node* next;
 	struct Node* prev;
 };
 
 /*Creates a new Node and returns pointer to it*/
-struct Node* GetNewNode(int x) {
+struct Node* GetNewNode(int data,int xdata, int ydata) {
 	struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-	newNode->data = x;
+	newNode->data = data;
+	newNode->x = xdata;
+	newNode->y = ydata;
 	newNode->prev = NULL;
 	newNode->next = NULL;
 	return newNode;
 }
 
 /*Inserts a Node at head of doubly linked list*/
-void InsertAtHead(int x,struct Node* head) {
-	struct Node* newNode = GetNewNode(x);
+void InsertAtHead(int data,int xdata,int ydata,struct Node* head) {
+	struct Node* newNode = GetNewNode(data,xdata,ydata);
 	if(head == NULL) {
 		head = newNode;
 		return;
@@ -36,9 +41,9 @@ void InsertAtHead(int x,struct Node* head) {
 }
 
 /*Inserts a Node at tail of Doubly linked list*/
-void InsertAtTail(int x,struct Node* head) {
+void InsertAtTail(int data,int xdata,int ydata,struct Node* head) {
 	struct Node* temp = head;
-	struct Node* newNode = GetNewNode(x);
+	struct Node* newNode = GetNewNode(data,xdata,ydata);
 	if(head == NULL) {
 		head = newNode;
 		return;
@@ -53,7 +58,7 @@ void Print(struct Node* head) {
 	struct Node* temp = head;
 	printf("Forward: ");
 	while(temp != NULL) {
-		printf("%d ",temp->data);
+		printf("x:%d,y%d,value:%d|",temp->x,temp->y,temp->data);
 		temp = temp->next;
 	}
 	printf("\n");
@@ -70,7 +75,7 @@ void ReversePrint(struct Node* head) {
 	/* Traversing backward using prev pointer*/
 	printf("Reverse: ");
 	while(temp != NULL) {
-		printf("%d ",temp->data);
+		printf("x:%d,y%d,value:%d|",temp->x,temp->y,temp->data);
 		temp = temp->prev;
 	}
 	printf("\n");
@@ -78,9 +83,36 @@ void ReversePrint(struct Node* head) {
 
 void RemoveNode(struct Node* node){
 	/*release memory allocation, connect previous and next node*/
+	struct Node* next = node->next;
+	struct Node* prev = node->prev;
+	next->prev = prev;
+	prev->next = next;
+	node->data = -1;
+	node->x = -1;
+	node->y = -1;
+	node->next = NULL;
+	node->prev = NULL;
 }
 
-void RemoveAllNodes(){
-	/*removes all nodes from given node forward*/
-
+void RemoveFollowingNodes(struct Node* head){
+	/*removes all nodes from given node forward, including given node*/
+	struct Node* temp = head;
+	struct Node* next = head->next;
+	if (head == NULL){return;}
+	while (next != NULL) {
+		temp->data = -1; /*zeroing all fields is not obligatory, but helps in debug*/
+		temp->x = -1;
+		temp->y = -1;
+		temp->next = NULL;
+		temp->prev = NULL;
+		free(temp);
+		temp = next;
+		next = temp->next;
+	}
+	temp->data = -1; /*zeroing all fields is not obligatory, but helps in debug*/
+	temp->x = -1;
+	temp->y = -1;
+	temp->next = NULL;
+	temp->prev = NULL;
+	free(temp);
 }

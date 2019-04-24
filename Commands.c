@@ -4,6 +4,9 @@
  *  Created on: Mar 16, 2019
  *      Author: Roy Darnell and Shahar Eshed
  */
+#include<stdio.h>
+#include<stdlib.h>
+#include "List.h"
 
 void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current){
 	/*function description: activate correct command according to user command and pass relevant parameters (router).
@@ -17,7 +20,7 @@ void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int
 			exitSudoku();
 			break;
 		case 1:
-			set(x,y,z,state,ctrl_z,ctrl_z_current);
+			set(n,m,x,y,z,board,ctrl_z,ctrl_z_current);
 			break;
 		case 2:
 			autoFill(n,m,board,state);
@@ -38,7 +41,7 @@ void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int
 			guess(x,state,board);
 			break;
 		case 8:
-			reset(state,board,ctrl_z,ctrl_z_current);
+			reset(n,m,board,ctrl_z,ctrl_z_current);
 			break;
 		case 9:
 			guess_hint(x,state,board);
@@ -47,10 +50,10 @@ void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int
 			hint(x,y,board,state);
 			break;
 		case 11:
-			undo(board,state ,ctrl_z, ctrl_z_current);
+			undo(n,m,board ,ctrl_z, ctrl_z_current);
 			break;
 		case 12:
-			redo(board,state ,ctrl_z, ctrl_z_current);
+			redo(n,m,board,ctrl_z, ctrl_z_current);
 			break;
 		case 13:
 			save(x,board,state);
@@ -81,16 +84,26 @@ void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,
 	exit();
 }
 
-void set(int x, int y, int z, int* state, int* ctrl_z, int* ctrl_z_current){
+int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
 	/*function description: sets the value of cell <x,y> to z, user may empty a cell
 	 * state: Edit, Solve (fixed cells are not updated)
 	 * args: cell -> <x,y>
-	 * return:
+	 * return: 0 if failed, 1 if successful
 	 */
 	/*set*/
 	/*check if user entered erroneous value*/
 	/*update ctrl_z, delete the further steps after current one*/
-
+	int location; const N = n*m; struct Node* temp;
+	if (x > N || x < 1){printf("%s\n",FIRSTPARAMETERERROR); return 0;}
+	if (y > N || y < 1){printf("%s\n",SECONDPARAMETERERROR); return 0;}
+	if (z > N || z < 1){printf("%s\n",THIRDPARAMETERERROR); return 0;}
+	location = (x+(y*N))*2;
+	board[location] = z;
+	temp = ctrl_z_current->next;
+	RemoveFollowingNodes(temp); /*forget next moves if existing*/
+	InsetrtAtTail(board[location],x,y,ctrl_z_current); /*add former data*/
+	ctrl_z_current = ctrl_z_current->next; /*advance current ctrl-z to new node*/
+	return 1;
 }
 
 void autoFill(int n, int m, int* board, int* state){
@@ -176,13 +189,14 @@ values hold for the same cell, randomly choose one according to the score 	 *
 
 }
 
-void reset(int* state, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
+void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
 	/* function description: Undo all moves, reverting the board to its original loaded state
 	 * state: Solve, Edit
-	 * args:
 	 * return: void
 	 */
-
+	while (ctrl_z_current != ctrl_z){
+		undo(n,m,board ,ctrl_z, ctrl_z_current);
+	}
 }
 
 void guess_hint(int x, int* state, int* board){
@@ -202,10 +216,9 @@ void hint(int x, int y, int* board, int* state){
 	 * return:
 	 */
 
-
 }
 
-void undo(int* board, int* state, struct Node* ctrl_z, struct Node* ctrl_z_current){
+int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
 	/*function description: Undo previous moves done by the user
 	 * states: Edit, Solve
 	 * args:
@@ -215,20 +228,28 @@ void undo(int* board, int* state, struct Node* ctrl_z, struct Node* ctrl_z_curre
 	/* set pointer in the list */
 	/* no moves to undo --> error */
 	/* print change */
-
+	int location = 0; const N = n*m;
+	if (ctrl_z_current->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
+	ctrl_z_current = ctrl_z_current->prev;
+	location = (ctrl_z_current->x+(ctrl_z_current->y*N))*2;
+	board[location] = ctrl_z_current->data;
 }
 
-void redo(int* board, int* state, struct Node* ctrl_z, struct Node* ctrl_z_current){
+int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
 	/*function description: Redo a move previously undone by the user.
 	 * states: Edit, Solve
 	 * args:
-	 * return: void
+	 * return: 0 if failed, 1 if successful
 	 */
 	/* set to board to next state */
 	/* set pointer in the list */
 	/* no moves to redo --> error */
 	/* print change */
-
+	int location = 0; const N = n*m;
+	if (ctrl_z_current->next == NULL){printf("%s\n",NOMOREMOVES);return 0;}
+	ctrl_z_current = ctrl_z_current->next;
+	location = (ctrl_z_current->x+(ctrl_z_current->y*N))*2;
+	board[location] = ctrl_z_current->data;
 }
 
 void save(char* X, int* board, int* state){
@@ -257,6 +278,7 @@ void toSolve(char* x, int* state, int* board){
 	 * args: x --> file path
 	 * return: void
 	 */
+
 
 }
 
