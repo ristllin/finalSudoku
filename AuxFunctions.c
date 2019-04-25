@@ -5,17 +5,18 @@
  *      Author: Roy Darnell
  */
 
-int is_finished(int n, int m, int* board){
+int isFinished(int n, int m, int* board){
 	/*function description: checks if board is full and legal, meaning the user won or not yet.
 	 * args: board - sudoku board n*n
-	 * return: 0 - didn't win, 1 - won.
+	 * return: 0 - didn't win, 1 - won, 2 - incomplete.
 	 */
 	int x,y,location = 0;
 	const N = n * m;
 	for (x=0;x<N;x++){
 		for (y=0;y<N;y++){
 			location = (x + y*N)*2;
-			if (!isLegal(n,m,x,y,board[location] || board[location] == 0)){return 0;} /*not legal or empty*/
+			if (!isLegal(n,m,x,y,board[location])){return 0;} /*not legal*/
+			else if(board[location] == 0){return 2;} /*not full*/
 		}
 	}
 	return 1;
@@ -88,7 +89,7 @@ void seperator(int n,int m){
 }
 
 void copyBoard(int* origin, int* target, int N){
-	/*function description: copies board of length N to target board
+	/*function description: copies board of length N to target board icluding fixed\unfixed\erroneous
 	 * args:origin - board to copy from, target - board to copy to. N = m*n
 	 * return:
 	 */
@@ -111,4 +112,38 @@ int singleOption(int* options,int N){
 		}
 	}
 	return rslt;
+}
+
+void deleteUnfixedFromPoint(int n, int m, int* board,int location){
+	/*function description: gets board and location on board (including fixed\unfixed) and turns to 0 every value cell that isn't fixed.
+	 * args: N size of array
+	 * return: 0 if more than one cell size is 1 (and not 0) or no cells with value, otherwise, returns index of single cell with value.
+	 */
+	int i,value_location,fixed_location = 0; const N = n*m;
+	for (i=location;i<N*N;i++){
+		value_location = i*2;
+		fixed_location = i*2+1;
+		if (board[fixed_location] == 0){ /*if not fixed*/
+			board[value_location] = 0; /*delete value*/
+		}
+	}
+}
+
+int sumArray(int* array, int length){
+	int i,rslt = 0;
+	for (i=0;i<length;i++){rslt += array[i];}
+	return rslt;
+}
+
+int yFromLocation(int N, int location){
+	return (location/2) / N;
+}
+
+int xFromLocation(int N, int location){
+	location = location / 2;
+	return location - (location / N);
+}
+
+int locationFromXY(int N, int x, int y){
+	return ((N*y)+x)*2;
 }

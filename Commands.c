@@ -29,7 +29,7 @@ void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int
 			markErrors(x,mark_errors,state);
 			break;
 		case 4:
-			numSolutions(board,state);
+			numSolutions(n,m,board);
 			break;
 		case 5:
 			generate(x,y,board);
@@ -143,13 +143,15 @@ void markErrors(int x, int* mark_errors, int* state){
 
 }
 
-void numSolutions(int* board, int* state){
+void numSolutions(int n, int m, int* board){
 	/*function description: Print the number of solutions for the current board, using Exhaustive backtracking algorithem
 	 * state: Edit, Solve
 	 * args:
 	 * return:
 	 */
-
+	int rslt = 0;
+	rslt = EBA(n,m,board);
+	printf("Number of solutions found for current bard is:%d\n",rslt);
 }
 
 void generate(int x, int y, int* board){
