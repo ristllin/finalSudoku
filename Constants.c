@@ -20,7 +20,7 @@ const char* THIRDPARAMILEGALERROR = "Third parameter - illegal value for current
 const char* TOOMANYLINESERROR = "Too many lines, Please enter one line at a time";
 const char* ILLEGALSAVEERROR = "Can't save erroneous board in edit mode, please fix board and try again. Didn't save board";
 const char* FIXEDCELLERROR = "you can't set fixed cells";
-const char* WRONGSTATEERROR = "Function unavailable in current state";
+const char* WRONGSTATEERROR = "Function unavailable in current state \n";
 const char* INVALIDBOARDERROR = "Board is invalid for command"; /*e.g. erroneous for auto-fill*/
 const char* EXECUTIONERROR = "Command finished unsuccessfully"; /*e.g. save command failed to save*/
 const char* COMMANDLENGTHERROR = "Invalid command length, please enter a command under 256 chars";
@@ -38,9 +38,13 @@ const char* COMMANDSAVE = "save";
 const char* COMMANDHINT = "hint";
 const char* COMMANDGUESSHINT = "guess_hint";
 const char* COMMANDNUMSOLUTIONS = "num_solutions";
-const char* COMMANDAUTFILL = "autofill";
+const char* COMMANDAUTOFILL = "autofill";
 const char* COMMANDRESET = "reset";
 const char* COMMANDEXIT = "exit";
-const char* NOTINT = "The given string did not consist solely of digit characters.";
+const char* NOTINT = "The given string did not consist solely of digit characters. \n";
+const char* FIRSTPARAMETERERRORGUESS= "First parameter out of range or incorrect, parameter should be between 0 and 1 \n";
+const char* FIRSTPARAMETERERRORMARKERRORS= "First parameter out of range or incorrect, parameter should be 0 or 1 \n";
+
+
 
 const int MAXBUFFERSIZE = 256;

@@ -83,7 +83,7 @@ void validate(int* board, int* state){
 
 }
 
-void guess(int x, int* state, int* board){
+void guess(float x, int* state, int* board){
 	/*function description: fills all cell values with a score of X or greater usong LP. If several
 values hold for the same cell, randomly choose one according to the score 	 *
 	 * state: Solve
