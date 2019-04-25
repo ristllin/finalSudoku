@@ -22,9 +22,9 @@ int main(int argc, char* argv[]){
 
 	int user_command[4]; /*[command,x,y,z]*/
 	char * user_path;
-
+	float user_threshold[1];
 	while(1){
-		userInput(board,m,n,state, user_command, user_path);
+		userInput(board,m,n,state, user_command, user_path, user_threshold);
 		execute(board, user_command, user_path, m, n, mark_errors,ctrl_z,state,ctrl_z_current);
 		printBoard(board);
 		/*last step? + validation*/
