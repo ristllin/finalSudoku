@@ -7,8 +7,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "List.h"
+#include "Constants.c"
 
-void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current){
+void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
 	/*function description: activate correct command according to user command and pass relevant parameters (router).
 	 * args: all variables that require memory release
 	 * return: void
@@ -26,7 +27,7 @@ void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int
 			autoFill(n,m,board,state);
 			break;
 		case 3:
-			markErrors(x,mark_errors,state);
+			markErrors(x,mark_errors);
 			break;
 		case 4:
 			numSolutions(n,m,board);
@@ -62,10 +63,10 @@ void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int
 			toInit(board,guess_board,m,n,mark_errors,ctrl_z, ctrl_z_current);
 			break;
 		case 15:
-			toSolve(x,state,board);
+			toSolve(n,m,x,state,board,guess_board);
 			break;
 		case 16:
-			toEdit(x,state,board);
+			toEdit(n,m,x,state,board);
 			break;
 		default:
 			printf("%s",INVALIDCOMMANDERROR);
@@ -134,13 +135,16 @@ void autoFill(int n, int m, int* board, int* state){
 	free(temp_board);
 }
 
-void markErrors(int x, int* mark_errors, int* state){
+void markErrors(int x, int* mark_errors){
 	/*function description: set the mark_errors flag to x value
 	 * state: Solve
 	 * args: x
 	 * return: void
 	 */
-
+	if (x > 1 || x < 0){printf("%s\n",FIRSTPARAMETERERROR);}
+	else {
+		*mark_errors = x;
+	}
 }
 
 void numSolutions(int n, int m, int* board){
@@ -254,17 +258,29 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_curr
 	board[location] = ctrl_z_current->data;
 }
 
-void save(char* X, int* board, int* state){
+void save(int n, int m, char* path, int* board, int* state){
 	/*function description: Saves the current game board to the specified file
 	 * states: Edit, Solve
 	 * args: X --> file's path
 	 * return: void
 	 */
-
-	/*check mode*/
-	/* edit - do not save erroneous files and boards without solution*/
-	/* edit - mark cells containing values as fixed */
-
+	int i = 0; const N = n*m; int* temp_board;
+	temp_board = calloc(N*N*2,sizeof(int));
+	copyBoard(board,temp_board,N);
+	if (state == 1){ /* edit - mark cells containing values as fixed */
+		for (i=0;i<N*N;i++){ /*each existing value in board, fix in temp_board*/
+			if (temp_board[i*2] != 0){
+				temp_board[i*2+1] = 1;
+			}
+		}
+		if (EBA(n,m,board)<1){/* edit - do not save erroneous files and boards without solution*/
+			printf("%s/n",ILLEGALSAVEERROR);
+			free(temp_board);
+			return;
+		}
+	}
+	if (writeBoardToFile(n,m,temp_board,path) == 1){printf("%s\n",SAVINGFAILED);}
+	free(temp_board);
 }
 
 void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct Node* ctrl_z, struct Node* ctrl_z_current,int* state){
@@ -273,22 +289,47 @@ void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct
 	 * return: void
 	 */
 	/*n,m to 9, state to 0, boards to empty*/
+	free(board);
+	free(guess_board);
+	n = 9; m = 9; state = 0; mark_errors = 1;
+	board = calloc((n*m)*(n*m)*2,sizeof(int));
+	guess_board = calloc((n*m)*(n*m)*2,sizeof(int));
+	ctrl_z_current = ctrl_z;
+	RemoveFollowingNodes(ctrl_z);
 }
 
-void toSolve(char* x, int* state, int* board){
+void toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board){
 	/*function description: change state to 'Solve' mode, and set board from file
 	 * args: x --> file path
 	 * return: void
 	 */
-
-
+	int* temp_board, tempn, tempm; const N = (*n)*(*m);
+	state = 1;
+	if (readBoardFromFile( tempn, tempm, temp_board, path) == 1){printf("%s/n",READINGFAILED);}
+	else{ /*reading successful*/
+		free(board);
+		free(guess_board);
+		board = temp_board;
+		n = tempn;
+		m = tempm;
+		guess_board = calloc((n*m)*(n*m)*2,sizeof(int));
+	}
 }
 
-void toEdit(char* x, int* state, int* board){
+void toEdit(int* n, int* m, char* path, int* state, int* board){
 	/*function description: change state to 'Edit' mode, and set board from file or to empty board if the file path is empty
 	 * args: x --> file path
 	 * return: void
 	 */
-
+	int* temp_board, tempn, tempm; const N = (*n)*(*m);
+	state = 1;
+	if (readBoardFromFile( tempn, tempm, temp_board, path) == 1){printf("%s/n",READINGFAILED);}
+	else{
+		free(board);
+		board = temp_board;
+		n = tempn;
+		m = tempm;
+	}
+}
 }
 

@@ -13,10 +13,10 @@ int* board; /* pseudo triple array -> single array, n*m*2 = rows * columns * [va
 int* guess_board; /*  single array, n*m*2 = rows * columns * [value,fixed- 1\0] playing board - used temporarily for guesses and hints*/
 int* m; /*board's width*/
 int* n; /* board's length*/
-int* mark_errors;
+int* mark_errors; /*1 show errors (default), 0 don't show*/
 struct Node* ctrl_z = NULL; /*list of player moves, starts and ends with "-2" cells, "-1" states reset board*/
 struct Node* ctrl_z_current = NULL; /*pointer to current place in ctrl_z list*/
-int* state; /* 0 => init, 1 => solve, 2 => solve */
+int* state; /* 0 => init, 1 => solve, 2 => edit */
 
 int main(int argc, char* argv[]){
 	toInit(board,guess_board,m,n,mark_errors,ctrl_z,ctrl_z_current,state);
