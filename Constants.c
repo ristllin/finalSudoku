@@ -24,6 +24,7 @@ const char* WRONGSTATEERROR = "Function unavailable in current state \n";
 const char* INVALIDBOARDERROR = "Board is invalid for command"; /*e.g. erroneous for auto-fill*/
 const char* EXECUTIONERROR = "Command finished unsuccessfully"; /*e.g. save command failed to save*/
 const char* COMMANDLENGTHERROR = "Invalid command length, please enter a command under 256 chars";
+
 const char* COMMANDSOLVE = "solve";
 const char* COMMANDEDIT = "edit";
 const char* COMMANDMARKERRORS = "mark_errors";
@@ -48,3 +49,9 @@ const char* XSIZEISTOOLARGE = "The board contains less empty cells then the prov
 
 
 const int MAXBUFFERSIZE = 256;
+const char* WINNING = "Horray! well done, you won!";
+const char* CURRUPTFILEFORMAT = "Invalid file format";
+const char* INVALIDFILEPATH = "Invalid File Path";
+const char* NOMOREMOVES = "No more moves were previously made";
+const char* READINGFAILED = "Failed to read from given path";
+const char* SAVINGFAILED = "Saving file - Failed";
