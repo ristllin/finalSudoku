@@ -44,7 +44,7 @@ const char* COMMANDEXIT = "exit";
 const char* NOTINT = "The given string did not consist solely of digit characters. \n";
 const char* FIRSTPARAMETERERRORGUESS= "First parameter out of range or incorrect, parameter should be between 0 and 1 \n";
 const char* FIRSTPARAMETERERRORMARKERRORS= "First parameter out of range or incorrect, parameter should be 0 or 1 \n";
-
+const char* XSIZEISTOOLARGE = "The board contains less empty cells then the provided number \n";
 
 
 const int MAXBUFFERSIZE = 256;

@@ -14,11 +14,11 @@ void printBoard(int* board, int* state){
 
 }
 
-void readBoardFromFile(???){
+void readBoardFromFile(){
 
 }
 
-void writeBoardToFile(???) {
+void writeBoardToFile() {
 
 }
 
