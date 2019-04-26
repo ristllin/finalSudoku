@@ -61,17 +61,17 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 	return rslt;
 }
 
-void ILP(int* board){
+int ILP(int* board){
 	/* ILP - Integer Linear Programming, used by validate, generate and hint functions, uses gorubi to solve the board
 	*  args: soduko board
-	*  return: soduko board (changes given board)
+	*  return: soduko board (changes given board), 0 -> no solution, 1 -> there is solution
 	* */
 }
 
-void LP(float threshold, int* board, int* guess_board){
+int LP(float threshold, int* board, int* guess_board){
 	/* Linear programming algorithm, Used by guess and guessHint functions. solves using gorubi solver module
 	*  args: gets board to solve, doesn't change it, builds solution on guess board
-	*  return: edits guess_board
+	*  return: edits guess_board, 0 -> no solution to guess_board, 1 -> there is solution
 	* */
 }
 
