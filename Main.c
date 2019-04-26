@@ -22,8 +22,8 @@ int main(int argc, char* argv[]){
 	toInit(board,guess_board,m,n,mark_errors,ctrl_z,ctrl_z_current,state);
 	int user_command[4]; /*[command,x,y,z]*/
 	while(1){
-		userInput(board,m,n,state, user_command);
-		execute(board, user_command, m, n, mark_errors,ctrl_z,state,ctrl_z_current);
+		userInput(board,m,n,state, user_command, user_path, user_threshold);
+		execute(board, user_command, user_path, m, n, mark_errors, ctrl_z, state, ctrl_z_current);
 		if (is_finished(n,m,board)){
 			printf(WINNING);
 			toInit();

@@ -9,7 +9,7 @@
 #include "List.h"
 #include "Constants.c"
 
-void execute(int* board, int* user_command, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
+void execute(int* board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
 	/*function description: activate correct command according to user command and pass relevant parameters (router).
 	 * args: all variables that require memory release
 	 * return: void
@@ -185,9 +185,9 @@ void validate(int* board, int* state){
 
 }
 
-void guess(int x, int* state, int* board){
-	/*function description: fills all cell values with a score of X or greater using LP. If several
-values hold for the same cell, randomly choose one according to the score 	 *
+void guess(float x, int* state, int* board){
+	/*function description: fills all cell values with a score of X or greater usong LP. If several
+   * values hold for the same cell, randomly choose one according to the score
 	 * state: Solve
 	 * args: x --> lower boundary of score
 	 * return: void
