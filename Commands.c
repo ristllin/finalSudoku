@@ -7,7 +7,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "List.h"
-#include "Constants.c"
+#include "AuxFunctions.h"
+#include "Constants.h"
 
 void execute(int* board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
 	/*function description: activate correct command according to user command and pass relevant parameters (router).
@@ -18,7 +19,7 @@ void execute(int* board, int* user_command, char* user_path, int* m, int* n, int
 	int x = user_command[1]; int y = user_command[2]; int z = user_command[3];
 	switch(command){
 		case 0:
-			exitSudoku();
+			exitSudoku(board, user_command, m, n,  mark_errors, state, ctrl_z, ctrl_z_current, guess_board);
 			break;
 		case 1:
 			set(n,m,x,y,z,board,ctrl_z,ctrl_z_current);
@@ -74,7 +75,7 @@ void execute(int* board, int* user_command, char* user_path, int* m, int* n, int
 	}
 }
 
-void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current){
+void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
 	/*function description: Terminates the program.
 	 * args: all variables that require memory release
 	 * return: void
@@ -82,7 +83,7 @@ void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,
 	/*free all variables that require memory release!*/
 	free(board); free(user_command); free(m); free(n);
 	free(mark_errors); free(state); free(ctrl_z); free(ctrl_z_current);
-	exit();
+	exit(0);
 }
 
 int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
@@ -102,7 +103,7 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	board[location] = z;
 	temp = ctrl_z_current->next;
 	RemoveFollowingNodes(temp); /*forget next moves if existing*/
-	InsetrtAtTail(board[location],x,y,ctrl_z_current); /*add former data*/
+	InsertAtTail(board[location],x,y,ctrl_z_current); /*add former data*/
 	ctrl_z_current = ctrl_z_current->next; /*advance current ctrl-z to new node*/
 	return 1;
 }
@@ -123,7 +124,7 @@ void autoFill(int n, int m, int* board, int* state){
 			location = (x+y*N)*2;
 			if (temp_board[location] == 0){ /*if cell is empty*/
 				if (optionsForLocation(n,m,x,y,temp_board,legal_options) == 1){ /*"obvious" solution for cell*/
-					if (singleOption(legal_options) != 0){
+					if (singleOption(legal_options,N) != 0){
 						board[location] = singleOption(legal_options,N)+1; /*returns index of cell, +1 to fix*/
 					}
 				}
@@ -292,8 +293,9 @@ void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct
 	free(board);
 	free(guess_board);
 	n = 9; m = 9; state = 0; mark_errors = 1;
-	board = calloc((n*m)*(n*m)*2,sizeof(int));
-	guess_board = calloc((n*m)*(n*m)*2,sizeof(int));
+	const N = (int)n*(int)m;
+	board = calloc(N*N*2,sizeof(int));
+	guess_board = calloc(N*N*2,sizeof(int));
 	ctrl_z_current = ctrl_z;
 	RemoveFollowingNodes(ctrl_z);
 }
@@ -312,7 +314,7 @@ void toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_boar
 		board = temp_board;
 		n = tempn;
 		m = tempm;
-		guess_board = calloc((n*m)*(n*m)*2,sizeof(int));
+		guess_board = calloc(N*N*2,sizeof(int));
 	}
 }
 
@@ -330,6 +332,5 @@ void toEdit(int* n, int* m, char* path, int* state, int* board){
 		n = tempn;
 		m = tempm;
 	}
-}
 }
 

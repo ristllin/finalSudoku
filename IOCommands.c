@@ -6,8 +6,8 @@
  */
 
 /*modules:*/
-#include <AuxFunctions.c>;
-#include <Constants.c>;
+#include "Constants.h"
+#include "AuxFunctions.h"
 /*libraries:*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,7 +87,7 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		}
 	}
 	N = (*n) * (*m);
-	realloc(board,N*N*2,sizeof(int)); /* rows*XcolumnsX[value,type]* */
+	board = (int*)realloc(board,N*N*2); /* rows*XcolumnsX[value,type]* */
 	while (1) { /*sets board according to n and m*/
 		c = fgetc(file_pointer);
 		if( feof(file_pointer) ) {

@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "Constants.c"
+#include "Constants.h"
 
 #define OK       0
 #define NO_INPUT 1
@@ -52,7 +52,7 @@ int numberOfParameters(char* buffer){
 			ch = *buffer;
 
 		}
-	printf("debugging: number of params is %d\n", paramsCnt);
+	//printf("debugging: number of params is %d\n", paramsCnt);
 	return paramsCnt;
 	}
 
@@ -114,25 +114,25 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 		        continue;
 		    }
 
-		 printf ("debugging [%s]\n", input);
+		//printf ("debugging [%s]\n", input);
 
 		/*split to variables (validate amount)*/
 		/*Get command name*/
 		char* buffer = input;
 		//printf("debugging: name of command:%s\n", command_name);
 		buffer = setTheLocationToStartOfNextString(buffer);
-		printf("debugging: %c\n", *buffer);
+		//printf("debugging: %c\n", *buffer);
 		char command_name[MAXBUFFERSIZE];
 		strcpy(command_name, buffer);
 
 		int locationOfSpcae = locationOfSpace(buffer);
 		command_name[locationOfSpcae]= '\0';
-		printf("debugging: name of command:%s\n", command_name);
+		//printf("debugging: name of command:%s\n", command_name);
 		//increase pointer to end of command name
 		buffer = buffer + locationOfSpcae;
 		// increase pointer to the start of next parameter
 		buffer = setTheLocationToStartOfNextString(buffer);
-		printf("debugging: the rest of command:%s\n", buffer);
+		//printf("debugging: the rest of command:%s\n", buffer);
 		/*Check if the command name is valid from this state value*/
 		int paramCnt = 0; //number of parameters
 		if(strcmp(command_name,COMMANDSOLVE)==0){ //solve command
@@ -172,7 +172,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 		}
 		if(strcmp(command_name,COMMANDMARKERRORS)==0){ //mark errors command
 			if(state !=1){ //only available in 'solve' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 			}
 			paramCnt = numberOfParameters(buffer);
@@ -189,7 +189,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			char *rest;
 			int value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 
 			}
@@ -201,13 +201,13 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 			}
 			else{
-				printf("Error = %s \n", FIRSTPARAMETERERRORMARKERRORS);
+				printf("Error: %s \n", FIRSTPARAMETERERRORMARKERRORS);
 				continue;
 			}
 		}
 		if(strcmp(command_name,COMMANDPRINTBOARD)==0){ //print board
 			if(state == 0){ //not available in 'int' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -223,7 +223,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 		if(strcmp(command_name,COMMANDSET)==0){ //set X Y Z
 			if(state == 0){ //not available in 'int' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -240,12 +240,12 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			char *rest;
 			int value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 
 			}
 			if(value1<0 || value1>m){ // m = lines
-				printf("Error = %s %d \n", FIRSTPARAMETERERROR, m);
+				printf("Error: %s %d \n", FIRSTPARAMETERERROR, m);
 				continue;
 			}
 			buffer = rest;
@@ -255,11 +255,11 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 			}
 			if(value2<0 || value2>n){ // n = rows
-				printf("Error = %s %d", SECONDPARAMETERERROR, n);
+				printf("Error: %s %d", SECONDPARAMETERERROR, n);
 				continue;
 			}
 			buffer = rest;
@@ -269,11 +269,11 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			printf("Debugging: rest of buffer is %s \n", buffer);
 			int value3 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 			}
 			if(value3<0 || value3>(m*n)){ // alphabat size = m*n
-				printf("Error = %s %d", THIRDPARAMETERERROR, m*n);
+				printf("Error: %s %d", THIRDPARAMETERERROR, m*n);
 				continue;
 			}
 			user_command[0]= 1;
@@ -286,7 +286,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			}
 		if(strcmp(command_name,COMMANDVALIDATE)==0){ //validate
 			if(state == 0){ //not available in 'int' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -302,7 +302,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 		if(strcmp(command_name,COMMANDGUESS)==0){ //Guess
 			//valid in Solve mode only
 			if(state != 1){ //available in 'Solve' mode only
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -318,12 +318,12 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			char *rest;
 			float value1 = strtof(buffer,&rest);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 
 			}
 			if(value1<0.0 || value1>1.0){ // m = lines
-				printf("Error = %s\n", FIRSTPARAMETERERRORGUESS);
+				printf("Error: %s\n", FIRSTPARAMETERERRORGUESS);
 				continue;
 			}
 
@@ -334,7 +334,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 		}
 		if(strcmp(command_name,COMMANDGENERATE)==0){ //generate X Y
 			if(state != 2){ //available in 'edit' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -351,12 +351,12 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			char *rest;
 			int value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 
 			}
 			if(value1<0 || value1>(m*n)){ // m = lines
-				printf("Error = %s %d \n", FIRSTPARAMETERERROR, m*n);
+				printf("Error: %s %d \n", FIRSTPARAMETERERROR, m*n);
 				continue;
 			}
 			buffer = rest;
@@ -366,11 +366,11 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 			}
 			if(value2<0 || value2>(m*n)){ // n = rows
-				printf("Error = %s %d", SECONDPARAMETERERROR, (m*n));
+				printf("Error: %s %d", SECONDPARAMETERERROR, (m*n));
 				continue;
 			}
 
@@ -383,7 +383,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			}
 		if(strcmp(command_name,COMMANDUNDO)==0){ //undo
 				if(state == 0){ //not available in 'int' mode
-					printf("Error = %s", WRONGSTATEERROR);
+					printf("Error: %s", WRONGSTATEERROR);
 					continue;
 							}
 				paramCnt = numberOfParameters(buffer);
@@ -398,7 +398,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 					}
 		if(strcmp(command_name,COMMANDREDO)==0){ //redo
 			if(state == 0){ //not available in 'int' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -414,7 +414,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 		if(strcmp(command_name,COMMANDSAVE)==0){ //save X command
 			if(state == 0){ //not available in 'int' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -436,7 +436,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 		if(strcmp(command_name,COMMANDHINT)==0){ //hint X Y
 			if(state != 1){ // available in 'solve' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -453,12 +453,12 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			char *rest;
 			int value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 
 			}
 			if(value1<0 || value1>m){ // m = lines
-				printf("Error = %s %d \n", FIRSTPARAMETERERROR, m);
+				printf("Error: %s %d \n", FIRSTPARAMETERERROR, m);
 				continue;
 			}
 			buffer = rest;
@@ -468,11 +468,11 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 			}
 			if(value2<0 || value2>n){ // n = rows
-				printf("Error = %s %d \n", SECONDPARAMETERERROR, n);
+				printf("Error: %s %d \n", SECONDPARAMETERERROR, n);
 				continue;
 			}
 
@@ -485,7 +485,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 		if(strcmp(command_name,COMMANDGUESSHINT)==0){ //guess hint X Y
 			if(state != 1){ // available in 'solve' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -502,12 +502,12 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			char *rest;
 			int value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 
 			}
 			if(value1<0 || value1>m){ // m = lines
-				printf("Error = %s %d \n", FIRSTPARAMETERERROR, m);
+				printf("Error: %s %d \n", FIRSTPARAMETERERROR, m);
 				continue;
 			}
 			buffer = rest;
@@ -517,11 +517,11 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
-				printf("Error = %s", NOTINT);
+				printf("Error: %s", NOTINT);
 				continue;
 			}
 			if(value2<0 || value2>n){ // n = rows
-				printf("Error = %s %d \n", SECONDPARAMETERERROR, n);
+				printf("Error: %s %d \n", SECONDPARAMETERERROR, n);
 				continue;
 			}
 
@@ -533,7 +533,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			}
 		if(strcmp(command_name,COMMANDNUMSOLUTIONS)==0){ //num solutions
 			if(state == 0){ //not available in 'int' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -548,7 +548,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				}
 		if(strcmp(command_name,COMMANDAUTOFILL)==0){ //autofill
 			if(state != 1){ //available in 'solve' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -563,7 +563,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				}
 		if(strcmp(command_name,COMMANDRESET)==0){ //reset
 			if(state == 0){ //not available in 'int' mode
-				printf("Error = %s", WRONGSTATEERROR);
+				printf("Error: %s", WRONGSTATEERROR);
 				continue;
 						}
 			paramCnt = numberOfParameters(buffer);
@@ -589,7 +589,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			break;
 				}
 
-		printf("Error = %s", INVALIDCOMMANDERROR);
+		printf("Error: %s", INVALIDCOMMANDERROR);
 	}
 
 

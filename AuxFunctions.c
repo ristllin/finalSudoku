@@ -5,6 +5,8 @@
  *      Author: Roy Darnell
  */
 
+
+
 int isFinished(int n, int m, int* board){
 	/*function description: checks if board is full and legal, meaning the user won or not yet.
 	 * args: board - sudoku board n*n
@@ -64,7 +66,7 @@ int optionsForLocation(int n, int m, int x, int y, int* board, int* legal_option
 	return 1; /*finished successfully*/
 }
 
-int is_legal(int n, int m, int x, int y, int* board){
+int isLegal(int n, int m, int x, int y, int* board){
 	/*function description: Uses optionForLocation. checks if current value in cell is legal.
 	 * args:
 	 * return: 1 if current value in cell is legal; 0 if not or if illegal state found in row\column\box of the cell. returns legal (1) for empty cell.
@@ -73,7 +75,7 @@ int is_legal(int n, int m, int x, int y, int* board){
 	legal_options = calloc(N,sizeof(int));
 	location = (x+y*N)*2;
 	if (board[location] == 0){return 1;} /*empty cell*/
-	rslt = optionForLocation(n,m,x,y,board,legal_options);
+	rslt = optionsForLocation(n,m,x,y,board,legal_options);
 	if (rslt == 0){return 0;}
 	if (legal_options[board[location]-1] == 0){return 0;} /*illegal option for cell*/
 	free(legal_options);

@@ -8,14 +8,14 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "List.h"
-
-struct Node  {
-	int x;
-	int y;
-	int data;
-	struct Node* next;
-	struct Node* prev;
-};
+//
+//struct Node  {
+//	int x;
+//	int y;
+//	int data;
+//	struct Node* next;
+//	struct Node* prev;
+//};
 
 /*Creates a new Node and returns pointer to it*/
 struct Node* GetNewNode(int data,int xdata, int ydata) {
@@ -97,17 +97,19 @@ void RemoveNode(struct Node* node){
 void RemoveFollowingNodes(struct Node* head){
 	/*removes all nodes from given node forward, including given node*/
 	struct Node* temp = head;
-	struct Node* next = head->next;
+	struct Node* next_node;
+	if (head == NULL){return;} /*list is already empty*/
+	next_node = head->next;
 	if (head == NULL){return;}
-	while (next != NULL) {
+	while (next_node != NULL) {
 		temp->data = -1; /*zeroing all fields is not obligatory, but helps in debug*/
 		temp->x = -1;
 		temp->y = -1;
 		temp->next = NULL;
 		temp->prev = NULL;
 		free(temp);
-		temp = next;
-		next = temp->next;
+		temp = next_node;
+		next_node = temp->next;
 	}
 	temp->data = -1; /*zeroing all fields is not obligatory, but helps in debug*/
 	temp->x = -1;

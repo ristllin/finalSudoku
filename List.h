@@ -14,9 +14,9 @@ struct Node  {
 	struct Node* next;
 	struct Node* prev;
 };
-struct Node* GetNewNode(int x);
-void InsertAtHead(int x,struct Node* head);
-void InsertAtTail(int x,struct Node* head);
+struct Node* GetNewNode(int data,int xdata, int ydata);
+void InsertAtHead(int data,int xdata,int ydata,struct Node* head);
+void InsertAtTail(int data,int xdata,int ydata,struct Node* head);
 void Print(struct Node* head);
 void ReversePrint(struct Node* head);
 void RemoveNode(struct Node* node);
