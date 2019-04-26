@@ -600,7 +600,3 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 	/*guess - 7, reset - 8, guess_hint - 9, hint - 10, undo - 11, redo - 12, save - 13, toInit - 14*/
 	/*toSolve - 15, toEdit - 16, printBoard - 17*/
 }
-
-
-
-
