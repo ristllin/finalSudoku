@@ -68,11 +68,19 @@ int ILP(int* board){
 	* */
 }
 
-int LP(float threshold, int* board, int* guess_board){
+int LPSolveCell(int location, int n, int m, float threshold, int* board, int* legal_options){
 	/* Linear programming algorithm, Used by guess and guessHint functions. solves using gorubi solver module
 	*  args: gets board to solve, doesn't change it, builds solution on guess board
-	*  return: edits guess_board, 0 -> no solution to guess_board, 1 -> there is solution
+	*  return: all possible solutions with scores higher than threshold and their scores to specific cell, 0 -> no solution to guess_board, 1 -> there is solution
 	* */
+}
+
+int LPSolver(float threshold, int* board){
+	/*Linear programming algorithm, Used by guess and guessHint functions. solves using gorubi solver module
+	 *  args: gets board to solve, and threshold
+	 * return: solved board, If several values hold for the same cell, randomly choose one according to the score
+	 *
+	 */
 }
 
 void boardToMatrix(int* board, int* matrix){

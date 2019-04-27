@@ -48,7 +48,8 @@ extern const char* COMMANDEXIT;
 extern const char* NOTINT;
 extern const char* FIRSTPARAMETERERRORGUESS;
 extern const char* FIRSTPARAMETERERRORMARKERRORS;
-
+extern const char* FILLEDCELLERROR;
+extern const char* UNSOLVEDBOARD;
 extern const int MAXBUFFERSIZE;
 extern const char* WINNING;
 extern const char* CURRUPTFILEFORMAT;
@@ -56,6 +57,7 @@ extern const char* INVALIDFILEPATH;
 extern const char* NOMOREMOVES;
 extern const char* READINGFAILED;
 extern const char* SAVINGFAILED;
+extern const char* XSIZEISTOOLARGE;
 
 
 #endif /* CONSTANTS_H_ */
