@@ -10,6 +10,7 @@
 #include "List.h"
 #include "AuxFunctions.h"
 #include "Constants.h"
+#include "Commands.h"
 
 //AuxFunctions
 
@@ -60,11 +61,13 @@ int selectUniqueRandomValues(int* shuffeled_list, int shuffeled_list_length, int
 
 //end of AuxFunctions
 
-void execute(int* board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
+int execute(int* board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
 	/*function description: activate correct command according to user command and pass relevant parameters (router).
 	 * args: all variables that require memory release
-	 * return: void
+	 * return: 1 - completed successful, 0 command completed unsuccessfully
 	 */
+	/*<<<>>>catch errors from functions*/
+	int fail = 1;
 	int command = user_command[0];
 	int x = user_command[1]; int y = user_command[2]; int z = user_command[3];
 	switch(command){
@@ -72,19 +75,23 @@ void execute(int* board, int* user_command, char* user_path, int* m, int* n, int
 			exitSudoku(board, user_command, m, n,  mark_errors, state, ctrl_z, ctrl_z_current, guess_board);
 			break;
 		case 1:
-			set(n,m,x,y,z,board,ctrl_z,ctrl_z_current);
+			fail = set(n,m,x,y,z,board,ctrl_z,ctrl_z_current);
+			return fail;
 			break;
 		case 2:
-			autoFill(n,m,board,state);
+			fail = autoFill(n,m,board,state);
+			return fail;
 			break;
 		case 3:
 			markErrors(x,mark_errors);
 			break;
 		case 4:
-			numSolutions(n,m,board);
+			fail = numSolutions(n,m,board);
+			return fail;
 			break;
 		case 5:
-			generate(x,y,board);
+			fail = generate(x,y,board,n,m);
+			return fail;
 			break;
 		case 6:
 			validate(board,state);
@@ -108,21 +115,26 @@ void execute(int* board, int* user_command, char* user_path, int* m, int* n, int
 			redo(n,m,board,ctrl_z, ctrl_z_current);
 			break;
 		case 13:
-			save(x,board,state);
+			fail = save(n,m,x,board,state);
+			return fail;
 			break;
 		case 14: /*There is no user init command, for debug purposes*/
-			toInit(board,guess_board,m,n,mark_errors,ctrl_z, ctrl_z_current);
+			toInit(board,guess_board,m,n,mark_errors,ctrl_z, ctrl_z_current,state);
 			break;
 		case 15:
-			toSolve(n,m,x,state,board,guess_board);
+			printf("debug: toSolve called\n");//debug
+			fail = toSolve(n,m,user_path,state,board,guess_board,ctrl_z, ctrl_z_current);
+			return fail;
 			break;
 		case 16:
-			toEdit(n,m,x,state,board);
+			fail = toEdit(n,m,board,guess_board,mark_errors,ctrl_z, ctrl_z_current,state,user_path);
+			return fail;
 			break;
 		default:
 			printf("%s",INVALIDCOMMANDERROR);
 			break;
 	}
+	return 1;
 }
 
 void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
@@ -158,12 +170,13 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	return 1;
 }
 
-void autoFill(int n, int m, int* board, int* state){
+int autoFill(int n, int m, int* board, int* state){
 	/*function description: Automatically fill "obvious" values � cells which contain a single legal value.
 	 * state: solve
 	 * args: board - changes current board
 	 * return:
 	 */
+	/*<<<<add special mark in redo\undo and refer in redo/undo>>>>*/
 	int* temp_board,legal_options; int x,y,location;
 	const N = n*m;
 	temp_board = (int*)calloc(N*N*2,sizeof(int));
@@ -184,6 +197,7 @@ void autoFill(int n, int m, int* board, int* state){
 	//if cell has 1 option, change origin cell to
 	free(legal_options);
 	free(temp_board);
+	return 1;
 }
 
 void markErrors(int x, int* mark_errors){
@@ -198,7 +212,7 @@ void markErrors(int x, int* mark_errors){
 	}
 }
 
-void numSolutions(int n, int m, int* board){
+int numSolutions(int n, int m, int* board){
 	/*function description: Print the number of solutions for the current board, using Exhaustive backtracking algorithem
 	 * state: Edit, Solve
 	 * args:
@@ -207,6 +221,7 @@ void numSolutions(int n, int m, int* board){
 	int rslt = 0;
 	rslt = EBA(n,m,board);
 	printf("Number of solutions found for current bard is:%d\n",rslt);
+	return 1;
 }
 
 int generate(int x, int y, int* board, int n, int m){
@@ -311,6 +326,7 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	free(random_empty_x_cells);
 	free(list);
 	free(random_y_cells);
+	return 1;
 }
 
 void validate(int* board, int* state){
@@ -402,9 +418,10 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_curr
 	ctrl_z_current = ctrl_z_current->next;
 	location = (ctrl_z_current->x+(ctrl_z_current->y*N))*2;
 	board[location] = ctrl_z_current->data;
+	return 1;
 }
 
-void save(int n, int m, char* path, int* board, int* state){
+int save(int n, int m, char* path, int* board, int* state){
 	/*function description: Saves the current game board to the specified file
 	 * states: Edit, Solve
 	 * args: X --> file's path
@@ -422,11 +439,12 @@ void save(int n, int m, char* path, int* board, int* state){
 		if (EBA(n,m,board)<1){/* edit - do not save erroneous files and boards without solution*/
 			printf("%s/n",ILLEGALSAVEERROR);
 			free(temp_board);
-			return;
+			return 0;
 		}
 	}
 	if (writeBoardToFile(n,m,temp_board,path) == 1){printf("%s\n",SAVINGFAILED);}
 	free(temp_board);
+	return 1;
 }
 
 void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct Node* ctrl_z, struct Node* ctrl_z_current,int* state){
@@ -445,37 +463,53 @@ void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct
 	RemoveFollowingNodes(ctrl_z);
 }
 
-void toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board){
+int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board,struct Node* ctrl_z, struct Node* ctrl_z_current){
 	/*function description: change state to 'Solve' mode, and set board from file
 	 * args: x --> file path
-	 * return: void
+	 * return: 1 - successful, 0 unsuccessful
 	 */
-	int* temp_board, tempn, tempm; const N = (*n)*(*m);
+	int* temp_board, tempn, tempm; const N = (int)n*(int)m; int fail = 0;
+	int i; //debug
+	printf("debug: toSolve()\n");
 	state = 1;
-	if (readBoardFromFile( tempn, tempm, temp_board, path) == 1){printf("%s/n",READINGFAILED);}
+	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
+	printf("debug: tosolve(0) tn:%d,tm:%d,fail:%d\n",tempn,tempm,fail);
+	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/
-		free(board);
-		free(guess_board);
+		printf("debug: board:%d,board:%d\n",board,guess_board);
+		free(*board);
+		free(*guess_board);
 		board = temp_board;
 		n = tempn;
 		m = tempm;
+		printf("debug: tosolve(1) n:%d,m:%d\n",n,m);
+		printf("\nboard: \n"); //debug
+		for (i = 0;i<N*N*2;i++){ //debug
+			printf("%d|",board[i]); //debug
+		} //debug
+		printBoard(board,n,m,2,1);//debug
 		guess_board = calloc(N*N*2,sizeof(int));
 	}
+	return 1;
 }
 
-void toEdit(int* n, int* m, char* path, int* state, int* board){
+int toEdit(int* board, int* guess_board,int* m, int* n,int* mark_errors, int* state, char* user_path,struct Node* ctrl_z, struct Node* ctrl_z_current){
 	/*function description: change state to 'Edit' mode, and set board from file or to empty board if the file path is empty
 	 * args: x --> file path
 	 * return: void
 	 */
 	int* temp_board, tempn, tempm; const N = (*n)*(*m);
 	state = 1;
-	if (readBoardFromFile( tempn, tempm, temp_board, path) == 1){printf("%s/n",READINGFAILED);}
+	if (strlen(user_path) == 0){
+		toInit(board, guess_board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
+	}
+	if (readBoardFromFile(tempn, tempm, temp_board, user_path) == 1){printf("%s/n",READINGFAILED);}
 	else{
 		free(board);
 		board = temp_board;
 		n = tempn;
 		m = tempm;
 	}
+	return 1;
 }
 

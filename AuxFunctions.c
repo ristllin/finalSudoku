@@ -10,7 +10,7 @@
 int isFinished(int n, int m, int* board){
 	/*function description: checks if board is full and legal, meaning the user won or not yet.
 	 * args: board - sudoku board n*n
-	 * return: 0 - didn't win, 1 - won, 2 - incomplete.
+	 * return: 0 - illegal board, 1 - won, 2 - incomplete board.
 	 */
 	int x,y,location = 0;
 	const N = n * m;
@@ -84,7 +84,9 @@ int isLegal(int n, int m, int x, int y, int* board){
 
 void seperator(int n,int m){
 	int i;
-	for (i = 0;i < 4*(n*m)+m+1;i++){
+	const int length = 4*(n*m)+m+1;
+//	printf("debug: %d\n",length);
+	for (i = 0;i < length;i++){
 		printf("-");
 	}
 	printf("\n");

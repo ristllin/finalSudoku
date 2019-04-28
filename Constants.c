@@ -5,8 +5,8 @@
  *      Author: Roy Darnell
  */
 
-const char* OPENNING = "'-_-=Welcome to SudokuFun=-_-' \n";
-const char* ENTERCOMMAND = "Please enter a command \n";
+const char* OPENNING = "'-_-=Welcome to SudokuFun=-_-'";
+const char* ENTERCOMMAND = "Please enter a command: ";
 const char* TOOMANYCHARACTERS = " too many characters were entered in a single line \n";
 const char* INVALIDCOMMANDERROR = "No such command exists\n";
 const char* EXCESSPARAMSERROR = "Too many parameters were entered \n";
@@ -46,8 +46,6 @@ const char* NOTINT = "The given string did not consist solely of digit character
 const char* FIRSTPARAMETERERRORGUESS= "First parameter out of range or incorrect, parameter should be between 0 and 1 \n";
 const char* FIRSTPARAMETERERRORMARKERRORS= "First parameter out of range or incorrect, parameter should be 0 or 1 \n";
 const char* XSIZEISTOOLARGE = "The board contains less empty cells then the provided number \n";
-
-
 const int MAXBUFFERSIZE = 256;
 const char* WINNING = "Horray! well done, you won!";
 const char* CURRUPTFILEFORMAT = "Invalid file format";

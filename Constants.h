@@ -48,7 +48,7 @@ extern const char* COMMANDEXIT;
 extern const char* NOTINT;
 extern const char* FIRSTPARAMETERERRORGUESS;
 extern const char* FIRSTPARAMETERERRORMARKERRORS;
-
+extern const char* XSIZEISTOOLARGE;
 extern const int MAXBUFFERSIZE;
 extern const char* WINNING;
 extern const char* CURRUPTFILEFORMAT;
