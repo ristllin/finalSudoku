@@ -68,8 +68,8 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 	 */
 	/*<<<>>>catch errors from functions*/
 	int fail = 1; int command = user_command[0]; int x = user_command[1]; int y = user_command[2]; int z = user_command[3];
-	printf("debug: execute() called\n");
-	printf("With params: board:%d, user_command[0]:%d, user_path:%s, m:%d, n:%d, mark_errors:%d, state: %d.\n",board,user_command[0],user_path,m,n,mark_errors,state);
+//	printf("debug: execute() called\n");
+//	printf("With params: board:%d, user_command[0]:%d, user_path:%s, m:%d, n:%d, mark_errors:%d, state: %d.\n",board,user_command[0],user_path,m,n,mark_errors,state);
 	switch(command){
 		case 0:
 			exitSudoku(board, user_command, m, n,  mark_errors, state, ctrl_z, ctrl_z_current, guess_board);
@@ -455,7 +455,7 @@ void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct
 	/*n,m to 9, state to 0, boards to empty*/
 	free(board);
 	free(guess_board);
-	n = 9; m = 9; state = 0; mark_errors = 1;
+	n = 3; m = 3; state = 0; mark_errors = 1;
 	const N = (int)n*(int)m;
 	board = calloc(N*N*2,sizeof(int));
 	guess_board = calloc(N*N*2,sizeof(int));
@@ -470,9 +470,9 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 	 */
 	int* temp_board, tempn, tempm; int fail = 0;
 	int i; //debug
-	printf("debug: toSolve(2) called\n");
-	printf("with: n:%d,m:%d,path:%s,board:%d,state:%d\n",n,m,path,board,state);
-	printf("now %d,%d",state,*state);
+//	printf("debug: toSolve(2) called\n");
+//	printf("with: n:%d,m:%d,path:%s,board:%d,state:%d\n",n,m,path,board,state);
+//	printf("debug: state:%d,state*:%d\n",state,*state);
 	*state = 1;
 	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
 //	printf("debug: tosolve(0) tn:%d,tm:%d,fail:%d\n",tempn,tempm,fail);
@@ -485,7 +485,7 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 		*n = tempn;
 		*m = tempm;
 		const N = (int)n*(int)m;
-//		printf("debug: tosolve(1) n:%d,m:%d\n",n,m);
+//		printf("debug: tosolve(1) n:%d,*n:%d,tempn:%d\n",n,*n,tempn);
 //		printf("board:"); //debug
 //		for (i = 0;i<N*N*2;i++){ //debug
 //			printf("%d|",temp_board[i]); //debug
@@ -503,7 +503,7 @@ int toEdit(int* board, int* guess_board,int* m, int* n,int* mark_errors, int* st
 	 * return: void
 	 */
 	int* temp_board, tempn, tempm; const N = (*n)*(*m);
-	state = 1;
+	*state = 2;
 	if (strlen(user_path) == 0){
 		toInit(board, guess_board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
 	}
