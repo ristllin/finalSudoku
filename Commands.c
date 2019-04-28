@@ -291,7 +291,7 @@ running ILP to solve the board, and then clearing all but Y random cells.
 			continue;
 			}
 	/*run ILP -> return 1= success, 0 = failure */
-	legal = ILP(temp_board);
+	legal = ILP(n,m,temp_board);
 	/* if there is no solution for board --> start another iteration */
 	if(!legal){
 		printf("Debugging: no solution using ILP, start another iteration");
@@ -335,7 +335,7 @@ int validate(int n, int m, int* board, int* state){
 	//check if board is found to be solvable, or not using ILP
 	temp_board = (int*)calloc(N*N*2,sizeof(int));
 	copyBoard(board,temp_board,N);
-	legal = ILP(temp_board);
+	legal = ILP(n,m,temp_board);
 		/* if there is no solution for board --> start another iteration */
 	if(!legal){
 		printf("The board is not solvable");
@@ -411,7 +411,7 @@ int guess_hint(int n, int m, int x,  int y, int* board){
 		/* run ILP (copy board) */
 		temp_board = (int*)calloc(N*N*2,sizeof(int));
 		copyBoard(board,temp_board,N);
-		legal = ILP(temp_board);
+		legal = ILP(n,m,temp_board);
 				/* if there is no solution for board --> start another iteration */
 		if(!legal){
 			printf("ERROR: %s", UNSOLVEDBOARD);
@@ -457,7 +457,7 @@ int hint(int n, int m, int x, int y, int* board){
 	/* run ILP (copy board) */
 	temp_board = (int*)calloc(N*N*2,sizeof(int));
 	copyBoard(board,temp_board,N);
-	legal_options = (int*)calloc(N*2,sizeof(int)); // N=optional values, 2=score
+	legal_options = (float*)calloc(N*2,sizeof(float)); // 0->optional values, 1->score
 	legal = LPSolveCell(value_location, n, m, 0, temp_board, legal_options);
 	if(!legal){
 		printf("ERROR: %s", UNSOLVEDBOARD);
