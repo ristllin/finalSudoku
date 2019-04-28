@@ -33,11 +33,13 @@ int main(int argc, char* argv[]){
 	while(1){
 //		userInput(board,m,n,state, user_command, user_path, user_threshold);
 		user_command[0] = 15; //debug
-		printf("debug: user_path:%s, user_command:%d\n",user_path,user_command[0]); //debug
+//		printf("debug: user_path:%s, user_command:%d\n",user_path,user_command[0]); //debug
+//		printf("debug: main(1): board:%d\n",&board);
 		execute(&board, user_command, user_path, &m, &n, &mark_errors, &ctrl_z, &state, &ctrl_z_current, &guess_board);
-		printBoard(board,n,m,2,1);//debug
-		printf("n:%d,m:%d\n",n,m);
-		printf("<----exiting---->"); exit(1); //debug
+//		printf("debug: main(0): board:%d\n",&board);
+//		printBoard(board,n,m,2,1);//debug
+//		printf("n:%d,m:%d\n",n,m);
+//		printf("<----exiting---->"); exit(1); //debug
 		if (isFinished(n,m,board)){
 			printf("%s\n",WINNING);
 			toInit(board, guess_board, m, n, mark_errors, ctrl_z, ctrl_z_current, state);

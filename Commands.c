@@ -67,9 +67,9 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 	 * return: 1 - completed successful, 0 command completed unsuccessfully
 	 */
 	/*<<<>>>catch errors from functions*/
-	int fail = 1;
-	int command = user_command[0];
-	int x = user_command[1]; int y = user_command[2]; int z = user_command[3];
+	int fail = 1; int command = user_command[0]; int x = user_command[1]; int y = user_command[2]; int z = user_command[3];
+	printf("debug: execute() called\n");
+	printf("With params: board:%d, user_command[0]:%d, user_path:%s, m:%d, n:%d, mark_errors:%d, state: %d.\n",board,user_command[0],user_path,m,n,mark_errors,state);
 	switch(command){
 		case 0:
 			exitSudoku(board, user_command, m, n,  mark_errors, state, ctrl_z, ctrl_z_current, guess_board);
@@ -468,26 +468,29 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 	 * args: x --> file path
 	 * return: 1 - successful, 0 unsuccessful
 	 */
-	int* temp_board, tempn, tempm; const N = (int)n*(int)m; int fail = 0;
+	int* temp_board, tempn, tempm; int fail = 0;
 	int i; //debug
-	printf("debug: toSolve()\n");
+	printf("debug: toSolve(2) called\n");
+	printf("with: n:%d, m:%d, path:%s, board: %d\n",n,m,path,board);
 	state = 1;
 	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
 	printf("debug: tosolve(0) tn:%d,tm:%d,fail:%d\n",tempn,tempm,fail);
 	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/
-		printf("debug: board:%d,board:%d\n",board,guess_board);
-		free(*board);
+//		free(board); /*<<<<need to free!!!>>>>*/
 		free(*guess_board);
-		board = temp_board;
-		n = tempn;
-		m = tempm;
+		*board = temp_board;
+		printf("debug: board:%d,guess board:%d\n",board,guess_board);
+		*n = tempn;
+		*m = tempm;
+		const N = (int)n*(int)m;
 		printf("debug: tosolve(1) n:%d,m:%d\n",n,m);
-		printf("\nboard: \n"); //debug
+		printf("board:"); //debug
 		for (i = 0;i<N*N*2;i++){ //debug
-			printf("%d|",board[i]); //debug
+			printf("%d|",temp_board[i]); //debug
 		} //debug
-		printBoard(board,n,m,2,1);//debug
+		printf("\n"); //debug
+		printBoard(*board,*n,*m,2,1);//debug
 		guess_board = calloc(N*N*2,sizeof(int));
 	}
 	return 1;

@@ -19,7 +19,8 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 	 * return: void
 	 */
 	printf("debug: printBoard() called\n");
-	printf("with: n:%d,m:%d\n",n,m);
+	printf("with: n:%d,m:%d,board:%d\n",n,m,board);
+
 	int row; int col; int value; int fixed;
 	int N = n * m;
 	seperator(n,m);
@@ -54,7 +55,7 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 		}
 		printf("\n");
 		seperator(n,m);
-		if ((row+1) % n == 0) {
+		if ((row+1) % n == 0 && row+1 != N) {
 			seperator(n,m);/*End of row*/
 		}
 	}
@@ -126,7 +127,7 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 	printf("\ndebug: reading board completed successfully\n");
 //	fclose(file_pointer); /*need to release file*/
 //	file_pointer = NULL;
-//	printBoard(board,*n,*m,2,1); //debug
+//	printBoard(*board,*n,*m,2,1); //debug
 	printf("debug: in readfrom() n:%d,m:%d\n",*n,*m);//debug
 	return 0;
 }
