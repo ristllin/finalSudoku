@@ -69,8 +69,8 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		 */
 	FILE* file_pointer; int N; int num,c,location = 0;
 	int* new_board;
-	path = "D:/9board.txt"; //debug!!!! <<<<must remove >>>>>
-	printf("debug: LoadBoard() called with path:%s \n",path);
+//	path = "D:/9board.txt"; //debug!!!! <<<<must remove >>>>>
+//	printf("debug: LoadBoard() called with path:%s \n",path);
 	file_pointer = fopen(path, "r");
 	if (file_pointer == NULL){ /*catch errors*/
 		printf("%s: %s \n",INVALIDFILEPATH,path);
@@ -94,13 +94,13 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 	}
 	if (*n > 5 || *m > 5){printf("%s \n",CURRUPTFILEFORMAT);return 1;}
 	N = (int)*n * (int)*m;
-	printf("debug: reallocating with N:%d\n",N);
+//	printf("debug: reallocating with N:%d\n",N);
 	new_board = (int*)calloc(board,N*N*2*sizeof(int)); /* rows X columns X [value,type] */
 //	free(board); //<<<need to happen to avoid memory leak!>>>
-	printf("debug: reallocation successful\n");
+//	printf("debug: reallocation successful\n");
 	while (1) { /*sets board according to n and m*/
 		c = fgetc(file_pointer);
-		printf("%c|",c);
+//		printf("%c|",c);
 		if( feof(file_pointer) ) {
 			break ;
 		}
@@ -119,16 +119,16 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		}
 	}
 	*board = new_board;
-	int i; //debug
-	printf("\n"); //debug
-	for (i = 0;i<N*N*2;i++){ //debug
-		printf("%d|",board[i]); //debug
-	} //debug
-	printf("\ndebug: reading board completed successfully\n");
+//	int i; //debug
+//	printf("\n"); //debug
+//	for (i = 0;i<N*N*2;i++){ //debug
+//		printf("%d|",board[i]); //debug
+//	} //debug
+//	printf("\ndebug: reading board completed successfully\n");
 //	fclose(file_pointer); /*need to release file*/
 //	file_pointer = NULL;
 //	printBoard(*board,*n,*m,2,1); //debug
-	printf("debug: in readfrom() n:%d,m:%d\n",*n,*m);//debug
+//	printf("debug: in readfrom() n:%d,m:%d\n",*n,*m);//debug
 	return 0;
 }
 

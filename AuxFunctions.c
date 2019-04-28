@@ -13,11 +13,11 @@ int isFinished(int n, int m, int* board){
 	 * return: 0 - illegal board, 1 - won, 2 - incomplete board.
 	 */
 	int x,y,location = 0;
-	const N = n * m;
+	const int N = n * m;
 	for (x=0;x<N;x++){
 		for (y=0;y<N;y++){
 			location = (x + y*N)*2;
-			if (!isLegal(n,m,x,y,board[location])){return 0;} /*not legal*/
+			if (!isLegal(n,m,x,y,board)){return 0;} /*not legal*/
 			else if(board[location] == 0){return 2;} /*not full*/
 		}
 	}

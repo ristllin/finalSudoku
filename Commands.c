@@ -122,7 +122,7 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			toInit(board,guess_board,m,n,mark_errors,ctrl_z, ctrl_z_current,state);
 			break;
 		case 15:
-			printf("debug: toSolve called\n");//debug
+//			printf("debug: toSolve called\n");//debug
 			fail = toSolve(n,m,user_path,state,board,guess_board,ctrl_z, ctrl_z_current);
 			return fail;
 			break;
@@ -471,26 +471,27 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 	int* temp_board, tempn, tempm; int fail = 0;
 	int i; //debug
 	printf("debug: toSolve(2) called\n");
-	printf("with: n:%d, m:%d, path:%s, board: %d\n",n,m,path,board);
-	state = 1;
+	printf("with: n:%d,m:%d,path:%s,board:%d,state:%d\n",n,m,path,board,state);
+	printf("now %d,%d",state,*state);
+	*state = 1;
 	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
-	printf("debug: tosolve(0) tn:%d,tm:%d,fail:%d\n",tempn,tempm,fail);
+//	printf("debug: tosolve(0) tn:%d,tm:%d,fail:%d\n",tempn,tempm,fail);
 	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/
 //		free(board); /*<<<<need to free!!!>>>>*/
 		free(*guess_board);
 		*board = temp_board;
-		printf("debug: board:%d,guess board:%d\n",board,guess_board);
+//		printf("debug: board:%d,guess board:%d\n",board,guess_board);
 		*n = tempn;
 		*m = tempm;
 		const N = (int)n*(int)m;
-		printf("debug: tosolve(1) n:%d,m:%d\n",n,m);
-		printf("board:"); //debug
-		for (i = 0;i<N*N*2;i++){ //debug
-			printf("%d|",temp_board[i]); //debug
-		} //debug
-		printf("\n"); //debug
-		printBoard(*board,*n,*m,2,1);//debug
+//		printf("debug: tosolve(1) n:%d,m:%d\n",n,m);
+//		printf("board:"); //debug
+//		for (i = 0;i<N*N*2;i++){ //debug
+//			printf("%d|",temp_board[i]); //debug
+//		} //debug
+//		printf("\n"); //debug
+//		printBoard(*board,*n,*m,2,1);//debug
 		guess_board = calloc(N*N*2,sizeof(int));
 	}
 	return 1;

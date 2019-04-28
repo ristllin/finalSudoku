@@ -31,20 +31,14 @@ int main(int argc, char* argv[]){
 	toInit(board,guess_board,m,n,mark_errors,ctrl_z,ctrl_z_current,state);
 	int user_command[4]; /*[command,x,y,z]*/
 	while(1){
-//		userInput(board,m,n,state, user_command, user_path, user_threshold);
-		user_command[0] = 15; //debug
-//		printf("debug: user_path:%s, user_command:%d\n",user_path,user_command[0]); //debug
-//		printf("debug: main(1): board:%d\n",&board);
+		userInput(board,m,n,state, user_command, user_path, user_threshold);
 		execute(&board, user_command, user_path, &m, &n, &mark_errors, &ctrl_z, &state, &ctrl_z_current, &guess_board);
-//		printf("debug: main(0): board:%d\n",&board);
-//		printBoard(board,n,m,2,1);//debug
-//		printf("n:%d,m:%d\n",n,m);
-//		printf("<----exiting---->"); exit(1); //debug
-		if (isFinished(n,m,board)){
+		printf("debug main() state: n:%d,m:%d,state:%d,board:%d\n",n,m,state,&board);
+		if (isFinished(n,m,board) == 1){
 			printf("%s\n",WINNING);
-			toInit(board, guess_board, m, n, mark_errors, ctrl_z, ctrl_z_current, state);
+			toInit(&board, &guess_board, &m, &n, &mark_errors, ctrl_z, ctrl_z_current, &state);
 		}else{
-			printBoard(board,*n,*m,state,mark_errors);
+			printBoard(board,n,m,state,mark_errors);
 		}
 	}
 
