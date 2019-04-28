@@ -75,11 +75,11 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			exitSudoku(board, user_command, m, n,  mark_errors, state, ctrl_z, ctrl_z_current, guess_board);
 			break;
 		case 1:
-			fail = set(n,m,x,y,z,board,ctrl_z,ctrl_z_current);
+			fail = set((int)n,(int)m,x,y,z,board,ctrl_z,ctrl_z_current);
 			return fail;
 			break;
 		case 2:
-			fail = autoFill(n,m,board,state);
+			fail = autoFill((int)n,(int)m,board,state);
 			return fail;
 			break;
 		case 3:
@@ -158,9 +158,12 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	/*check if user entered erroneous value*/
 	/*update ctrl_z, delete the further steps after current one*/
 	int location; const N = n*m; struct Node* temp;
+	printf("debug set() called\n");
+	printf("with: n:%d,m:%d,x:%d,y:%d,z:%d\n",n,m,x,y,z);
 	if (x > N || x < 1){printf("%s\n",FIRSTPARAMETERERROR); return 0;}
 	if (y > N || y < 1){printf("%s\n",SECONDPARAMETERERROR); return 0;}
 	if (z > N || z < 1){printf("%s\n",THIRDPARAMETERERROR); return 0;}
+	x = x-1; y = y-1; //translate value to location
 	location = (x+(y*N))*2;
 	board[location] = z;
 	temp = ctrl_z_current->next;
@@ -176,7 +179,7 @@ int autoFill(int n, int m, int* board, int* state){
 	 * args: board - changes current board
 	 * return:
 	 */
-	/*<<<<add special mark in redo\undo and refer in redo/undo>>>>*/
+	/*<<<<add special mark in redo\undo and refer in redo/undo and use set!>>>>*/
 	int* temp_board,legal_options; int x,y,location;
 	const N = n*m;
 	temp_board = (int*)calloc(N*N*2,sizeof(int));
@@ -396,6 +399,7 @@ int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_curr
 	/* set pointer in the list */
 	/* no moves to undo --> error */
 	/* print change */
+	/*if -1 run until -1*/
 	int location = 0; const N = n*m;
 	if (ctrl_z_current->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
 	ctrl_z_current = ctrl_z_current->prev;
@@ -413,6 +417,7 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_curr
 	/* set pointer in the list */
 	/* no moves to redo --> error */
 	/* print change */
+	/*<<<<if has -1 run until next -1>>>>*/
 	int location = 0; const N = n*m;
 	if (ctrl_z_current->next == NULL){printf("%s\n",NOMOREMOVES);return 0;}
 	ctrl_z_current = ctrl_z_current->next;
