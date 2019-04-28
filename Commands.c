@@ -60,6 +60,10 @@ int selectUniqueRandomValues(int* shuffeled_list, int shuffeled_list_length, int
 
 //end of AuxFunctions
 
+//Declarations: (in order to use the functions in execute)
+int guess(int n, int m, float x, int* board);
+//
+
 void execute(int* board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
 	/*function description: activate correct command according to user command and pass relevant parameters (router).
 	 * args: all variables that require memory release
@@ -90,7 +94,7 @@ void execute(int* board, int* user_command, char* user_path, int* m, int* n, int
 			validate(n,m,board,state);
 			break;
 		case 7:
-			guess(n,m,x,state,board);
+			guess(n,m,x,board);
 			break;
 		case 8:
 			reset(n,m,board,ctrl_z,ctrl_z_current);
@@ -344,7 +348,7 @@ int validate(int n, int m, int* board, int* state){
 	/*print*/
 }
 
-int guess(int n, int m, float x, int* state, int* board){
+int guess(int n, int m, float x, int* board){
 	/*function description: fills all cell values with a score of X or greater usong LP. If several
    * values hold for the same cell, randomly choose one according to the score
 	 * state: Solve
@@ -352,7 +356,6 @@ int guess(int n, int m, float x, int* state, int* board){
 	 * return: 0 --> there is no solution to the board / an error occurred, 1 --> board has a solution
 	 */
 	int legal;
-
 	//check if board is erroneous
 	legal = isFinished(n,m,board);
 	if(!legal){
