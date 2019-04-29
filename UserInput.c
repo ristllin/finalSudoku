@@ -81,7 +81,7 @@ int getLine (const char *prmpt, char *buff, size_t sz) {
     	return NO_INPUT;
 
     // Otherwise remove newline and give string back to caller.
-    buff[strlen(buff)-1] = '\0';
+    //buff[strlen(buff)-1] = '\0';
     return OK;
 }
 

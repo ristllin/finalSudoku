@@ -20,11 +20,12 @@ const char* THIRDPARAMILEGALERROR = "Third parameter - illegal value for current
 const char* TOOMANYLINESERROR = "Too many lines, Please enter one line at a time";
 const char* ILLEGALSAVEERROR = "Can't save erroneous board in edit mode, please fix board and try again. Didn't save board";
 const char* FIXEDCELLERROR = "you can't set fixed cells";
+const char* FILLEDCELLERROR = "you can't get hints for cells with values";
 const char* WRONGSTATEERROR = "Function unavailable in current state \n";
 const char* INVALIDBOARDERROR = "Board is invalid for command"; /*e.g. erroneous for auto-fill*/
 const char* EXECUTIONERROR = "Command finished unsuccessfully"; /*e.g. save command failed to save*/
 const char* COMMANDLENGTHERROR = "Invalid command length, please enter a command under 256 chars";
-
+const char* UNSOLVEDBOARD = "The board is not solvable";
 const char* COMMANDSOLVE = "solve";
 const char* COMMANDEDIT = "edit";
 const char* COMMANDMARKERRORS = "mark_errors";
