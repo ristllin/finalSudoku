@@ -87,7 +87,7 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			markErrors(x,mark_errors);
 			break;
 		case 4:
-			rslt = numSolutions(n,m,board);
+			rslt = numSolutions((int)*n,(int)*m,*board);
 			return rslt;
 			break;
 		case 5:
@@ -172,10 +172,10 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	x = x-1; y = y-1; //translate value to location
 	location = (x+(y*N))*2;
 	board[location] = z;
-	temp = ctrl_z_current->next;
-	RemoveFollowingNodes(temp); /*forget next moves if existing*/
-	InsertAtTail(board[location],x,y,ctrl_z_current); /*add former data*/
-	ctrl_z_current = ctrl_z_current->next; /*advance current ctrl-z to new node*/
+//	temp = ctrl_z_current->next;
+//	RemoveFollowingNodes(temp); /*forget next moves if existing*/
+//	InsertAtTail(board[location],x,y,ctrl_z_current); /*add former data*/
+//	ctrl_z_current = ctrl_z_current->next; /*advance current ctrl-z to new node*/
 	return 1;
 }
 
@@ -593,11 +593,11 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 //	printf("debug: toSolve(2) called\n");
 //	printf("with: n:%d,m:%d,path:%s,board:%d,state:%d\n",n,m,path,board,state);
 //	printf("debug: state:%d,state*:%d\n",state,*state);
-	*state = 1;
 	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
 //	printf("debug: tosolve(0) tn:%d,tm:%d,fail:%d\n",tempn,tempm,fail);
 	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/
+		*state = 1;
 //		free(board); /*<<<<need to free!!!>>>>*/
 		free(*guess_board);
 		*board = temp_board;

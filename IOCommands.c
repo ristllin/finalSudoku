@@ -23,6 +23,7 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 
 	int row; int col; int value; int fixed;
 	int N = n * m;
+	if (n == 0 || m == 0){return;}
 	seperator(n,m);
 	for (row = 0;row < N;row++){
 		printf("|"); /*starting a new row*/

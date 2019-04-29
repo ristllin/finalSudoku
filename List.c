@@ -58,7 +58,7 @@ void Print(struct Node* head) {
 	struct Node* temp = head;
 	printf("Forward: ");
 	while(temp != NULL) {
-		printf("x:%d,y%d,value:%d|",temp->x,temp->y,temp->data);
+		printf("x:%d,y:%d,value:%d|",temp->x,temp->y,temp->data);
 		temp = temp->next;
 	}
 	printf("\n");

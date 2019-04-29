@@ -20,6 +20,8 @@ int EBA(int n,int m,int* board){
 	 *  return: number of correct solutions from current state (doesn't change given board)
 	 * */
 	int *temp_board; const int N = n*m; int i;
+	printf("debug: EBA() called\n");
+	printf("with: n:%d,m:%d,board:%d,board(addr):%d\n",n,m,board,&board); //debug
 	temp_board = calloc(N*N*2,sizeof(int));
 	copyBoard(board,temp_board,N); /*copy board to temp_board*/
 	for (i=0;i<N*N;i++){ /*each existing value in board, fix in temp_board*/
