@@ -18,6 +18,9 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 	 * args: mark_errors - whether to mark errors or not
 	 * return: void
 	 */
+//	printf("debug: printBoard() called\n");
+//	printf("with: n:%d,m:%d,board:%d\n",n,m,board);
+
 	int row; int col; int value; int fixed;
 	int N = n * m;
 	seperator(n,m);
@@ -52,7 +55,7 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 		}
 		printf("\n");
 		seperator(n,m);
-		if ((row+1) % n == 0) {
+		if ((row+1) % n == 0 && row+1 != N) {
 			seperator(n,m);/*End of row*/
 		}
 	}
@@ -64,14 +67,17 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		 * args: n,m - size of board, path - file path
 		 * return: 1 for fail, 0 for success
 		 */
-	/*printf("LoadBoard() called\n");*/
 	FILE* file_pointer; int N; int num,c,location = 0;
+	int* new_board;
+//	path = "D:/9board.txt"; //debug!!!! <<<<must remove >>>>>
+//	printf("debug: LoadBoard() called with path:%s \n",path);
 	file_pointer = fopen(path, "r");
 	if (file_pointer == NULL){ /*catch errors*/
-		printf("%s\n",INVALIDFILEPATH);
+		printf("%s: %s \n",INVALIDFILEPATH,path);
 		fclose(file_pointer);
 		return 1;
 	}
+	num = 0;
 	while(c != '\n' && !(feof(file_pointer))){ /*get n,m*/
 		c = fgetc(file_pointer);
 		if (c != ' ' && c != '\n'){
@@ -86,29 +92,43 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 			num = 0;
 		}
 	}
-	N = (*n) * (*m);
-	board = (int*)realloc(board,N*N*2); /* rows*XcolumnsX[value,type]* */
+	if (*n > 5 || *m > 5){printf("%s \n",CURRUPTFILEFORMAT);return 1;}
+	N = (int)*n * (int)*m;
+//	printf("debug: reallocating with N:%d\n",N);
+	new_board = (int*)calloc(board,N*N*2*sizeof(int)); /* rows X columns X [value,type] */
+//	free(board); //<<<need to happen to avoid memory leak!>>>
+//	printf("debug: reallocation successful\n");
 	while (1) { /*sets board according to n and m*/
 		c = fgetc(file_pointer);
+//		printf("%c|",c);
 		if( feof(file_pointer) ) {
 			break ;
 		}
 		if (c != '\n' && c!= ' ' && c!= '.'){ /*a number*/
 			num = num * 10 + (c - 48);
 		}else if (c != '\n'){ /*a sign skips new line*/
-			board[location] = num;
+			new_board[location] = num;
 			num = 0;
 			location += 1;
 			if (c == '.'){
-				board[location] = 1;
+				new_board[location] = 1;
 			} else { /*c == ' '*/
-				board[location] = 0;
+				new_board[location] = 0;
 			}
 			location += 1;
 		}
 	}
-	printf("EOF\n");
-	fclose(file_pointer);
+	*board = new_board;
+//	int i; //debug
+//	printf("\n"); //debug
+//	for (i = 0;i<N*N*2;i++){ //debug
+//		printf("%d|",board[i]); //debug
+//	} //debug
+//	printf("\ndebug: reading board completed successfully\n");
+//	fclose(file_pointer); /*need to release file*/
+//	file_pointer = NULL;
+//	printBoard(*board,*n,*m,2,1); //debug
+//	printf("debug: in readfrom() n:%d,m:%d\n",*n,*m);//debug
 	return 0;
 }
 
