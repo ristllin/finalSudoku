@@ -229,7 +229,7 @@ int numSolutions(int n, int m, int* board){
 	 */
 	int rslt = 0;
 	rslt = EBA(n,m,board);
-	printf("Number of solutions found for current bard is:%d\n",rslt);
+	printf("Number of solutions found for current board is:%d\n",rslt);
 	return 1;
 }
 

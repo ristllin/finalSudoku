@@ -36,7 +36,7 @@ int optionsForLocation(int n, int m, int x, int y, int* board, int* legal_option
 		legal_options[i] = 1;
 		temp_legal[i] = 1;
 	}
-	if (x > N || y > N){printf("<<<isLegal() assertion - illegal parameters x or y>>>\n"); return 0;} /*assertion*/
+	if (x > N || y > N){printf("<<<isLegal() assertion - illegal parameters x or y>>>\n"); printf("x:%d,y:%d\n",x,y); return 0;} /*assertion*/
 	for (i=0;i<N;i++){ /*check row*/
 		location = ((y*N)+i)*2; /*y*N*2 - starting row location on board*/
 		if (i == x || board[location] == 0){continue;} /*skip x,y cell and 0s*/
@@ -98,7 +98,7 @@ void copyBoard(int* origin, int* target, int N){
 	 * return:
 	 */
 	printf("debug: copyBoard() called\n");
-	printf("with: origin:%d,origin(addr):%d",origin,&origin);
+	printf("with: origin:%d,origin(addr):%d\n",origin,&origin);
 	int i = 0; for (i=0;i<(N*N*2);i++){target[i] = origin[i];}
 }
 
@@ -142,12 +142,18 @@ int sumArray(int* array, int length){
 }
 
 int yFromLocation(int N, int location){
+//	printf("debug: yFromLocation() called\n");
+//	printf("with: N:%d,location:%d\n",N,location);
+	if (location == 0 || N == 0){return 0;}
 	return (location/2) / N;
 }
 
 int xFromLocation(int N, int location){
+	//	printf("debug: xFromLocation() called\n");
+	//	printf("with: N:%d,location:%d\n",N,location);
+	if (location == 0 || N == 0){return 0;}
 	location = location / 2;
-	return location - (location / N);
+	return location - ((location / N)*N);
 }
 
 int locationFromXY(int N, int x, int y){
