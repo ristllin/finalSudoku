@@ -11,6 +11,7 @@
 #include "AuxFunctions.h"
 #include "Constants.h"
 #include "Commands.h"
+#include "Algorithem.h"
 
 //AuxFunctions
 
@@ -67,7 +68,7 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 	 * return: 1 - completed successful, 0 command completed unsuccessfully
 	 */
 	/*<<<>>>catch errors from functions*/
-	int fail = 1; int command = user_command[0]; int x = user_command[1]; int y = user_command[2]; int z = user_command[3];
+	int rslt = 1; int command = user_command[0]; int x = user_command[1]; int y = user_command[2]; int z = user_command[3];
 //	printf("debug: execute() called\n");
 //	printf("With params: board:%d, user_command[0]:%d, user_path:%s, m:%d, n:%d, mark_errors:%d, state: %d.\n",board,user_command[0],user_path,m,n,mark_errors,state);
 	switch(command){
@@ -75,38 +76,42 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			exitSudoku(board, user_command, m, n,  mark_errors, state, ctrl_z, ctrl_z_current, guess_board);
 			break;
 		case 1:
-			fail = set((int)n,(int)m,x,y,z,board,ctrl_z,ctrl_z_current);
-			return fail;
+			rslt = set((int)*n,(int)*m,x,y,z,board,ctrl_z,ctrl_z_current);
+			return rslt;
 			break;
 		case 2:
-			fail = autoFill((int)n,(int)m,board,state);
-			return fail;
+			rslt = autoFill((int)n,(int)m,board,state);
+			return rslt;
 			break;
 		case 3:
 			markErrors(x,mark_errors);
 			break;
 		case 4:
-			fail = numSolutions(n,m,board);
-			return fail;
+			rslt = numSolutions(n,m,board);
+			return rslt;
 			break;
 		case 5:
-			fail = generate(x,y,board,n,m);
-			return fail;
+			rslt = generate(x,y,board,n,m);
+			return rslt;
 			break;
 		case 6:
-			validate(n,m,board,state);
+			rslt = validate(n,m,board,state);
+			return rslt;
 			break;
 		case 7:
-			guess(n,m,x,board);
+			rslt = guess(n,m,x,board);
+			return rslt;
 			break;
 		case 8:
 			reset(n,m,board,ctrl_z,ctrl_z_current);
 			break;
 		case 9:
-			guess_hint(n,m,x,y,board);
+			rslt = guess_hint(n,m,x,y,board);
+			return rslt;
 			break;
 		case 10:
-			hint(n,m,x,y,board);
+			rslt = hint(n,m,x,y,board);
+			return rslt;
 			break;
 		case 11:
 			undo(n,m,board ,ctrl_z, ctrl_z_current);
@@ -115,20 +120,20 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			redo(n,m,board,ctrl_z, ctrl_z_current);
 			break;
 		case 13:
-			fail = save(n,m,x,board,state);
-			return fail;
+			rslt = save(n,m,x,board,state);
+			return rslt;
 			break;
 		case 14: /*There is no user init command, for debug purposes*/
 			toInit(board,guess_board,m,n,mark_errors,ctrl_z, ctrl_z_current,state);
 			break;
 		case 15:
 //			printf("debug: toSolve called\n");//debug
-			fail = toSolve(n,m,user_path,state,board,guess_board,ctrl_z, ctrl_z_current);
-			return fail;
+			rslt = toSolve(n,m,user_path,state,board,guess_board,ctrl_z, ctrl_z_current);
+			return rslt;
 			break;
 		case 16:
-			fail = toEdit(n,m,board,guess_board,mark_errors,ctrl_z, ctrl_z_current,state,user_path);
-			return fail;
+			rslt = toEdit(n,m,board,guess_board,mark_errors,ctrl_z, ctrl_z_current,state,user_path);
+			return rslt;
 			break;
 		default:
 			printf("%s",INVALIDCOMMANDERROR);
@@ -157,12 +162,13 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	/*set*/
 	/*check if user entered erroneous value*/
 	/*update ctrl_z, delete the further steps after current one*/
-	int location; const N = n*m; struct Node* temp;
+	int location; const int N = n*m; struct Node* temp;
+	board = *board;
 	printf("debug set() called\n");
-	printf("with: n:%d,m:%d,x:%d,y:%d,z:%d\n",n,m,x,y,z);
-	if (x > N || x < 1){printf("%s\n",FIRSTPARAMETERERROR); return 0;}
-	if (y > N || y < 1){printf("%s\n",SECONDPARAMETERERROR); return 0;}
-	if (z > N || z < 1){printf("%s\n",THIRDPARAMETERERROR); return 0;}
+	printf("with: n:%d,m:%d,x:%d,y:%d,z:%d,board:%d\n",n,m,x,y,z,board);
+	if (x > N || x < 1){printf("%s\n %d",FIRSTPARAMETERERROR,N); return 0;}
+	if (y > N || y < 1){printf("%s\n %d",SECONDPARAMETERERROR,N); return 0;}
+	if (z > N || z < 1){printf("%s\n %d",THIRDPARAMETERERROR,N); return 0;}
 	x = x-1; y = y-1; //translate value to location
 	location = (x+(y*N))*2;
 	board[location] = z;
@@ -181,7 +187,7 @@ int autoFill(int n, int m, int* board, int* state){
 	 */
 	/*<<<<add special mark in redo\undo and refer in redo/undo and use set!>>>>*/
 	int* temp_board,legal_options; int x,y,location;
-	const N = n*m;
+	const int N = n*m;
 	temp_board = (int*)calloc(N*N*2,sizeof(int));
 	legal_options = (int*)calloc(N,sizeof(int));
 	copyBoard(board,temp_board,N);
@@ -305,7 +311,8 @@ running ILP to solve the board, and then clearing all but Y random cells.
 			continue;
 			}
 	/*run ILP -> return 1= success, 0 = failure */
-	legal = ILP(n,m,temp_board);
+//	legal = ILP(n,m,temp_board); //debug temp cancelled
+	legal = 1; //<<<debug mode>>>
 	/* if there is no solution for board --> start another iteration */
 	if(!legal){
 		printf("Debugging: no solution using ILP, start another iteration");
@@ -350,7 +357,8 @@ int validate(int n, int m, int* board, int* state){
 	//check if board is found to be solvable, or not using ILP
 	temp_board = (int*)calloc(N*N*2,sizeof(int));
 	copyBoard(board,temp_board,N);
-	legal = ILP(n,m,temp_board);
+	//	legal = ILP(n,m,temp_board); //debug temp cancelled
+	legal = 1; //<<<debug mode>>>
 		/* if there is no solution for board --> start another iteration */
 	if(!legal){
 		printf("The board is not solvable");
@@ -379,7 +387,8 @@ int guess(int n, int m, float x, int* board){
 			}
 	/* call LP_Solver: get board and solve it using LP If several
 	values hold for the same cell, randomly choose one according to the score */
-	legal = LPSolver(x, board);
+//	legal = LPSolver(n,m,x, board); //temp cancel for debug
+	legal = 1; //<<<debug mode>>>
 	if(!legal){
 		printf("ERROR: %s",INVALIDBOARDERROR);
 		return 0;
@@ -426,7 +435,8 @@ int guess_hint(int n, int m, int x,  int y, int* board){
 		/* run ILP (copy board) */
 		temp_board = (int*)calloc(N*N*2,sizeof(int));
 		copyBoard(board,temp_board,N);
-		legal = ILP(n,m,temp_board);
+		//	legal = ILP(n,m,temp_board); //debug temp cancelled
+		legal = 1; //<<<debug mode>>>
 				/* if there is no solution for board --> start another iteration */
 		if(!legal){
 			printf("ERROR: %s", UNSOLVEDBOARD);
@@ -473,7 +483,8 @@ int hint(int n, int m, int x, int y, int* board){
 	temp_board = (int*)calloc(N*N*2,sizeof(int));
 	copyBoard(board,temp_board,N);
 	legal_options = (float*)calloc(N*2,sizeof(float)); // 0->optional values, 1->score
-	legal = LPSolveCell(value_location, n, m, 0, temp_board, legal_options);
+	//legal = LPSolveCell(value_location, n, m, 0, temp_board, legal_options);//temp cancelled for debug
+	legal = 1; //temp for debug
 	if(!legal){
 		printf("ERROR: %s", UNSOLVEDBOARD);
 		return 0;
@@ -503,7 +514,7 @@ int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_curr
 	/* no moves to undo --> error */
 	/* print change */
 	/*if -1 run until -1*/
-	int location = 0; const N = n*m;
+	int location = 0; const int N = n*m;
 	if (ctrl_z_current->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
 	ctrl_z_current = ctrl_z_current->prev;
 	location = (ctrl_z_current->x+(ctrl_z_current->y*N))*2;
@@ -521,7 +532,7 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_curr
 	/* no moves to redo --> error */
 	/* print change */
 	/*<<<<if has -1 run until next -1>>>>*/
-	int location = 0; const N = n*m;
+	int location = 0; const int N = n*m;
 	if (ctrl_z_current->next == NULL){printf("%s\n",NOMOREMOVES);return 0;}
 	ctrl_z_current = ctrl_z_current->next;
 	location = (ctrl_z_current->x+(ctrl_z_current->y*N))*2;
@@ -535,7 +546,7 @@ int save(int n, int m, char* path, int* board, int* state){
 	 * args: X --> file's path
 	 * return: void
 	 */
-	int i = 0; const N = n*m; int* temp_board;
+	int i = 0; const int N = n*m; int* temp_board;
 	temp_board = calloc(N*N*2,sizeof(int));
 	copyBoard(board,temp_board,N);
 	if (state == 1){ /* edit - mark cells containing values as fixed */
@@ -561,10 +572,11 @@ void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct
 	 * return: void
 	 */
 	/*n,m to 9, state to 0, boards to empty*/
+	int N;
 	free(board);
 	free(guess_board);
 	n = 3; m = 3; state = 0; mark_errors = 1;
-	const N = (int)n*(int)m;
+	N = (int)n*(int)m;
 	board = calloc(N*N*2,sizeof(int));
 	guess_board = calloc(N*N*2,sizeof(int));
 	ctrl_z_current = ctrl_z;
@@ -576,7 +588,7 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 	 * args: x --> file path
 	 * return: 1 - successful, 0 unsuccessful
 	 */
-	int* temp_board, tempn, tempm; int fail = 0;
+	int* temp_board, tempn, tempm; int fail = 0; int N;
 	int i; //debug
 //	printf("debug: toSolve(2) called\n");
 //	printf("with: n:%d,m:%d,path:%s,board:%d,state:%d\n",n,m,path,board,state);
@@ -592,7 +604,7 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 //		printf("debug: board:%d,guess board:%d\n",board,guess_board);
 		*n = tempn;
 		*m = tempm;
-		const N = (int)n*(int)m;
+		N = (int)n*(int)m;
 //		printf("debug: tosolve(1) n:%d,*n:%d,tempn:%d\n",n,*n,tempn);
 //		printf("board:"); //debug
 //		for (i = 0;i<N*N*2;i++){ //debug
@@ -610,7 +622,7 @@ int toEdit(int* board, int* guess_board,int* m, int* n,int* mark_errors, int* st
 	 * args: x --> file path
 	 * return: void
 	 */
-	int* temp_board, tempn, tempm; const N = (*n)*(*m);
+	int* temp_board, tempn, tempm; const int N = (*n)*(*m);
 	*state = 2;
 	if (strlen(user_path) == 0){
 		toInit(board, guess_board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);

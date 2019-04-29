@@ -71,7 +71,7 @@ int isLegal(int n, int m, int x, int y, int* board){
 	 * args:
 	 * return: 1 if current value in cell is legal; 0 if not or if illegal state found in row\column\box of the cell. returns legal (1) for empty cell.
 	 */
-	int* legal_options; int rslt,location; const N = n*m;
+	int* legal_options; int rslt,location; const int N = n*m;
 	legal_options = calloc(N,sizeof(int));
 	location = (x+y*N)*2;
 	if (board[location] == 0){return 1;} /*empty cell*/
@@ -123,7 +123,7 @@ void deleteUnfixedFromPoint(int n, int m, int* board,int location){
 	 * args: N size of array
 	 * return: 0 if more than one cell size is 1 (and not 0) or no cells with value, otherwise, returns index of single cell with value.
 	 */
-	int i,value_location,fixed_location = 0; const N = n*m;
+	int i,value_location,fixed_location = 0; const int N = n*m;
 	for (i=location;i<N*N;i++){
 		value_location = i*2;
 		fixed_location = i*2+1;

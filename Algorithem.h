@@ -5,9 +5,20 @@
  *      Author: shahare
  */
 
+//#include "gurobi_c.h"
+
 #ifndef ALGORITHEM_H_
 #define ALGORITHEM_H_
 
+int recursiveEBA(int n, int m, int* board, int starting_point);
+int EBA(int n,int m,int* board);
+//int LP(int n, int m, double* sol, int* board);
+//int recursiveEBA(int n, int m, int* board, int starting_point);
+//int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model);
+//int ILP(int n, int m, int* board);
+//int LPSolveCell(int location, int n, int m, float threshold, int* board, float* legal_options);
+//int LPSolver(int n, int m,float threshold, int* board);
+//int LP(int n, int m, double* sol, int* board);
 
 
 #endif /* ALGORITHEM_H_ */

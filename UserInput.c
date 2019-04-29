@@ -101,6 +101,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 	char    input[MAXBUFFERSIZE]; /* sufficient to handle one line */
 	int     invalid_command = 1; /* the command was valid */
 	int     command_flag = 0;
+	const int N = m*n;
 	/*get user input*/
 	while(invalid_command){ /* run until the command is valid */
 		command_flag = getLine (ENTERCOMMAND, input, sizeof(input));
@@ -244,7 +245,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				continue;
 
 			}
-			if(value1<0 || value1>m){ // m = lines
+			if(value1<0 || value1>N){ // m = lines
 				printf("Error: %s %d \n", FIRSTPARAMETERERROR, m);
 				continue;
 			}
@@ -258,7 +259,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				printf("Error: %s", NOTINT);
 				continue;
 			}
-			if(value2<0 || value2>n){ // n = rows
+			if(value2<0 || value2>N){ // n = rows
 				printf("Error: %s %d", SECONDPARAMETERERROR, n);
 				continue;
 			}
@@ -272,7 +273,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				printf("Error: %s", NOTINT);
 				continue;
 			}
-			if(value3<0 || value3>(m*n)){ // alphabat size = m*n
+			if(value3<0 || value3>(N)){ // alphabat size = m*n
 				printf("Error: %s %d", THIRDPARAMETERERROR, m*n);
 				continue;
 			}
