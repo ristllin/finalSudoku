@@ -12,12 +12,13 @@
 
 int recursiveEBA(int n, int m, int* board, int starting_point);
 int EBA(int n,int m,int* board);
+int randomWeightedNumber(double* list, int length);
 //int LP(int n, int m, double* sol, int* board);
 //int recursiveEBA(int n, int m, int* board, int starting_point);
 //int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model);
 //int ILP(int n, int m, int* board);
-//int LPSolveCell(int location, int n, int m, float threshold, int* board, float* legal_options);
-//int LPSolver(int n, int m,float threshold, int* board);
+int LPSolveCell(int location, int n, int m, float threshold, int* board, float* legal_options);
+int LPSolver(int n, int m,float threshold, int* board);
 //int LP(int n, int m, double* sol, int* board);
 
 

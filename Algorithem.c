@@ -11,7 +11,7 @@
 #include <string.h>
 
 int recursiveEBA(int n, int m, int* board, int starting_point);
-int LP(int n, int m, double* sol, int* board);
+//int LP(int n, int m, double* sol, int* board);
 
 int EBA(int n,int m,int* board){
 	int rslt = -1;
@@ -67,8 +67,8 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 	free(legal_options);
 	return rslt;
 }
-/*
 
+/*
 int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model){
 
 	 the function adds to model all the constraints of Sudoku game
@@ -155,6 +155,7 @@ int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model){
 		    }
 		    return 0;
 }
+*/
 
 int randomWeightedNumber(double* list, int length){
 	// return random v out of list with values and their weights. return -1 in case of an error;
@@ -174,6 +175,7 @@ int randomWeightedNumber(double* list, int length){
 	return -1;
 }
 
+/*
 int ILP(int n, int m, int* board){
 	 ILP - Integer Linear Programming, used by validate, generate and hint functions, uses gorubi to solve the board
 	*  args: soduko board
@@ -329,22 +331,25 @@ int ILP(int n, int m, int* board){
 
 	  return 1;
 }
+*/
 
 int LPSolveCell(int location, int n, int m, int* board, float* legal_options){
-	 Linear programming algorithm, Used by guess and guessHint functions. solves using gorubi solver module
+	/* Linear programming algorithm, Used by guess and guessHint functions. solves using gorubi solver module
 	*  args: gets board to solve, doesn't change it, builds solution on guess board
 	*  return: all possible solutions with scores higher than 0 and their scores to specific cell, 0 -> no solution to guess_board, 1 -> there is solution
-	*
+	*/
 	int success, x, y, i, sol_index;
 	const int N = n*m;
 	double*	sol = (double*)calloc(N*N*N,sizeof(double)); //save sol values
-	success = LP(n,m,sol,board);
+	//success = LP(n,m,sol,board);
+	success = 1;
 	if(!success){
 		return 0;
 	}
 	x = xFromLocation(N, location);
 	y = yFromLocation(N, location);
 	sol_index = N*N*x + N*y;
+	printf("Debuging index is %d, sol val is %f",sol_index,sol[sol_index]);
 	for (i=0; i<N; i++) {
 		if(sol[sol_index+i]>0){
 			legal_options[i*2]= i+1.0; //optional value
@@ -353,24 +358,27 @@ int LPSolveCell(int location, int n, int m, int* board, float* legal_options){
 		else{
 			legal_options[i*2]= -1.0; //optional value
 			legal_options[i*2+1]= -1.0; //score
+			printf("value of legal op is %f", legal_options[i*2+1]);
 		}
 	}
 	return 1;
 
 }
 
+
 int LPSolver(int n, int m,float threshold, int* board){
-	Linear programming algorithm, Used by guess  functions. solves using gorubi solver module
+	/*Linear programming algorithm, Used by guess  functions. solves using gorubi solver module
 	 *  args: gets board to solve, and threshold
 	 * return: solved board, If several values hold for the same cell, randomly choose one according to the score
 	 *
-
+	 */
 	int success, valid_cnt, sol_index, location, i, j, v, valid, sol_value;
 	const int N=n*m;
 	double*	sol = (double*)calloc(N*N*N,sizeof(double)); //save sol values
 	double* legal_options = (double*)calloc(N*2,sizeof(double));
 	//run LP and get sol matrix
-	success = LP(n,m,sol,board);
+	//success = LP(n,m,sol,board);
+	success = 1;
 	if(!success){
 			return 0;
 		}
@@ -382,7 +390,7 @@ int LPSolver(int n, int m,float threshold, int* board){
 				  for (v = 0; v < N; v++) {
 						//check if score is higher than x  and
 					  sol_index = i*N*N+j*N+v;
-					  if (sol[sol_index] > threshold) { //need to check ig lb == threshold
+					  if (sol[sol_index] > threshold && board[location]==0) {
 						  board[location] = v+1;
 						  valid = isLegal(n,m,xFromLocation(N, location),yFromLocation(N, location),board);
 						  if(valid){
@@ -395,7 +403,7 @@ int LPSolver(int n, int m,float threshold, int* board){
 				  	  }
 				  //choose one item randomly using weighted random
 				  sol_value = randomWeightedNumber(legal_options, valid_cnt);
-				  if(sol_value!=-1) // there is option higher than X
+				  if(sol_value!=-1) // there is an option higher than X
 					  board[location] = sol_value;
 				  // place it on board using location;
 			 }
@@ -403,6 +411,8 @@ int LPSolver(int n, int m,float threshold, int* board){
 	return 1;
 
 }
+
+/*
 
 int LP(int n, int m, double* sol, int* board){
 	 gets board, and fill Gurobi matrix (sol) with the solution

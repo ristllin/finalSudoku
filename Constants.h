@@ -60,6 +60,7 @@ extern const char* NOMOREMOVES;
 extern const char* READINGFAILED;
 extern const char* SAVINGFAILED;
 extern const char* XSIZEISTOOLARGE;
+extern const char* LPFAILED;
 
 
 #endif /* CONSTANTS_H_ */
