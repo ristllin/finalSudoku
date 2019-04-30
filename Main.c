@@ -27,6 +27,7 @@ int main(int argc, char* argv[]){
 	struct Node* ctrl_z_current = ctrl_z; //ctrl_z; /*pointer to current place in ctrl_z list*/
 	char user_path[MAXBUFFERSIZE];
 	int user_command[4]; /*[command,x,y,z]*/
+	int did_pass=1;
 	setvbuf(stdout, NULL, _IONBF, 0); /*debug mode*/
 	printf(">>debug: main opens with:\n");
 	printf("with:ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
@@ -40,16 +41,21 @@ int main(int argc, char* argv[]){
 		printf(">>debug: main with:\n");
 		printf("with:ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
 		printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
+		printf("board:%d, board(addr):%d\n",board,&board);
 //		printf("debug: main opens with: (addrs) n:%d,m:%d,state:%d,board:%d\n",&n,&m,&state,&board);
-		execute(&board, user_command, user_path, &m, &n, &mark_errors, &state, ctrl_z, &ctrl_z_current, &guess_board);
-		printf("debug: main(1) ctrlz:"); Print(ctrl_z); printf("\n");
-		printf("debug: main(2) current:"); Print(ctrl_z_current); printf("\n");
-		if (isFinished(n,m,board) == 1 && state == 1){
-			printBoard(board,n,m,state,mark_errors);
-			printf("%s\n",WINNING);
-			toInit(&board, &guess_board, &m, &n, &mark_errors, ctrl_z, ctrl_z_current, &state);
-		}else{
-			printBoard(board,n,m,state,mark_errors);
+		did_pass = execute(&board, user_command, user_path, &m, &n, &mark_errors, &state, ctrl_z, &ctrl_z_current, &guess_board);
+		printf("debug: main(1) ctrlz:"); Print(ctrl_z);
+		printf("debug: main(2) current:"); Print(ctrl_z_current);
+		printf("ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
+		printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
+		if (did_pass){
+			if (isFinished(n,m,board) == 1 && state == 1){
+				printBoard(board,n,m,state,mark_errors);
+				printf("%s\n",WINNING);
+				toInit(&board, &guess_board, &m, &n, &mark_errors, ctrl_z, ctrl_z_current, &state);
+			}else{
+				printBoard(board,n,m,state,mark_errors);
+			}
 		}
 	}
 

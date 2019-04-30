@@ -96,7 +96,7 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			return rslt;
 			break;
 		case 6:
-			rslt = validate(n,m,board,state);
+			rslt = validate((int)*n,(int)*m,board,state);
 			return rslt;
 			break;
 		case 7:
@@ -104,7 +104,7 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			return rslt;
 			break;
 		case 8:
-			reset(n,m,board,ctrl_z,ctrl_z_current);
+			reset((int)*n,(int)*m,board,ctrl_z,ctrl_z_current);
 			break;
 		case 9:
 			rslt = guess_hint(n,m,x,y,board);
@@ -115,13 +115,13 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			return rslt;
 			break;
 		case 11:
-			undo(n,m,board ,ctrl_z, ctrl_z_current);
+			undo((int)*n,(int)*m,board ,ctrl_z, ctrl_z_current);
 			break;
 		case 12:
-			redo(n,m,board,ctrl_z, ctrl_z_current);
+			redo((int)*n,(int)*m,board,ctrl_z, ctrl_z_current);
 			break;
 		case 13:
-			rslt = save(n,m,x,board,state);
+			rslt = save((int)*n,(int)*m,x,board,state);
 			return rslt;
 			break;
 		case 14: /*There is no user init command, for debug purposes*/
@@ -519,7 +519,7 @@ int hint(int n, int m, int x, int y, int* board){
 	/* free copied board */
 }
 
-int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
+int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/*function description: Undo previous moves done by the user
 	 * states: Edit, Solve
 	 * args:
@@ -530,14 +530,29 @@ int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_curr
 	/* no moves to undo --> error */
 	/* print change */
 	/*if -1 run until -1*/
-	int location = 0; const int N = n*m;
-	if (ctrl_z_current->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
-	ctrl_z_current = ctrl_z_current->prev;
-	location = (ctrl_z_current->x+(ctrl_z_current->y*N))*2;
-	board[location] = ctrl_z_current->data;
+	int x,y,temp,location = 0; const int N = n*m;
+	printf(">>debug: undo() called\n");
+	board = *board;
+	printf("with: n:%d,m:%d,N:%d,board:%d\n",n,m,N,board);
+	printf("ctrl_z:");Print(ctrl_z);
+	printf("ctrl_z_current:");Print(*ctrl_z_current);
+	printf("ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
+	printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
+	printf("debug: current: z:%d,x:%d,y:%d\n",(*ctrl_z_current)->data,(*ctrl_z_current)->x,(*ctrl_z_current)->y);
+	if ((*ctrl_z_current)->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
+	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
+	location = (x+(y*N))*2;
+	printf("x:%d y:%d location:%d\n",x,y,location);
+	printf("board[location]:%d\n",board[location]);
+	temp = board[location];
+	board[location] = (*ctrl_z_current)->data;
+	(*ctrl_z_current)->data = temp;
+	*ctrl_z_current = (*ctrl_z_current)->prev;
+	printf("<<debug: finished undo\n");
+	return 1;
 }
 
-int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
+int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/*function description: Redo a move previously undone by the user.
 	 * states: Edit, Solve
 	 * args:
@@ -548,11 +563,25 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_curr
 	/* no moves to redo --> error */
 	/* print change */
 	/*<<<<if has -1 run until next -1>>>>*/
-	int location = 0; const int N = n*m;
-	if (ctrl_z_current->next == NULL){printf("%s\n",NOMOREMOVES);return 0;}
-	ctrl_z_current = ctrl_z_current->next;
-	location = (ctrl_z_current->x+(ctrl_z_current->y*N))*2;
-	board[location] = ctrl_z_current->data;
+	int x,y,temp,location = 0; const int N = n*m;
+	printf(">>debug: redo() called\n");
+	board = *board;
+	printf("with: n:%d,m:%d,N:%d,board:%d\n",n,m,N,board);
+	printf("ctrl_z:");Print(ctrl_z);
+	printf("ctrl_z_current:");Print(*ctrl_z_current);
+	printf("ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
+	printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
+	printf("debug: current: z:%d,x:%d,y:%d\n",(*ctrl_z_current)->data,(*ctrl_z_current)->x,(*ctrl_z_current)->y);
+	if (((*ctrl_z_current)->next) == NULL){printf("%s\n",NOMOREMOVES);return 0;}
+	*ctrl_z_current = (*ctrl_z_current)->next;
+	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
+	location = (x+(y*N))*2;
+	printf("x:%d y:%d location:%d\n",x,y,location);
+	printf("board[location]:%d\n",board[location]);
+	temp = board[location];
+	board[location] = (*ctrl_z_current)->data;
+	(*ctrl_z_current)->data = temp;
+	printf("<<debug: finished redo\n");
 	return 1;
 }
 
