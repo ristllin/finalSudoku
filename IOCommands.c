@@ -23,6 +23,7 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 
 	int row; int col; int value; int fixed;
 	int N = n * m;
+	if (n == 0 || m == 0){return;}
 	seperator(n,m);
 	for (row = 0;row < N;row++){
 		printf("|"); /*starting a new row*/
@@ -119,13 +120,10 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		}
 	}
 	*board = new_board;
-//	int i; //debug
 //	printf("\n"); //debug
-//	for (i = 0;i<N*N*2;i++){ //debug
-//		printf("%d|",board[i]); //debug
-//	} //debug
-//	printf("\ndebug: reading board completed successfully\n");
-//	fclose(file_pointer); /*need to release file*/
+//	int i; //debug
+//	for (i = 0;i<N*N*2;i++){printf("%d|",board[i]);} printf("\n"); //debug
+//	fclose(file_pointer); /*<<<need to release file>>>*/
 //	file_pointer = NULL;
 //	printBoard(*board,*n,*m,2,1); //debug
 //	printf("debug: in readfrom() n:%d,m:%d\n",*n,*m);//debug
