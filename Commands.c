@@ -80,7 +80,7 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			return rslt;
 			break;
 		case 2:
-			rslt = autoFill((int)*n,(int)*m,board,state);
+			rslt = autoFill((int)*n,(int)*m,board,state,ctrl_z,ctrl_z_current);
 			return rslt;
 			break;
 		case 3:
@@ -179,7 +179,7 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	return 1;
 }
 
-int autoFill(int n, int m, int* board, int* state){
+int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct Node* ctrl_z_current){
 	/*function description: Automatically fill "obvious" values � cells which contain a single legal value.
 	 * state: solve
 	 * args: board - changes current board
@@ -204,7 +204,8 @@ int autoFill(int n, int m, int* board, int* state){
 					for (i=0;i<N;i++){printf("",legal_options[i]);}
 					option = singleOption(legal_options,N);
 					if (option != 0){ /*"obvious" solution for cell*/
-						board[location] = option+1; /*returns index of cell, +1 to fix*/
+//						board[location] = option+1; /*returns index of cell, +1 to fix*/
+						set(n,m,x+1,y+1,option+1,&board,ctrl_z,ctrl_z_current);
 					}
 				}
 			}
