@@ -80,7 +80,7 @@ int execute(int* board, int* user_command, char* user_path, int* m, int* n, int*
 			return rslt;
 			break;
 		case 2:
-			rslt = autoFill((int)n,(int)m,board,state);
+			rslt = autoFill((int)*n,(int)*m,board,state);
 			return rslt;
 			break;
 		case 3:
@@ -166,9 +166,9 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	board = *board;
 	printf("debug set() called\n");
 	printf("with: n:%d,m:%d,x:%d,y:%d,z:%d,board:%d\n",n,m,x,y,z,board);
-	if (x > N || x < 1){printf("%s\n %d",FIRSTPARAMETERERROR,N); return 0;}
-	if (y > N || y < 1){printf("%s\n %d",SECONDPARAMETERERROR,N); return 0;}
-	if (z > N || z < 1){printf("%s\n %d",THIRDPARAMETERERROR,N); return 0;}
+	if (x > N || x < 1){printf("%s %d\n",FIRSTPARAMETERERROR,N); return 0;}
+	if (y > N || y < 1){printf("%s %d\n",SECONDPARAMETERERROR,N); return 0;}
+	if (z > N || z < 1){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
 	x = x-1; y = y-1; //translate value to location
 	location = (x+(y*N))*2;
 	board[location] = z;
@@ -186,18 +186,36 @@ int autoFill(int n, int m, int* board, int* state){
 	 * return:
 	 */
 	/*<<<<add special mark in redo\undo and refer in redo/undo and use set!>>>>*/
-	int* temp_board,legal_options; int x,y,location;
-	const int N = n*m;
-	temp_board = (int*)calloc(N*N*2,sizeof(int));
-	legal_options = (int*)calloc(N,sizeof(int));
+	int* temp_board; int* legal_options; int x,y,location,option = 0;
+	const int N = (n)*(m);
+	printf("debug: autoFill() called\n");
+	printf("with: n:%d,m:%d,board:%d,state:%d\n",n,m,(int)board,state);
+	const int board_size = (N*N)*2;
+	printf("debug: N=%d, board_size= %d\n",N,board_size);
+	temp_board = calloc(board_size,sizeof(int));
+	legal_options = calloc(N,sizeof(int));
+	printf("temp_board:%d,%d,%d,%d,%d,%d\n",temp_board[0],temp_board[1],temp_board[2],temp_board[3],temp_board[4],temp_board[5]);
+//	temp_board = &temp_board;
+	printf("tempboard:%d\n",temp_board);
+	board = *board;
+	printf("board: (*)%d (reg)%d (&)%d\n",*board,board,&board);
+	printf("temp_board: (*)%d (reg)%d (&)%d\n",*temp_board,temp_board,&temp_board);
 	copyBoard(board,temp_board,N);
+	printf("temp_board:%d,%d,%d,%d,%d,%d\n",temp_board[0],temp_board[1],temp_board[2],temp_board[3],temp_board[4],temp_board[5]);
+	int i; //debug
+//	printf("temp_board: ");for (i=0;i<N*2;i++){printf("%d|",temp_board[i]);}printf("\n");//debug
 	for (x=0;x<N;x++){
 		for (y=0;y<N;y++){
 			location = (x+y*N)*2;
 			if (temp_board[location] == 0){ /*if cell is empty*/
-				if (optionsForLocation(n,m,x,y,temp_board,legal_options) == 1){ /*"obvious" solution for cell*/
-					if (singleOption(legal_options,N) != 0){
-						board[location] = singleOption(legal_options,N)+1; /*returns index of cell, +1 to fix*/
+//				printf("options for location: %d\n",optionsForLocation(n,m,x,y,temp_board,legal_options));
+				if (optionsForLocation(n,m,x,y,temp_board,legal_options) == 1){ //legal value inj position
+					printf("debug: x:%d,y:%d is empty\n",x,y);
+					printf("legal_options: "); for (i=0;i<N;i++){printf("%d|",legal_options[i]);} printf("\n");
+					option = singleOption(legal_options,N);
+					printf("option:%d\n",option);
+					if (option != 0){ /*"obvious" solution for cell*/
+						board[location] = option+1; /*returns index of cell, +1 to fix*/
 					}
 				}
 			}
@@ -590,11 +608,12 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 	 */
 	int* temp_board, tempn, tempm; int fail = 0; int N;
 	int i; //debug
-//	printf("debug: toSolve(2) called\n");
-//	printf("with: n:%d,m:%d,path:%s,board:%d,state:%d\n",n,m,path,board,state);
+	printf("debug: toSolve(2) called\n");
+	printf("with: n:%d,m:%d,path:%s,board:%d,state:%d\n",n,m,path,board,state);
 //	printf("debug: state:%d,state*:%d\n",state,*state);
 	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
 //	printf("debug: tosolve(0) tn:%d,tm:%d,fail:%d\n",tempn,tempm,fail);
+//	for (i = 0;i<9*9*2;i++){printf("%d|",temp_board[i]);} printf("\n"); //debug
 	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/
 		*state = 1;

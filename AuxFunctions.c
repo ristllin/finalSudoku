@@ -98,7 +98,7 @@ void copyBoard(int* origin, int* target, int N){
 	 * return:
 	 */
 	printf("debug: copyBoard() called\n");
-	printf("with: origin:%d,origin(addr):%d\n",origin,&origin);
+	printf("with: origin:%d,origin(addr):%d,target:%d,target(addr): %d\n",origin,&origin,target,&target);
 	int i = 0; for (i=0;i<(N*N*2);i++){target[i] = origin[i];}
 }
 
@@ -108,8 +108,10 @@ int singleOption(int* options,int N){
 	 * return: 0 if more than one cell size is 1 (and not 0) or no cells with value, otherwise, returns index of single cell with value.
 	 */
 	int rslt,i = 0;
+//	printf("debug: singleOptions() called\n");
+//	printf("with: N:%d, options:",N);for(i=0;i<N;i++){printf("%d|",options[i]);}printf("\n");
 	for (i=0;i<N;i++){
-		if (options[i] != 0) {
+		if (options[i] != 0) { // found 1
 			if (rslt != 0) { /*more than single cell with value*/
 				return 0;
 			} else { /*first cell with value*/
@@ -117,6 +119,7 @@ int singleOption(int* options,int N){
 			}
 		}
 	}
+//	printf("debug: single option is index: %d\n",rslt);
 	return rslt;
 }
 

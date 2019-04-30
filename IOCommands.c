@@ -120,13 +120,10 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		}
 	}
 	*board = new_board;
-//	int i; //debug
 //	printf("\n"); //debug
-//	for (i = 0;i<N*N*2;i++){ //debug
-//		printf("%d|",board[i]); //debug
-//	} //debug
-//	printf("\ndebug: reading board completed successfully\n");
-//	fclose(file_pointer); /*need to release file*/
+//	int i; //debug
+//	for (i = 0;i<N*N*2;i++){printf("%d|",board[i]);} printf("\n"); //debug
+//	fclose(file_pointer); /*<<<need to release file>>>*/
 //	file_pointer = NULL;
 //	printBoard(*board,*n,*m,2,1); //debug
 //	printf("debug: in readfrom() n:%d,m:%d\n",*n,*m);//debug

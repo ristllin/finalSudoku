@@ -34,11 +34,12 @@ int main(int argc, char* argv[]){
 		userInput(board,m,n,state, user_command, user_path, user_threshold);
 		printf("debug:main(0)addr: n:%d,m:%d,state:%d,board:%d\n",&n,&m,&state,&board);
 		execute(&board, user_command, user_path, &m, &n, &mark_errors, &state, &ctrl_z, &ctrl_z_current, &guess_board);
-		printf("debug main(3): execute finished\n");
+//		printf("debug main(3): execute finished\n");
 //		Print(ctrl_z); printf("\n");
 //		printf("debug main(1) state: n:%d,m:%d,state:%d,board:%d\n",n,m,state,&board);
 //		printf("debug:main(2)addr: n:%d,m:%d,state:%d,board:%d\n",&n,&m,&state);
 		if (isFinished(n,m,board) == 1 && state == 1){
+			printBoard(board,n,m,state,mark_errors);
 			printf("%s\n",WINNING);
 			toInit(&board, &guess_board, &m, &n, &mark_errors, ctrl_z, ctrl_z_current, &state);
 		}else{
