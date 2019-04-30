@@ -97,8 +97,6 @@ void copyBoard(int* origin, int* target, int N){
 	 * args:origin - board to copy from, target - board to copy to. N = m*n
 	 * return:
 	 */
-	printf("debug: copyBoard() called\n");
-	printf("with: origin:%d,origin(addr):%d,target:%d,target(addr): %d\n",origin,&origin,target,&target);
 	int i = 0; for (i=0;i<(N*N*2);i++){target[i] = origin[i];}
 }
 

@@ -165,12 +165,6 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	/*update ctrl_z, delete the further steps after current one*/
 	int location; const int N = n*m;
 	board = *board;
-	printf(">>debug: set() called\n");
-	printf("with: n:%d,m:%d,x:%d,y:%d,z:%d,board:%d\n",n,m,x,y,z,board);
-	printf("with:ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
-	printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
-	printf("ctrl_z (%d): ",ctrl_z); Print(ctrl_z);
-	printf("current (%d): ",*ctrl_z_current); Print(*ctrl_z_current);;
 	if (x > N || x < 1){printf("%s %d\n",FIRSTPARAMETERERROR,N); return 0;}
 	if (y > N || y < 1){printf("%s %d\n",SECONDPARAMETERERROR,N); return 0;}
 	if (z > N || z < 1){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
@@ -179,11 +173,7 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	InsertAtTail(board[location],x,y,ctrl_z); /*add former data (board[location] not z)*/
 	board[location] = z;
-	printf("ctrl_z (%d): ",ctrl_z); Print(ctrl_z);
-	printf("current: "); Print(*ctrl_z_current);
-	printf("debug#54: current.data:%d\n",(*ctrl_z_current)->data);
 	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
-	printf("<<debug: set finished\n");
 	return 1;
 }
 
@@ -196,8 +186,6 @@ int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct No
 	/*<<<<add special mark in redo\undo and refer in redo/undo and use set!>>>>*/
 	int* temp_board; int* legal_options; int x,y,location,option = 0;
 	const int N = (n)*(m);
-	printf("debug: autoFill() called\n");
-	printf("with: n:%d,m:%d,board:%d,state:%d\n",n,m,(int)board,state);
 	const int board_size = (N*N)*2;
 	temp_board = calloc(board_size,sizeof(int));
 	legal_options = calloc(N,sizeof(int));
@@ -531,24 +519,14 @@ int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 	/* print change */
 	/*if -1 run until -1*/
 	int x,y,temp,location = 0; const int N = n*m;
-	printf(">>debug: undo() called\n");
 	board = *board;
-	printf("with: n:%d,m:%d,N:%d,board:%d\n",n,m,N,board);
-	printf("ctrl_z:");Print(ctrl_z);
-	printf("ctrl_z_current:");Print(*ctrl_z_current);
-	printf("ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
-	printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
-	printf("debug: current: z:%d,x:%d,y:%d\n",(*ctrl_z_current)->data,(*ctrl_z_current)->x,(*ctrl_z_current)->y);
 	if ((*ctrl_z_current)->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
 	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
 	location = (x+(y*N))*2;
-	printf("x:%d y:%d location:%d\n",x,y,location);
-	printf("board[location]:%d\n",board[location]);
 	temp = board[location];
 	board[location] = (*ctrl_z_current)->data;
 	(*ctrl_z_current)->data = temp;
 	*ctrl_z_current = (*ctrl_z_current)->prev;
-	printf("<<debug: finished undo\n");
 	return 1;
 }
 
@@ -564,24 +542,14 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 	/* print change */
 	/*<<<<if has -1 run until next -1>>>>*/
 	int x,y,temp,location = 0; const int N = n*m;
-	printf(">>debug: redo() called\n");
 	board = *board;
-	printf("with: n:%d,m:%d,N:%d,board:%d\n",n,m,N,board);
-	printf("ctrl_z:");Print(ctrl_z);
-	printf("ctrl_z_current:");Print(*ctrl_z_current);
-	printf("ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
-	printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
-	printf("debug: current: z:%d,x:%d,y:%d\n",(*ctrl_z_current)->data,(*ctrl_z_current)->x,(*ctrl_z_current)->y);
 	if (((*ctrl_z_current)->next) == NULL){printf("%s\n",NOMOREMOVES);return 0;}
 	*ctrl_z_current = (*ctrl_z_current)->next;
 	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
 	location = (x+(y*N))*2;
-	printf("x:%d y:%d location:%d\n",x,y,location);
-	printf("board[location]:%d\n",board[location]);
 	temp = board[location];
 	board[location] = (*ctrl_z_current)->data;
 	(*ctrl_z_current)->data = temp;
-	printf("<<debug: finished redo\n");
 	return 1;
 }
 
@@ -617,11 +585,6 @@ void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct
 	 * return: void
 	 */
 	/*n,m to 9, state to 0, boards to empty*/
-	printf(">>debug: toInit() called\n");
-//	printf("with: ctrl_z:%d, ctrl_z_current:%d,n:%d,m:%d\n",ctrl_z,ctrl_z_current,n,m);
-	printf("with:ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
-	printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
-	printf("ctrl_z(*):%d,ctrl_z_current(*):%d\n",*ctrl_z,*ctrl_z_current);
 	int N; struct Node* temp;
 	free(board);
 	free(guess_board);
@@ -631,8 +594,6 @@ void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct
 	guess_board = calloc(N*N*2,sizeof(int));
 	RemoveFollowingNodes(ctrl_z);
 	*ctrl_z_current = ctrl_z;
-	printf("finished toInit()\n");
-	printf("with:ctrl_z:%d,ctrl_z_current:%d\nctrl_z(addr):%d,ctrl_z_current(addr):%d\n",ctrl_z,ctrl_z_current,&ctrl_z,&ctrl_z_current);
 }
 
 int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board,struct Node* ctrl_z, struct Node* ctrl_z_current){
@@ -642,8 +603,6 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 	 */
 	int* temp_board, tempn, tempm; int fail = 0; int N;
 	int i; //debug
-	printf(">>debug: toSolve(2) called\n");
-	printf("with: n:%d,m:%d,path:%s,board:%d,state:%d\n",n,m,path,board,state);
 	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
 	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/

@@ -98,9 +98,7 @@ void RemoveFollowingNodes(struct Node* head){
 	/*removes all nodes from given node forward, not including given node*/
 	struct Node* temp = NULL;
 	struct Node* next_node;
-	printf(">>debug: RemoveFollowingNodes() called\n");
-	printf("with: head.data:%d,head.next:%d\n",head->data,head->next);
-	if (head->next == NULL){printf("<<debug: RemoveFollowingNodes(NULL) finished");return;} /*list is already empty*/
+	if (head->next == NULL){return;} /*list is already empty*/
 	next_node = head->next;
 	head->next = NULL;
 	temp = next_node;
@@ -120,5 +118,4 @@ void RemoveFollowingNodes(struct Node* head){
 	temp->next = NULL;
 	temp->prev = NULL;
 	free(temp);
-	printf("<<debug: RemoveFollowingNodes() finished");
 }
