@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
 	int user_command[4]; /*[command,x,y,z]*/
 	while(1){
 		userInput(board,m,n,state, user_command, user_path, user_threshold);
-		printf("debug:main(0)addr: n:%d,m:%d,state:%d,board:%d\n",&n,&m,&state,&board);
+		printf("debug: main opens with: (addrs) n:%d,m:%d,state:%d,board:%d\n",&n,&m,&state,&board);
 		execute(&board, user_command, user_path, &m, &n, &mark_errors, &state, &ctrl_z, &ctrl_z_current, &guess_board);
 //		printf("debug main(3): execute finished\n");
 //		Print(ctrl_z); printf("\n");

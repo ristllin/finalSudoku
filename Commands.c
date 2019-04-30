@@ -191,29 +191,18 @@ int autoFill(int n, int m, int* board, int* state){
 	printf("debug: autoFill() called\n");
 	printf("with: n:%d,m:%d,board:%d,state:%d\n",n,m,(int)board,state);
 	const int board_size = (N*N)*2;
-	printf("debug: N=%d, board_size= %d\n",N,board_size);
 	temp_board = calloc(board_size,sizeof(int));
 	legal_options = calloc(N,sizeof(int));
-	printf("temp_board:%d,%d,%d,%d,%d,%d\n",temp_board[0],temp_board[1],temp_board[2],temp_board[3],temp_board[4],temp_board[5]);
-//	temp_board = &temp_board;
-	printf("tempboard:%d\n",temp_board);
 	board = *board;
-	printf("board: (*)%d (reg)%d (&)%d\n",*board,board,&board);
-	printf("temp_board: (*)%d (reg)%d (&)%d\n",*temp_board,temp_board,&temp_board);
 	copyBoard(board,temp_board,N);
-	printf("temp_board:%d,%d,%d,%d,%d,%d\n",temp_board[0],temp_board[1],temp_board[2],temp_board[3],temp_board[4],temp_board[5]);
 	int i; //debug
-//	printf("temp_board: ");for (i=0;i<N*2;i++){printf("%d|",temp_board[i]);}printf("\n");//debug
 	for (x=0;x<N;x++){
 		for (y=0;y<N;y++){
 			location = (x+y*N)*2;
 			if (temp_board[location] == 0){ /*if cell is empty*/
-//				printf("options for location: %d\n",optionsForLocation(n,m,x,y,temp_board,legal_options));
 				if (optionsForLocation(n,m,x,y,temp_board,legal_options) == 1){ //legal value inj position
-					printf("debug: x:%d,y:%d is empty\n",x,y);
-					printf("legal_options: "); for (i=0;i<N;i++){printf("%d|",legal_options[i]);} printf("\n");
+					for (i=0;i<N;i++){printf("",legal_options[i]);}
 					option = singleOption(legal_options,N);
-					printf("option:%d\n",option);
 					if (option != 0){ /*"obvious" solution for cell*/
 						board[location] = option+1; /*returns index of cell, +1 to fix*/
 					}
