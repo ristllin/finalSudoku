@@ -20,9 +20,9 @@
 /*Creates a new Node and returns pointer to it*/
 struct Node* GetNewNode(int data,int xdata, int ydata) {
 	struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-	newNode->data = data;
-	newNode->x = xdata;
-	newNode->y = ydata;
+	newNode->data = data; //cell value
+	newNode->x = xdata; //user x = values 1 to N
+	newNode->y = ydata; //user y = values 1 to N
 	newNode->prev = NULL;
 	newNode->next = NULL;
 	return newNode;
@@ -95,12 +95,15 @@ void RemoveNode(struct Node* node){
 }
 
 void RemoveFollowingNodes(struct Node* head){
-	/*removes all nodes from given node forward, including given node*/
-	struct Node* temp = head;
+	/*removes all nodes from given node forward, not including given node*/
+	struct Node* temp = NULL;
 	struct Node* next_node;
-	if (head == NULL){return;} /*list is already empty*/
+	printf(">>debug: RemoveFollowingNodes() called\n");
+	printf("with: head.data:%d,head.next:%d\n",head->data,head->next);
+	if (head->next == NULL){printf("<<debug: RemoveFollowingNodes(NULL) finished");return;} /*list is already empty*/
 	next_node = head->next;
-	if (head == NULL){return;}
+	head->next = NULL;
+	temp = next_node;
 	while (next_node != NULL) {
 		temp->data = -1; /*zeroing all fields is not obligatory, but helps in debug*/
 		temp->x = -1;
@@ -117,4 +120,5 @@ void RemoveFollowingNodes(struct Node* head){
 	temp->next = NULL;
 	temp->prev = NULL;
 	free(temp);
+	printf("<<debug: RemoveFollowingNodes() finished");
 }

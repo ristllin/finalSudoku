@@ -62,13 +62,14 @@ int selectUniqueRandomValues(int* shuffeled_list, int shuffeled_list_length, int
 
 //end of AuxFunctions
 
-int execute(int* board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
+int execute(int* board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node** ctrl_z_current, int* guess_board){
 	/*function description: activate correct command according to user command and pass relevant parameters (router).
 	 * args: all variables that require memory release
 	 * return: 1 - completed successful, 0 command completed unsuccessfully
 	 */
 	/*<<<>>>catch errors from functions*/
 	int rslt = 1; int command = user_command[0]; int x = user_command[1]; int y = user_command[2]; int z = user_command[3];
+	struct Node* temp;
 //	printf("debug: execute() called\n");
 //	printf("With params: board:%d, user_command[0]:%d, user_path:%s, m:%d, n:%d, mark_errors:%d, state: %d.\n",board,user_command[0],user_path,m,n,mark_errors,state);
 	switch(command){
@@ -153,7 +154,7 @@ void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,
 	exit(0);
 }
 
-int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
+int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/*function description: sets the value of cell <x,y> to z, user may empty a cell
 	 * state: Edit, Solve (fixed cells are not updated)
 	 * args: cell -> <x,y>
@@ -162,20 +163,27 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	/*set*/
 	/*check if user entered erroneous value*/
 	/*update ctrl_z, delete the further steps after current one*/
-	int location; const int N = n*m; struct Node* temp;
+	int location; const int N = n*m;
 	board = *board;
-	printf("debug set() called\n");
+	printf(">>debug: set() called\n");
 	printf("with: n:%d,m:%d,x:%d,y:%d,z:%d,board:%d\n",n,m,x,y,z,board);
+	printf("with:ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
+	printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
+	printf("ctrl_z (%d): ",ctrl_z); Print(ctrl_z);
+	printf("current (%d): ",*ctrl_z_current); Print(*ctrl_z_current);;
 	if (x > N || x < 1){printf("%s %d\n",FIRSTPARAMETERERROR,N); return 0;}
 	if (y > N || y < 1){printf("%s %d\n",SECONDPARAMETERERROR,N); return 0;}
 	if (z > N || z < 1){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
 	x = x-1; y = y-1; //translate value to location
 	location = (x+(y*N))*2;
+	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
+	InsertAtTail(board[location],x,y,ctrl_z); /*add former data (board[location] not z)*/
 	board[location] = z;
-//	temp = ctrl_z_current->next;
-//	RemoveFollowingNodes(temp); /*forget next moves if existing*/
-//	InsertAtTail(board[location],x,y,ctrl_z_current); /*add former data*/
-//	ctrl_z_current = ctrl_z_current->next; /*advance current ctrl-z to new node*/
+	printf("ctrl_z (%d): ",ctrl_z); Print(ctrl_z);
+	printf("current: "); Print(*ctrl_z_current);
+	printf("debug#54: current.data:%d\n",(*ctrl_z_current)->data);
+	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+	printf("<<debug: set finished\n");
 	return 1;
 }
 
@@ -574,21 +582,28 @@ int save(int n, int m, char* path, int* board, int* state){
 	return 1;
 }
 
-void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct Node* ctrl_z, struct Node* ctrl_z_current,int* state){
+void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct Node* ctrl_z, struct Node** ctrl_z_current,int* state){
 	/*function description: change state to 'init' mode, sets all global parameters to default.
 	 * args: all global parameters
 	 * return: void
 	 */
 	/*n,m to 9, state to 0, boards to empty*/
-	int N;
+	printf(">>debug: toInit() called\n");
+//	printf("with: ctrl_z:%d, ctrl_z_current:%d,n:%d,m:%d\n",ctrl_z,ctrl_z_current,n,m);
+	printf("with:ctrl_z:%d,ctrl_z_current:%d\n",ctrl_z,ctrl_z_current);
+	printf("ctrl_z(addr):%d,ctrl_z_current(addr):%d\n",&ctrl_z,&ctrl_z_current);
+	printf("ctrl_z(*):%d,ctrl_z_current(*):%d\n",*ctrl_z,*ctrl_z_current);
+	int N; struct Node* temp;
 	free(board);
 	free(guess_board);
-	n = 3; m = 3; state = 0; mark_errors = 1;
-	N = (int)n*(int)m;
+	*n = 3; *m = 3; state = 0; mark_errors = 1;
+	N = (int)(n)*(int)(m);
 	board = calloc(N*N*2,sizeof(int));
 	guess_board = calloc(N*N*2,sizeof(int));
-	ctrl_z_current = ctrl_z;
 	RemoveFollowingNodes(ctrl_z);
+	*ctrl_z_current = ctrl_z;
+	printf("finished toInit()\n");
+	printf("with:ctrl_z:%d,ctrl_z_current:%d\nctrl_z(addr):%d,ctrl_z_current(addr):%d\n",ctrl_z,ctrl_z_current,&ctrl_z,&ctrl_z_current);
 }
 
 int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board,struct Node* ctrl_z, struct Node* ctrl_z_current){
@@ -598,29 +613,18 @@ int toSolve(int* n, int* m, char* path, int* state, int* board, int* guess_board
 	 */
 	int* temp_board, tempn, tempm; int fail = 0; int N;
 	int i; //debug
-	printf("debug: toSolve(2) called\n");
+	printf(">>debug: toSolve(2) called\n");
 	printf("with: n:%d,m:%d,path:%s,board:%d,state:%d\n",n,m,path,board,state);
-//	printf("debug: state:%d,state*:%d\n",state,*state);
 	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
-//	printf("debug: tosolve(0) tn:%d,tm:%d,fail:%d\n",tempn,tempm,fail);
-//	for (i = 0;i<9*9*2;i++){printf("%d|",temp_board[i]);} printf("\n"); //debug
 	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/
 		*state = 1;
 //		free(board); /*<<<<need to free!!!>>>>*/
 		free(*guess_board);
 		*board = temp_board;
-//		printf("debug: board:%d,guess board:%d\n",board,guess_board);
 		*n = tempn;
 		*m = tempm;
 		N = (int)n*(int)m;
-//		printf("debug: tosolve(1) n:%d,*n:%d,tempn:%d\n",n,*n,tempn);
-//		printf("board:"); //debug
-//		for (i = 0;i<N*N*2;i++){ //debug
-//			printf("%d|",temp_board[i]); //debug
-//		} //debug
-//		printf("\n"); //debug
-//		printBoard(*board,*n,*m,2,1);//debug
 		guess_board = calloc(N*N*2,sizeof(int));
 	}
 	return 1;

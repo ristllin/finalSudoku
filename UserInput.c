@@ -253,7 +253,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 2
-			printf("Debugging: rest of buffer is %s \n", buffer);
+//			printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
@@ -267,7 +267,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 3
-			printf("Debugging: rest of buffer is %s \n", buffer);
+			//printf("Debugging: rest of buffer is %s \n", buffer);
 			int value3 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
@@ -364,7 +364,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 2
-			printf("Debugging: rest of buffer is %s \n", buffer);
+			//printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
@@ -466,7 +466,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 2
-			printf("Debugging: rest of buffer is %s \n", buffer);
+			//printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
@@ -515,7 +515,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 2
-			printf("Debugging: rest of buffer is %s \n", buffer);
+			//printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
