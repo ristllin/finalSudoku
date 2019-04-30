@@ -135,13 +135,15 @@ int writeBoardToFile(int n, int m, int* board,char* path){
 		 * args: n,m - size of board, path - file path
 		 * return: 1 for fail, 0 for success
 		 */
-	/*printf("saveBoard() Called\n");*/
 	FILE* file_pointer; int row,col; int N = n*m;
 	file_pointer = fopen(path, "w+");
 	int value; int fixed; char* sign;
+	if (DEBUG){printf(">>debug: WriteBoardToFile() called\n");}
+	if (DEBUG){printf("with: n:%d,m:%d,board:%d,path:%s\n",n,m,board,path);}
 	if (file_pointer == NULL){
 		printf("%s\n",INVALIDFILEPATH);
 		fclose(file_pointer);
+		if (DEBUG){printf("<<debug: WriteBoardToFile(1) finished\n");}
 		return 1;
 	}
 	fprintf(file_pointer,"%d %d\n",n,m); //	The first line contains the block size m n. These are two integers, separated by a single space.
@@ -149,7 +151,6 @@ int writeBoardToFile(int n, int m, int* board,char* path){
 		for (col = 0; col < N; col++){
 			value = board[(row*N+col)*2]; /*starting a new cell*/
 			fixed = board[(row*N+col)*2 + 1];
-			printf("%d%d|",value,fixed);
 			if (fixed == 1){
 				sign = ".";
 			} else if(fixed == 0){
@@ -157,6 +158,7 @@ int writeBoardToFile(int n, int m, int* board,char* path){
 			} else {
 				printf("%s\n",ILLEGALSAVEERROR);
 				fclose(file_pointer);
+				if (DEBUG){printf("<<debug: WriteBoardToFile(1) finished\n");}
 				return 1;
 			}
 			fprintf(file_pointer,"%d%s",value,sign);
@@ -164,6 +166,7 @@ int writeBoardToFile(int n, int m, int* board,char* path){
 		fprintf(file_pointer,"\n");
 	}
 	fclose(file_pointer);
+	if (DEBUG){printf("<<debug: WriteBoardToFile(0) finished\n");}
 	return 0;
 }
 
