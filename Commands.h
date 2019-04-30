@@ -8,15 +8,15 @@
 #ifndef COMMANDS_H_
 #define COMMANDS_H_
 
-int execute(int* board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node** ctrl_z_current, int* guess_board);
+int execute(int** board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board, float user_threshold);
 void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board);
 int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current);
 int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct Node* ctrl_z_current);
 void markErrors(int x, int* mark_errors);
 int numSolutions(int n, int m, int* board);
-int generate(int x, int y, int* board, int n, int m);
+int generate(int x, int y, int* board, int n, int m, struct Node* ctrl_z, struct Node* ctrl_z_current);
 int validate(int n, int m, int* board, int* state);
-int guess(int n, int m, float x, int* board);
+int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current);
 void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current);
 int guess_hint(int n, int m, int x,  int y, int* board);
 int hint(int n, int m, int x, int y, int* board);

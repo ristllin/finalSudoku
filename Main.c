@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
 	/*Game Main Loop*/
 	while(1){
 		userInput(board,m,n,state, user_command, user_path, user_threshold);
-		did_pass = execute(&board, user_command, user_path, &m, &n, &mark_errors, &state, ctrl_z, &ctrl_z_current, &guess_board);
+		did_pass = execute(&board, user_command, user_path, &m, &n, &mark_errors, &state, ctrl_z, &ctrl_z_current, &guess_board, user_threshold[0]);
 		if (did_pass){
 			if (isFinished(n,m,board) == 1 && state == 1){
 				printBoard(board,n,m,state,mark_errors);

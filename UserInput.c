@@ -507,8 +507,8 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				continue;
 
 			}
-			if(value1<0 || value1>m){ // m = lines
-				printf("Error: %s %d \n", FIRSTPARAMETERERROR, m);
+			if(value1<0 || value1>N){
+				printf("Error: %s %d \n", FIRSTPARAMETERERROR, N);
 				continue;
 			}
 			buffer = rest;
@@ -521,8 +521,8 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				printf("Error: %s", NOTINT);
 				continue;
 			}
-			if(value2<0 || value2>n){ // n = rows
-				printf("Error: %s %d \n", SECONDPARAMETERERROR, n);
+			if(value2<0 || value2>N){
+				printf("Error: %s %d \n", SECONDPARAMETERERROR, N);
 				continue;
 			}
 

@@ -53,3 +53,5 @@ const char* INVALIDFILEPATH = "Invalid File Path";
 const char* NOMOREMOVES = "No more moves were previously made";
 const char* READINGFAILED = "Failed to read from given path";
 const char* SAVINGFAILED = "Saving file - Failed";
+const char* LPFAILED = "LP Algorithm - Failed";
+const char* SETFAILED = "failed to set cell";
