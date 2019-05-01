@@ -111,7 +111,7 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 			return rslt;
 			break;
 		case 10:
-			rslt = hint(n,m,x-1,y-1,*board);
+			rslt = hint((int)*n,(int)*m,x-1,y-1,*board);
 			return rslt;
 			break;
 		case 11:
@@ -236,7 +236,7 @@ int numSolutions(int n, int m, int* board){
 	return 1;
 }
 
-int generate(int x, int y, int* board, int n, int m, struct Node* ctrl_z, struct Node* ctrl_z_current){
+int generate(int x, int y, int* board, int n, int m, struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/* function description: Generates a puzzle by randomly filling X empty cells with legal values,
 running ILP to solve the board, and then clearing all but Y random cells.
 	 * state: Edit
@@ -247,12 +247,13 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	int* random_empty_x_cells;
 	int* list;
 	int* random_y_cells;
-	int empty_cells_cnt = 0;
+	int empty_cells_cnt, i, j, yi, xi, sumA, random_location, zi;
 	int x_temp,y_temp,location, legal;
 	const int N = n*m;
 	int locations_empty_cells[N*N];
 	int list_of_all_cells[N*N];
 	int legal_options[N];
+	empty_cells_cnt = 0;
 	/* check number of empty cells, if X< print an error */
 	for (x_temp=0;x_temp<N;x_temp++){
 			for (y_temp=0;y_temp<N;y_temp++){
@@ -279,46 +280,46 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	/*copy board from original */
 		copyBoard(board,temp_board,N);
 	/* fill x randomly selected cells with legal values */
-		//truncate lists
+		/*truncate lists*/
 		truncateArray(list,empty_cells_cnt);
 		truncateArray(random_empty_x_cells,x);
-		//Select X random unique numbers out of [0,empty_cells_cnt) range
+		/*Select X random unique numbers out of [0,empty_cells_cnt) range*/
 		selectUniqueRandomValues(random_empty_x_cells,x,list,empty_cells_cnt);
-		//fill it using optionsForLocation
-		for (int i = 0; i < x; i++){
-			int j =  random_empty_x_cells[i];
+		/*fill it using optionsForLocation*/
+		for ( i = 0; i < x; i++){
+			j =  random_empty_x_cells[i];
 			location = locations_empty_cells[j];
-			int y = yFromLocation(N,location);
-			int x = xFromLocation(N, location);
-			legal = optionsForLocation(n,m,x,y,temp_board,legal_options);
-			//check if value is legal
+			yi = yFromLocation(N,location);
+			xi = xFromLocation(N, location);
+			legal = optionsForLocation(n,m,xi,yi,temp_board,legal_options);
+			/*check if value is legal*/
 			if(!legal){
 				break;
 				}
-			int sumA = sumArray(legal_options,N);
+			sumA = sumArray(legal_options,N);
 			if(sumA ==0) {
 				legal = 0;
 				break;
 				}
-			//select random option
-			int random_location = chooseRandomOption(legal_options,N);
+			/*select random option*/
+			random_location = chooseRandomOption(legal_options,N);
 			if(random_location == -1){
 				legal = 0;
 				break;
 				}
 			temp_board[location] = random_location;
 		}
-		//start another iteration if there are no legal values
+		/*start another iteration if there are no legal values*/
 		if(!legal){
-			//printf("Debugging: no legal values, start another iteration");
+			/*printf("Debugging: no legal values, start another iteration");*/
 			continue;
 			}
 	/*run ILP -> return 1= success, 0 = failure */
-	legal = ILP(n,m,temp_board); //debug temp cancelled
-	//legal = 1; //<<<debug mode>>>
+	legal = ILP(n,m,temp_board); /*debug temp cancelled*/
+	/*legal = 1; //<<<debug mode>>>*/
 	/* if there is no solution for board --> start another iteration */
 	if(!legal){
-		//printf("Debugging: no solution using ILP, start another iteration");
+		/*printf("Debugging: no solution using ILP, start another iteration");*/
 		continue;
 			}
 	/* if there is solution --> break*/
@@ -329,22 +330,27 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	/* choose y random cells and clear it */
 	random_y_cells = (int*)calloc(y,sizeof(int));
 	selectUniqueRandomValues(random_y_cells,y,list_of_all_cells,N*N);
-	for(int i= 0; i<y; i++){
+	for(i= 0; i<y; i++){
 		location = random_y_cells[i]*2;
 		temp_board[location] = 0;
 	}
 	/* copy to original board using set for undo */
-	int i = 0;
+
+	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
+	InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
+	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 	for (i=0;i<(N*N*2);i++){
-		int z = temp_board[i];
-		int y = yFromLocation(N,i)+1;
-		int x = xFromLocation(N, i)+1;
-		legal =  set(n, m, x, y, z, board, ctrl_z, ctrl_z_current);
+		zi = temp_board[i];
+		yi = yFromLocation(N,i)+1;
+		xi = xFromLocation(N, i)+1;
+		legal =  set(n, m, xi, yi, zi, board, ctrl_z, ctrl_z_current);
 		if(!legal){
 			printf("EROOR: %s\n", SETFAILED);
 			return 0;
 		}
 	}
+	InsertAtTail(-4,0,0,ctrl_z); /*add end marker*/
+	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 	/* free copied board */
 	free(temp_board);
 	free(random_empty_x_cells);
@@ -362,41 +368,41 @@ int validate(int n, int m, int* board, int* state){
 	int legal;
 	int* temp_board;
 	int N= n*m;
-	//check if board is erroneous
+	/*check if board is erroneous*/
 	legal = isFinished(n,m,board);
 	if(!legal){
-		printf("ERROR: %s",INVALIDBOARDERROR);
+		printf("ERROR: %s\n",INVALIDBOARDERROR);
 		return 0;
 			}
-	//check if board is found to be solvable, or not using ILP
+/*	check if board is found to be solvable, or not using ILP*/
 	temp_board = (int*)calloc(N*N*2,sizeof(int));
 	copyBoard(board,temp_board,N);
-	//	legal = ILP(n,m,temp_board); //debug temp cancelled
-	legal = 1; //<<<debug mode>>>
+	legal = ILP(n,m,temp_board); /*debug temp cancelled*/
+	/*legal = 1; //<<<debug mode>>>*/
 		/* if there is no solution for board --> start another iteration */
 	if(!legal){
-		printf("The board is not solvable");
+		printf("The board is not solvable \n");
 		return 1;
 			}
-	printf("The board is solvable");
+	printf("The board is solvable\n");
 	free(temp_board);
 	return 1;
 	/*validate using ILP - return whther the board is */
 	/*print*/
 }
 
-int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
+int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/*function description: fills all cell values with a score of X or greater using LP. If several
    * values hold for the same cell, randomly choose one according to the score
 	 * state: Solve
 	 * args: x --> lower boundary of score
 	 * return: 0 --> there is no solution to the board / an error occurred, 1 --> board has a solution
 	 */
-	//printf("Debugging: inside guess \n");
+	/*printf("Debugging: inside guess \n");*/
 	int legal;
-	//check if board is erroneous
+	/*check if board is erroneous*/
 	legal = isFinished(n,m,board);
-	//printf("Debugging: Guess: isFinished value is %d \n", legal);
+	/*printf("Debugging: Guess: isFinished value is %d \n", legal);*/
 	if(!legal){
 		printf("ERROR: %s",INVALIDBOARDERROR);
 		return 0;
@@ -404,7 +410,7 @@ int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node* c
 	/* call LP_Solver: get board and solve it using LP If several
 	values hold for the same cell, randomly choose one according to the score */
 	legal = LPSolver(n,m,x, board, ctrl_z, ctrl_z_current);
-	legal = 1; //<<<debug mode>>>
+/*	legal = 1; //<<<debug mode>>>*/
 	if(!legal){
 		printf("ERROR: %s \n", LPFAILED);
 		return 0;
@@ -425,25 +431,24 @@ void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_cu
 int guess_hint(int n, int m, int x,  int y, int* board){
 	/* function description: Show a guess to the user for a single cell X,Y using LP and print suggested value
 	 * state: Solve
-	 * args: x --> lower boundary of score
+	 * args: x , y --> [0,8] range
 	 * return: void
 	 */
-	//printf("Debugging: inside guess hint, n = %d, m = %d, x = %d, y = %d, <1,1> is %d \n", n, m, x, y, board[0]);
-	int legal, value_location, fixed_location, result, score;
+	/*printf("Debugging: inside guess hint, n = %d, m = %d, x = %d, y = %d, <1,1> is %d \n", n, m, x, y, board[0]);*/
+	int legal, value_location, fixed_location, result, score, i;
 	int* temp_board;
 	float* legal_options;
 	const int N = n*m;
-	//check if board is erroneous
+	/*check if board is erroneous*/
 	legal = isFinished(n,m,board);
-	legal = 2; //Debugging
-	//printf("Debugging: inside guess hint, isFinished is = %d \n", legal);
+	/*printf("Debugging: inside guess hint, isFinished is = %d \n", legal);*/
 	if(!legal){
 		printf("ERROR: %s \n",INVALIDBOARDERROR);
 		return 0;
 			}
-	// check if cell <X,Y> is fixed or cell <X,Y> already contains a value
+	/* check if cell <X,Y> is fixed or cell <X,Y> already contains a value*/
 	value_location = locationFromXY(N,x,y);
-	//printf("Debugging: inside guess hint, value of location is %d\n", board[value_location] );
+	/*printf("Debugging: inside guess hint, value of location is %d\n", board[value_location] );*/
 	fixed_location = value_location+1;
 	if (board[fixed_location] == 1){ //cell is fixed
 		printf("ERROR: %s\n",FIXEDCELLERROR);
@@ -462,11 +467,11 @@ int guess_hint(int n, int m, int x,  int y, int* board){
 		printf("ERROR: %s", UNSOLVEDBOARD);
 		return 0;
 		}
-	for(int i = 0; i<N; i++){
+	for(i = 0; i<N; i++){
 		result = i*2;
 		score = i*2+1;
 		if(legal_options[score]>0){
-		printf("Hint: optional value of <%d,%d> is %d with score %f \n", x,y,(int)legal_options[result], legal_options[score]);
+		printf("Hint: optional value of <%d,%d> is %d with score %f \n", x+1,y+1,(int)legal_options[result], legal_options[score]);
 		}
 	}
 	free(temp_board);
@@ -488,35 +493,35 @@ int hint(int n, int m, int x, int y, int* board){
 	int legal, value_location, fixed_location, result;
 			int* temp_board;
 			const int N = n*m;
-			//check if board is erroneous
+			/*check if board is erroneous*/
 			legal = isFinished(n,m,board);
 			if(!legal){
 				printf("ERROR: %s",INVALIDBOARDERROR);
 				return 0;
 					}
-			// check if cell <X,Y> is fixed or cell <X,Y> already contains a value
+			/* check if cell <X,Y> is fixed or cell <X,Y> already contains a value*/
 			value_location = (x + y*N)*2;
 			fixed_location = value_location+1;
-			if (board[fixed_location] == 1){ //cell is fixed
+			if (board[fixed_location] == 1){ /*cell is fixed*/
 				printf("ERROR: %s",FIXEDCELLERROR);
 				return 0;
 				}
-			if (board[value_location] != 0){ //cell has value
+			if (board[value_location] != 0){ /*cell has value*/
 				printf("ERROR: %s",FILLEDCELLERROR);
 				return 0;
 				}
 			/* run ILP (copy board) */
 			temp_board = (int*)calloc(N*N*2,sizeof(int));
 			copyBoard(board,temp_board,N);
-			legal = ILP(n,m,temp_board); //debug temp cancelled
-			//legal = 1; //<<<debug mode>>>
+			legal = ILP(n,m,temp_board);
+			/*legal = 1; //<<<debug mode>>>*/
 					/* if there is no solution for board --> start another iteration */
 			if(!legal){
 				printf("ERROR: %s", UNSOLVEDBOARD);
 				return 0;
 				}
 			result = temp_board[value_location];
-			printf("Hint: the value of <%d,%d> is %d", x,y,result);
+			printf("Hint: the value of <%d,%d> is %d \n", x+1,y+1,result);
 			free(temp_board);
 			return 1;
 			/* print the value of specific location in board */

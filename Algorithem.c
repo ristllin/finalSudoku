@@ -40,11 +40,11 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 	 *  args: current board, starting point - actual place (including fixed\unfixed cells) on board
 	 *  return: number of correct solutions from current state (doesn't change given board)
 	 * */
-	const int N = n*m; int board_state,fixed = -1; int* legal_options; int rslt,i,value = 0;
+	const int N = n*m; int board_state,fixed = -1; int* legal_options; int rslt,i;
 	rslt = 0;
-//	printf("debug: recursiveEBA() called\n");
-//	printf("with: n:%d,m:%d,board:%d,starting point:%d\n",n,m,board,starting_point);
-//	printBoard(board,n,m,2,1);
+/*	printf("debug: recursiveEBA() called\n");
+	printf("with: n:%d,m:%d,board:%d,starting point:%d\n",n,m,board,starting_point);
+	printBoard(board,n,m,2,1);*/
 	legal_options = calloc(N,sizeof(int));
 	/*if board is legaly finished return 1*/
 	board_state = isFinished(n,m,board);
@@ -65,40 +65,45 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 		starting_point += 2;
 		fixed = board[starting_point + 1];
 	}
-//	printf("starting point: x:%d,y:%d\n",xFromLocation(N,starting_point),yFromLocation(N,starting_point));
-	if (optionsForLocation(n,m,xFromLocation(N,starting_point),yFromLocation(N,starting_point),board,legal_options) == 0){return 0;}//check next unfixed cell's options
+/*	printf("starting point: x:%d,y:%d\n",xFromLocation(N,starting_point),yFromLocation(N,starting_point));*/
+	if (optionsForLocation(n,m,xFromLocation(N,starting_point),yFromLocation(N,starting_point),board,legal_options) == 0){
+		return 0;
+	}/*check next unfixed cell's options*/
 	for (i=0;i<N;i++){/*for each option fill cell with one of the values and call recuresively*/
 		if (legal_options[i] == 1){
-			board[starting_point] = i+1;//
+			board[starting_point] = i+1;
 			rslt += recursiveEBA(n, m, board, starting_point+2);/*add to rslt variable all options that returned with value*/
 		}
 	}
 	free(legal_options);
-//	printf("debug: EBA rslt: %d\n",rslt);
+/*	printf("debug: EBA rslt: %d\n",rslt);*/
 	return rslt;
 }
 
+
 int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model){
 
-	 //the function adds to model all the constraints of Sudoku game
-	// * return 0 --> error, 1---> success
+/*
+	 the function adds to model all the constraints of Sudoku game
+	 * return 0 --> error, 1---> success
 
-	 //First constraint: Each cell gets a value
+	 First constraint: Each cell gets a value
 
-		  // variables xij0...xij(N-1) (0,1,..,N-1)
-		 // ind[0] =  i*N*N + j*N + 0; ind[1] = i*N*N + j*N + 1; ...; ind[2] =  i*N*N + j*N + N-1;
-		  /// coefficients (according to variables in "ind")
-		 // val[0] = 1; val[1] = 1;... ;val[N-1] = 1;
+		   variables xij0...xij(N-1) (0,1,..,N-1)
+		  ind[0] =  i*N*N + j*N + 0; ind[1] = i*N*N + j*N + 1; ...; ind[2] =  i*N*N + j*N + N-1;
+		  / coefficients (according to variables in "ind")
+		  val[0] = 1; val[1] = 1;... ;val[N-1] = 1;
+*/
 	int i, j, v, error, ig, jg, count;
 	GRBenv   *env   = NULL;
 	const int N= n*m;
 	  for (i = 0; i < N; i++) {
 			  for (j = 0; j < N; j++) {
 				  for (v = 0; v < N; v++) {
-					  ind[v] = i*N*N + j*N + v;// ind[v] -> variable's index
-					  val[v] = 1.0; //vals[v] -> coefficients
+					  ind[v] = i*N*N + j*N + v;
+					  val[v] = 1.0;
 				  }
-				   //add constraint to model - note size 3 + operator GRB_LESS_EQUAL
+				  /* add constraint to model - note size 3 + operator GRB_LESS_EQUAL*/
 				  error = GRBaddconstr(model, N, ind, val, GRB_EQUAL, 1.0, NULL);
 				  if (error) {
 					  printf("ERROR %d Each cell gets a value GRBaddconstr(): %s\n", error, GRBgeterrormsg(env));
@@ -108,7 +113,7 @@ int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model){
 		  }
 
 
-		  // Second constraint: Each value must appear once in each row
+		  /* Second constraint: Each value must appear once in each row*/
 		  for (v = 0; v < N; v++) {
 		      for (j = 0; j < N; j++) {
 		        for (i = 0; i < N; i++) {
@@ -124,7 +129,7 @@ int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model){
 		      }
 		    }
 
-		  // Third constraint: Each value must appear once in each column
+		/*   Third constraint: Each value must appear once in each column*/
 		  for (v = 0; v < N; v++) {
 		      for (i = 0; i < N; i++) {
 		        for (j = 0; j < N; j++) {
@@ -140,11 +145,11 @@ int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model){
 		      }
 		    }
 
-		     //Forth constraint: Each value must appear once in each subgrid
+		   /*  Forth constraint: Each value must appear once in each subgrid*/
 
 		    for (v = 0; v < N; v++) {
-		      for (ig = 0; ig < n; ig++) { //n-> block length
-		        for (jg = 0; jg < m; jg++) { // m-> block width
+		      for (ig = 0; ig < n; ig++) { /*n-> block length*/
+		        for (jg = 0; jg < m; jg++) { /* m-> block width*/
 		          count = 0;
 		          for (i = ig*m; i < (ig+1)*m; i++) {
 		            for (j = jg*n; j < (jg+1)*n; j++) {
@@ -165,16 +170,19 @@ int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model){
 		    return 0;
 }
 
+
+
 int randomWeightedNumber(double* list, int length){
-	// return random v out of list with values and their weights. return -1 in case of an error;
-	double sum_of_weight = 0.0;
-	int location;
-	for(int i=0; i<length; i++) {
+/*	 return random v out of list with values and their weights. return -1 in case of an error;*/
+	double sum_of_weight, rnd;
+	int location,i;
+	sum_of_weight = 0.0;
+	for(i=0; i<length; i++) {
 		location = i*2+1;
 	   sum_of_weight += list[location];
 	}
-	double rnd = (double)rand()/RAND_MAX* sum_of_weight;
-	for(int i=0; i<length; i++) {
+	rnd = (double)rand()/RAND_MAX* sum_of_weight;
+	for(i=0; i<length; i++) {
 		location = i*2+1;
 	  if(rnd < list[location])
 	    return (int)list[location-1];
@@ -183,49 +191,60 @@ int randomWeightedNumber(double* list, int length){
 	return -1;
 }
 
+
+
 int ILP(int n, int m, int* board){
-	/* ILP - Integer Linear Programming, used by validate, generate and hint functions, uses gorubi to solve the board
+/*
+	 ILP - Integer Linear Programming, used by validate, generate and hint functions, uses gorubi to solve the board
 	*  args: soduko board
 	*  return: soduko board (changes given board), 0 -> no errors, 1 -> errors
-	*/
+
+*/
 	GRBenv   *env   = NULL;
 	  GRBmodel *model = NULL;
-	  int       error = 0;
+
 	  const int N = n*m;
-	  double*	sol = (double*)calloc(N*N*N,sizeof(double)); //save sol values
-	  int*		ind = (int*)calloc(N,sizeof(int)); //Variable's index
-	  double*   val = (double*)calloc(N,sizeof(int)); // Variable's Coefficients
-	  double*	lb = (double*)calloc(N*N*N,sizeof(double)); // lb = lowerbound
-	  char*		vtype = (char*)calloc(N*N*N,sizeof(char)); // variables types
-	  //char**	names = (char**)calloc(N*N*N,sizeof(char*)); // pointer to the name of variable
-	  //char*		namestorage= (char*)calloc(10*N*N*N,sizeof(char)); // names storage
-	  //char*		cursor;
+	  double*	sol;
+	  double* val;
+	  double* lb;
+	  int* ind;
+	  char* vtype;
+	  sol = (double*)calloc(N*N*N,sizeof(double)); /*save sol values*/
+	  ind = (int*)calloc(N,sizeof(int)); /*Variable's index
+*/	  val = (double*)calloc(N,sizeof(int)); /*Variable's Coefficients
+*/	  lb = (double*)calloc(N*N*N,sizeof(double)); /* lb = lowerbound*/
+	  vtype = (char*)calloc(N*N*N,sizeof(char)); /* variables types*/
+	  /*char**	names = (char**)calloc(N*N*N,sizeof(char*));  pointer to the name of variable
+	  char*		namestorage= (char*)calloc(10*N*N*N,sizeof(char));  names storage
+	  char*		cursor;*/
 	  double 	objval;
-	  int       i, j, v, location;
+	  int       i, j, v, location, error;
 	  int       optimstatus;
 
-	   //Create an empty model
-	  //cursor = namestorage;
+	  error = 0;
+
+	  /* Create an empty model
+	  cursor = namestorage;*/
 	      for (i = 0; i < N; i++) {
 	          for (j = 0; j < N; j++) {
 	        	  location = (i + j*N)*2;
 	              for (v = 0; v < N; v++) {
 	                  if (board[location] == v) {
-	                      lb[i*N*N+j*N+v] = 1; //LB = lowerbound
+	                      lb[i*N*N+j*N+v] = 1; /*LB = lowerbound*/
 	                  }
 	                  else {
 	                      lb[i*N*N+j*N+v] = 0;
 	                  }
-	                  //names[i*N*N+j*N+v] = cursor;
-	                  vtype[i*N*N+j*N+v] = GRB_BINARY; //change to GRB_CONTINUOUS in LP
-	                  //sprintf(names[i*N*N+j*N+v], "x[%d,%d,%d]", i, j, v+1);
-	                  //cursor += strlen(names[i*N*N+j*N+v]) + 1;
+	                  /*names[i*N*N+j*N+v] = cursor;*/
+	                  vtype[i*N*N+j*N+v] = GRB_BINARY;
+	                 /* sprintf(names[i*N*N+j*N+v], "x[%d,%d,%d]", i, j, v+1);
+	                  cursor += strlen(names[i*N*N+j*N+v]) + 1;*/
 	              }
 	          }
 	      }
 
 
-	   //Create environment - log file is sudoku.log
+	/*   Create environment - log file is sudoku.log*/
 	  error = GRBloadenv(&env, "sudokuILP.log");
 	  if (error) {
 		  printf("ERROR %d GRBloadenv(): %s\n", error, GRBgeterrormsg(env));
@@ -238,7 +257,7 @@ int ILP(int n, int m, int* board){
 		  return 0;
 	  }
 
-	   //Create new model named "sudoku"
+	/*   Create new model named "sudoku"*/
 	  error = GRBnewmodel(env, &model, "sudoku", N*N*N, NULL, lb, NULL, vtype, NULL);
 	  if (error) {
 		  printf("ERROR %d GRBnewmodel(): %s\n", error, GRBgeterrormsg(env));
@@ -246,28 +265,28 @@ int ILP(int n, int m, int* board){
 	  }
 
 
-	   //ADD constraint
+	 /*  ADD constraint*/
 	  error = ConstraintsSudoku(n,m,ind,val,model);
 	  if(error){
 		  return 0;
 	  }
 
 
-	   //Optimize model - need to call this before calculation
+	 /*  Optimize model - need to call this before calculation*/
 	  error = GRBoptimize(model);
 	  if (error) {
 		  printf("ERROR %d GRBoptimize(): %s\n", error, GRBgeterrormsg(env));
 		  return 0;
 	  }
 
-	   //Write model to 'sudoku.lp' - this is not necessary but very helpful
+	  /* Write model to 'sudoku.lp' - this is not necessary but very helpful*/
 	  error = GRBwrite(model, "sudokuILP.lp");
 	  if (error) {
 		  printf("ERROR %d GRBwrite(): %s\n", error, GRBgeterrormsg(env));
 		  return 0;
 	  }
 
-	  // Get solution information
+	  /* Get solution information*/
 
 	  error = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
 	  if (error) {
@@ -275,34 +294,34 @@ int ILP(int n, int m, int* board){
 		  return 0;
 	  }
 
-	   //get the objective -- the optimal result of the function
+	   /*get the objective -- the optimal result of the function*/
 	  error = GRBgetdblattr(model, GRB_DBL_ATTR_OBJVAL, &objval);
 	  if (error) {
 		  printf("ERROR %d GRBgettdblattr(): %s\n", error, GRBgeterrormsg(env));
 		  return 0;
 	  }
-	   //solution found
+	/*   solution found*/
 	  if (optimstatus == GRB_OPTIMAL) {
 	     }
-	   //no solution found
+	   /*no solution found*/
 	     else if (optimstatus == GRB_INF_OR_UNBD) {
 	    	 printf("ERROR: Model is infeasible or unbounded\n");
 	    	 return 0;
 	     }
-	   //error or calculation stopped
+	   /*error or calculation stopped*/
 	     else {
 	    	 printf("ERROR: Optimization was stopped early\n");
 	    	 return 0;
 	     }
 
-	   //get the solution - the assignment to each variable
+	 /*  get the solution - the assignment to each variable*/
 	  error = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, N*N*N, sol);
 	  if (error) {
 		  printf("ERROR %d GRBgetdblattrarray(): %s\n", error, GRBgeterrormsg(env));
 		  return 0;
 	  }
 
-	   //update board
+/*	   update board*/
 	  for (i = 0; i < N; i++) {
 	  	          for (j = 0; j < N; j++) {
 	  	        	  location = (i + j*N)*2;
@@ -317,7 +336,7 @@ int ILP(int n, int m, int* board){
 	  	          }
 	  	      }
 
-	  // make sure board is finished
+	 /*  make sure board is finished*/
 	  error = isFinished(n,m,board);
 	  if(error!=1) //1==win
 	  {
@@ -325,19 +344,21 @@ int ILP(int n, int m, int* board){
 		  return 0;
 	  }
 
-	   //IMPORTANT !!! - Free model and environment
+/*	   IMPORTANT !!! - Free model and environment*/
 	  GRBfreemodel(model);
 	  GRBfreeenv(env);
 	  free(ind);
 	  free(lb);
 	  free(vtype);
-	 // free(names);
-	 // free(namestorage);
+/*	  free(names);
+	  free(namestorage);*/
 	  free(sol);
 	  free(val);
 
 	  return 1;
 }
+
+
 
 int LPSolveCell(int location, int n, int m, int* board, float* legal_options){
 	/* Linear programming algorithm, Used by guess and guessHint functions. solves using gorubi solver module
@@ -346,34 +367,36 @@ int LPSolveCell(int location, int n, int m, int* board, float* legal_options){
 	*/
 	int success, x, y, i, sol_index;
 	const int N = n*m;
-	double*	sol = (double*)calloc(N*N*N,sizeof(double)); //save sol values
-	//printf("Debugging: inside LPSolveCell, value of location is %d\n", board[location] );
-	//success = LP(n,m,sol,board);
-	success = 1;
+	double*	sol;
+	sol = (double*)calloc(N*N*N,sizeof(double));
+/*	printf("Debugging: inside LPSolveCell, value of location is %d\n", board[location] );*/
+	success = LP(n,m,sol,board);
+/*	success = 1;*/
 	if(!success){
 		return 0;
 	}
 	x = xFromLocation(N, location);
 	y = yFromLocation(N, location);
 	sol_index = N*N*x + N*y;
-	//printf("Debuging index is %d, sol val ",sol_index);
+/*	printf("Debuging index is %d, sol val ",sol_index);*/
 	for (i=0; i<N; i++) {
 		if(sol[sol_index+i]>0){
-			legal_options[i*2]= i+1.0; //optional value
-			legal_options[i*2+1]= sol[sol_index+i]; //score
+			legal_options[i*2]= i+1.0;/* optional value*/
+			legal_options[i*2+1]= sol[sol_index+i]; /*score*/
 	    }
 		else{
-			legal_options[i*2]= -1.0; //optional value
-			legal_options[i*2+1]= -1.0; //score
-			//printf("value of legal op is %f", legal_options[i*2+1]);
+			legal_options[i*2]= -1.0; /*optional value*/
+			legal_options[i*2+1]= -1.0; /*score*/
+			/*printf("value of legal op is %f", legal_options[i*2+1]);*/
 		}
 	}
+	free(sol);
 	return 1;
 
 }
 
 
-int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
+int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/*Linear programming algorithm, Used by guess  functions. solves using gorubi solver module
 	 *  args: gets board to solve, and threshold
 	 * return: solved board, If several values hold for the same cell, randomly choose one according to the score
@@ -381,81 +404,97 @@ int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, stru
 	 */
 	int success, valid_cnt, sol_index, location, i, j, v, valid, sol_value;
 	const int N=n*m;
-	double*	sol = (double*)calloc(N*N*N,sizeof(double)); //save sol values
-	double* legal_options = (double*)calloc(N*2,sizeof(double));
-	//run LP and get sol matrix
-	//success = LP(n,m,sol,board);
-	success = 1;
+	double*	sol;
+	double* legal_options;
+	sol = (double*)calloc(N*N*N,sizeof(double));
+	legal_options = (double*)calloc(N*2,sizeof(double));
+/*	run LP and get sol matrix */
+	success = LP(n,m,sol,board);
 	if(!success){
 			return 0;
 		}
-	//go over empty cells and fill them
+/*	go over empty cells and fill them*/
 	valid_cnt = 0;
 		for (i = 0; i < N; i++) {
 			 for (j = 0; j < N; j++) {
 				  location = (i + j*N)*2;
 				  for (v = 0; v < N; v++) {
-						//check if score is higher than x  and
+/*						check if score is higher than x  and*/
 					  sol_index = i*N*N+j*N+v;
 					  if (sol[sol_index] > threshold && board[location]==0) {
 						  board[location] = v+1;
 						  valid = isLegal(n,m,xFromLocation(N, location),yFromLocation(N, location),board);
 						  if(valid){
-							  legal_options[valid_cnt*2]= (float)v+1.0; //optional value
-							  legal_options[valid_cnt*2+1]= sol[sol_index+v]; //score
+							  legal_options[valid_cnt*2]= (float)v+1.0; /*optional value*/
+							  legal_options[valid_cnt*2+1]= sol[sol_index+v]; /*score*/
 							  valid_cnt++;
 						  }
 						  board[location]= 0;
 					  	  }
 				  	  }
-				  //choose one item randomly using weighted random
+/*				  choose one item randomly using weighted random*/
 				  sol_value = randomWeightedNumber(legal_options, valid_cnt);
-				  // place it on board using location;
-				  if(sol_value!=-1){ // there is an option higher than X
+/*				   place it on board using location;*/
+				  RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
+				  InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
+				  *ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+				  if(sol_value!=-1){  /*there is an option higher than X*/
 						valid =  set(n, m, i+1, j+1, sol_value, board, ctrl_z, ctrl_z_current);
 						if(!valid){
 							printf("EROOR: %s\n", SETFAILED);
 							return 0;
 							}
 				  	  }
-
+				  InsertAtTail(-4,0,0,ctrl_z); /*add end marker*/
+				  *ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 			 }
 		}
+	free(sol);
+	free(legal_options);
 	return 1;
 
 }
 
 
+
 int LP(int n, int m, double* sol, int* board){
-	 /*gets board, and fill Gurobi matrix (sol) with the solution
+	/* gets board, and fill Gurobi matrix (sol) with the solution
 		*  args: soduko board
 		*  return: 0 - > failed, 1 -> success
-		*/
+		*  */
+
 		GRBenv   *env   = NULL;
 		  GRBmodel *model = NULL;
-		  int       error = 0;
-		  const int N = n*m;
-		  int*		ind = (int*)calloc(N,sizeof(int)); //Variable's index
-		  double*   val = (double*)calloc(N,sizeof(int)); // Variable's Coefficients
-		  double*	obj = (double*)calloc(N*N*N,sizeof(double)); // Coefficients for objective's variables
-		  double*	lb = (double*)calloc(N*N*N,sizeof(double)); // lb = lowerbound
-		  double*	ub = (double*)calloc(N*N*N,sizeof(double)); // ub = upperbound
-		  char*		vtype = (char*)calloc(N*N*N,sizeof(char)); // variables types
-		  //char**	names = (char**)calloc(N*N*N,sizeof(char*)); // pointer to the name of variable
-		  //char*		namestorage= (char*)calloc(10*N*N*N,sizeof(char)); // names storage
-		  //char*		cursor;
-		  double 	objval;
-		  int       i, j, v, location;
-		  int       optimstatus;
 
-		  // Create an empty model
-		  //cursor = namestorage;
+		  const int N = n*m;
+		  int*		ind;
+		  double* 	val;
+		  double*	obj;
+		  double*	lb;
+		  double*	ub;
+		  char*		vtype;
+		  double 	objval;
+		  int       i, j, v, location, error;
+		  int       optimstatus;
+		  ind = (int*)calloc(N,sizeof(int)); /*Variable's index*/
+		  val = (double*)calloc(N,sizeof(int)); /* Variable's Coefficients*/
+		  obj = (double*)calloc(N*N*N,sizeof(double)); /* Coefficients for objective's variables */
+		  lb = (double*)calloc(N*N*N,sizeof(double)); /* lb = lowerbound */
+		  ub = (double*)calloc(N*N*N,sizeof(double)); /* ub = upperbound */
+		  vtype = (char*)calloc(N*N*N,sizeof(char)); /* variables types */
+		  /*char**	names = (char**)calloc(N*N*N,sizeof(char*)); // pointer to the name of variable
+		  //char*		namestorage= (char*)calloc(10*N*N*N,sizeof(char)); // names storage
+		  //char*		cursor; */
+		  error = 0;
+
+		  /* Create an empty model
+		  //cursor = namestorage;*/
 		      for (i = 0; i < N; i++) {
 		          for (j = 0; j < N; j++) {
 		        	  location = (i + j*N)*2;
 		              for (v = 0; v < N; v++) {
 		                  if (board[location] == v) {
-		                      lb[i*N*N+j*N+v] = 1.0;// LB = lowerbound
+		                      lb[i*N*N+j*N+v] = 1.0;
 		                      ub[i*N*N+j*N+v] = 1.0;
 		                      obj[i*N*N+j*N+v] = 1.0;
 		                  }
@@ -464,16 +503,16 @@ int LP(int n, int m, double* sol, int* board){
 		                      ub[i*N*N+j*N+v] = 1.0;
 		                      obj[i*N*N+j*N+v] = 1.0/rand();
 		                  }
-		                  //names[i*N*N+j*N+v] = cursor;
+		                  /*names[i*N*N+j*N+v] = cursor;*/
 		                  vtype[i*N*N+j*N+v] = GRB_CONTINUOUS; //change to GRB_CONTINUOUS in LP
-		                  //sprintf(names[i*N*N+j*N+v], "x[%d,%d,%d]", i, j, v+1);
-		                  //cursor += strlen(names[i*N*N+j*N+v]) + 1;
+		                  /*sprintf(names[i*N*N+j*N+v], "x[%d,%d,%d]", i, j, v+1);
+		                  //cursor += strlen(names[i*N*N+j*N+v]) + 1;*/
 		              }
 		          }
 		      }
 
 
-		   //Create environment - log file is sudokuLP.log
+		   /*Create environment - log file is sudokuLP.log*/
 		  error = GRBloadenv(&env, "sudokuLP.log");
 		  if (error) {
 			  printf("ERROR %d GRBloadenv(): %s\n", error, GRBgeterrormsg(env));
@@ -486,7 +525,7 @@ int LP(int n, int m, double* sol, int* board){
 			  return 0;
 		  }
 
-		   //Create new model named "sudokuLP", optional -> add names
+		   /*Create new model named "sudokuLP", optional -> add names*/
 		  error = GRBnewmodel(env, &model, "sudokuLP", N*N*N, obj, lb, ub, vtype, NULL);
 		  if (error) {
 			  printf("ERROR %d GRBnewmodel(): %s\n", error, GRBgeterrormsg(env));
@@ -494,27 +533,27 @@ int LP(int n, int m, double* sol, int* board){
 		  }
 
 
-		   //ADD constraint
+		   /*ADD constraint*/
 		  	  error = ConstraintsSudoku(n,m,ind,val,model);
 		  	  if(error){
 		  		  return 0;
 		  	  }
 
-		  // Optimize model - need to call this before calculation
+		  /* Optimize model - need to call this before calculation*/
 		  error = GRBoptimize(model);
 		  if (error) {
 			  printf("ERROR %d GRBoptimize(): %s\n", error, GRBgeterrormsg(env));
 			  return 0;
 		  }
 
-		   //Write model to 'sudoku.lp' - this is not necessary but very helpful
+		   /*Write model to 'sudoku.lp' - this is not necessary but very helpful*/
 		  error = GRBwrite(model, "sudokuLP.lp");
 		  if (error) {
 			  printf("ERROR %d GRBwrite(): %s\n", error, GRBgeterrormsg(env));
 			  return 0;
 		  }
 
-		  // Get solution information
+		  /* Get solution information*/
 
 		  error = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
 		  if (error) {
@@ -522,27 +561,27 @@ int LP(int n, int m, double* sol, int* board){
 			  return 0;
 		  }
 
-		  // get the objective -- the optimal result of the function
+		  /* get the objective -- the optimal result of the function*/
 		  error = GRBgetdblattr(model, GRB_DBL_ATTR_OBJVAL, &objval);
 		  if (error) {
 			  printf("ERROR %d GRBgettdblattr(): %s\n", error, GRBgeterrormsg(env));
 			  return 0;
 		  }
-		   //solution found
+		   /*solution found*/
 		  if (optimstatus == GRB_OPTIMAL) {
 		     }
-		  		//   no solution found
+		  		/*   no solution found*/
 		     else if (optimstatus == GRB_INF_OR_UNBD) {
 		    	 printf("ERROR: Model is infeasible or unbounded\n");
 		    	 return 0;
 		     }
-		  // error or calculation stopped
+		  /* error or calculation stopped*/
 		     else {
 		    	 printf("ERROR: Optimization was stopped early\n");
 		    	 return 0;
 		     }
 
-		   //get the solution - the assignment to each variable
+		   /*get the solution - the assignment to each variable*/
 		  error = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, N*N*N, sol);
 		  if (error) {
 			  printf("ERROR %d GRBgetdblattrarray(): %s\n", error, GRBgeterrormsg(env));
@@ -550,11 +589,12 @@ int LP(int n, int m, double* sol, int* board){
 		  }
 
 
-		   //IMPORTANT !!! - Free model and environment
+		   /*IMPORTANT !!! - Free model and environment*/
 		  GRBfreemodel(model);
 		  GRBfreeenv(env);
 		  free(ind);
 		  free(lb);
+		  free(ub);
 		  free(vtype);
 		  free(obj);
 		  free(val);
@@ -562,3 +602,4 @@ int LP(int n, int m, double* sol, int* board){
 		  return 1;
 
 }
+
