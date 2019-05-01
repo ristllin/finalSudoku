@@ -19,5 +19,6 @@ int sumArray(int* array, int length);
 int yFromLocation(int N, int location);
 int xFromLocation(int N, int location);
 int locationFromXY(int N, int x, int y);
+void updateErrors(int n, int m, int* board);
 
 #endif /* AUXFUNCTIONS_H_ */

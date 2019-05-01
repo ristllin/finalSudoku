@@ -7,7 +7,7 @@
 #include "AuxFunctions.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "gurobi_c.h"
+//#include "gurobi_c.h"
 #include <string.h>
 #include "Constants.h"
 #include "List.h"
@@ -604,3 +604,5 @@ int LP(int n, int m, double* sol, int* board){
 
 }
 
+	return rslt;
+}
