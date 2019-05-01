@@ -45,8 +45,12 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 	 *  args: current board, starting point - actual place (including fixed\unfixed cells) on board
 	 *  return: number of correct solutions from current state (doesn't change given board)
 	 * */
-	const int N = n*m; int board_state,fixed = -1; int* legal_options; int rslt,i;
+	const int N = n*m;
+	int board_state,fixed;
+	int* legal_options;
+	int rslt,i;
 	rslt = 0;
+	fixed = -1;
 	legal_options = calloc(N,sizeof(int));
 	/*if board is legaly finished return 1*/
 	board_state = isFinished(n,m,board);
@@ -67,7 +71,10 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 		starting_point += 2;
 		fixed = board[starting_point + 1];
 	}
-	if (optionsForLocation(n,m,xFromLocation(N,starting_point),yFromLocation(N,starting_point),board,legal_options) == 0){return 0;}//check next unfixed cell's options
+	if (optionsForLocation(n,m,xFromLocation(N,starting_point),yFromLocation(N,starting_point),board,legal_options) == 0){
+		return 0;
+	}
+/*	check next unfixed cell's options*/
 
 	for (i=0;i<N;i++){/*for each option fill cell with one of the values and call recuresively*/
 		if (legal_options[i] == 1){
@@ -210,6 +217,10 @@ int ILP(int n, int m, int* board){
 	  double* lb;
 	  int* ind;
 	  char* vtype;
+	  double 	objval;
+	  int       i, j, v, location, error;
+	  int       optimstatus;
+
 	  sol = (double*)calloc(N*N*N,sizeof(double)); /*save sol values*/
 	  ind = (int*)calloc(N,sizeof(int)); /*Variable's index
 */	  val = (double*)calloc(N,sizeof(int)); /*Variable's Coefficients
@@ -218,9 +229,6 @@ int ILP(int n, int m, int* board){
 	  /*char**	names = (char**)calloc(N*N*N,sizeof(char*));  pointer to the name of variable
 	  char*		namestorage= (char*)calloc(10*N*N*N,sizeof(char));  names storage
 	  char*		cursor;*/
-	  double 	objval;
-	  int       i, j, v, location, error;
-	  int       optimstatus;
 
 	  error = 0;
 
@@ -339,7 +347,7 @@ int ILP(int n, int m, int* board){
 
 	 /*  make sure board is finished*/
 	  error = isFinished(n,m,board);
-	  if(error!=1) //1==win
+	  if(error!=1) /*1==win*/
 	  {
 		  printf("ERROR: %d, Finish optimization, but board is unsolved.\n", error);
 		  return 0;
@@ -505,7 +513,7 @@ int LP(int n, int m, double* sol, int* board){
 		                      obj[i*N*N+j*N+v] = 1.0/rand();
 		                  }
 		                  /*names[i*N*N+j*N+v] = cursor;*/
-		                  vtype[i*N*N+j*N+v] = GRB_CONTINUOUS; //change to GRB_CONTINUOUS in LP
+		                  vtype[i*N*N+j*N+v] = GRB_CONTINUOUS;
 		                  /*sprintf(names[i*N*N+j*N+v], "x[%d,%d,%d]", i, j, v+1);
 		                  //cursor += strlen(names[i*N*N+j*N+v]) + 1;*/
 		              }
