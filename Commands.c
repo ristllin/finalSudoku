@@ -170,12 +170,13 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	if (z > N || z < 1){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
 	x = x-1; y = y-1; //translate value to location
 	location = (x+(y*N))*2;
-	if (board[location+1] == 1 && *state == 2){printf("%s\n",FIXEDCELLERROR);if (DEBUG){printf("<<debug: set(0) finished\n");}return 0;}
+	if (board[location+1] == 1 && *state == 1){printf("%s\n",FIXEDCELLERROR);if (DEBUG){printf("<<debug: set(0) finished\n");}return 0;}
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	InsertAtTail(board[location],x,y,ctrl_z); /*add former data (board[location] not z)*/
 	board[location] = z;
 	if (!isLegal(n,m,x,y,board)){board[location+1] = 2;}
 	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+	updateErrors(n,m,board);
 	if (DEBUG){printf("<<debug: set(1) finished\n");}
 	return 1;
 }

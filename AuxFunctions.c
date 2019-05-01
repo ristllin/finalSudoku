@@ -145,15 +145,11 @@ int sumArray(int* array, int length){
 }
 
 int yFromLocation(int N, int location){
-//	printf("debug: yFromLocation() called\n");
-//	printf("with: N:%d,location:%d\n",N,location);
 	if (location == 0 || N == 0){return 0;}
 	return (location/2) / N;
 }
 
 int xFromLocation(int N, int location){
-	//	printf("debug: xFromLocation() called\n");
-	//	printf("with: N:%d,location:%d\n",N,location);
 	if (location == 0 || N == 0){return 0;}
 	location = location / 2;
 	return location - ((location / N)*N);
@@ -161,4 +157,35 @@ int xFromLocation(int N, int location){
 
 int locationFromXY(int N, int x, int y){
 	return ((N*y)+x)*2;
+}
+
+int isLegalLocal(int n, int m, int x, int y, int* board){
+	/*function description: Uses optionForLocation. checks if current value in cell is legal.
+	 * args:
+	 * return: 1 if current value in cell is legal; 0 if not. returns legal (1) for empty cell.
+	 */
+	int* legal_options; int rslt,location; const int N = n*m;
+	legal_options = calloc(N,sizeof(int));
+	location = (x+y*N)*2;
+	if (board[location] == 0){return 1;} /*empty cell*/
+	rslt = optionsForLocation(n,m,x,y,board,legal_options);
+	if (legal_options[board[location]-1] == 0){return 0;} /*illegal option for cell*/
+	free(legal_options);
+	return 1; /*valid option*/
+}
+
+void updateErrors(int n, int m, int* board){
+	/*function description: goes over board, updates fixed\legal cell to error or not.
+	 * args: N = m*n
+	 */
+	int i,location,x,y; const int N = n*m;
+	for (x=0;x<N;x++){
+		for (y=0;y<N;y++){
+			location = (x+(y*N))*2;
+			if (board[location] != 0 && board[location+1] != 1){ //not fixed
+				if(isLegalLocal(n,m,x,y,board)){board[location+1] = 0;} //make legal
+				else {board[location+1] = 2;} //make illegal
+			}
+		}
+	}
 }
