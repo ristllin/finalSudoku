@@ -196,7 +196,7 @@ int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct No
 	legal_options = calloc(N,sizeof(int));
 	copyBoard(board,temp_board,N);
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
-	InsertAtTail(-3,x,y,ctrl_z); /*add former data (board[location] not z)*/
+	InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
 	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 	for (x=0;x<N;x++){
 		for (y=0;y<N;y++){
@@ -215,7 +215,7 @@ int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct No
 			}
 		}
 	}
-	InsertAtTail(-4,x,y,ctrl_z); /*add former data (board[location] not z)*/
+	InsertAtTail(-4,0,0,ctrl_z); /*add end marker*/
 	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 	free(legal_options);
 	free(temp_board);
@@ -560,13 +560,15 @@ int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 	if (DEBUG){printf(">>debug: undo() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
 	if ((*ctrl_z_current)->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
-	if (((*ctrl_z_current)->prev)->data == -4){ /*multi-undo, undo until next -3 in data*/
-		printf("debug: multi identified\n");
-		*ctrl_z_current = (*ctrl_z_current)->prev;
-		while(((*ctrl_z_current)->prev)->data != -3){
-			printf("not yet\n");
+	if ((*ctrl_z_current)->data == -4){ /*multi-undo, undo until next -3 in data*/
+//		printf("debug: multi identified\n");
+		*ctrl_z_current = (*ctrl_z_current)->prev; //avoid infi loop
+		while((*ctrl_z_current)->data != -3){
+//			printf("not yet\n");
 			undo(n,m,board,ctrl_z,ctrl_z_current);
 		}
+//		*ctrl_z_current = (*ctrl_z_current)->prev; //skipping marker
+		if (DEBUG){printf("<<debug: multi_undo(1) finished\n");} return 1;
 	}
 	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
 	location = (x+(y*N))*2;
@@ -588,17 +590,32 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 	/* set pointer in the list */
 	/* no moves to redo --> error */
 	/* print change */
-	int x,y,temp,location = 0; const int N = n*m;
+	int x,y,flag,temp,location = 0; const int N = n*m;
 	if (DEBUG){printf(">>debug: redo() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
+	if (DEBUG){printf("with: n:%d,m:%d,current.data:%d\n",n,m,(*ctrl_z_current)->data);}
 	if (((*ctrl_z_current)->next) == NULL){printf("%s\n",NOMOREMOVES);return 0;}
-	if (((*ctrl_z_current)->next)->data == -3){ /*multi-redo, redo until next -4 in data*/
-		*ctrl_z_current = (*ctrl_z_current)->next;
-		while(((*ctrl_z_current)->next)->data != -4){
-			redo(n,m,board,ctrl_z,ctrl_z_current);
+	if ((*ctrl_z_current)->data == -3){ /*multi-redo, redo until next -4 in data*/
+		flag = 1;
+		*ctrl_z_current = (*ctrl_z_current)->next; //avoid infi loop
+		y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
+		location = (x+(y*N))*2;
+		temp = board[location];
+		board[location] = (*ctrl_z_current)->data;
+		(*ctrl_z_current)->data = temp;
+		printf("debug: multi identified\n");
+		while((int)(*ctrl_z_current)->data != -4 && flag != -7){
+			printf("not yet, current.data:%d\n",(*ctrl_z_current)->data);
+			Print(*ctrl_z_current);
+			flag = redo(n,m,board,ctrl_z,ctrl_z_current);
 		}
+		if (DEBUG){printf("<<debug: multi_redo(2) finished\n");}
+		return 1; //end of redo
 	}
 	*ctrl_z_current = (*ctrl_z_current)->next;
+	if ((*ctrl_z_current)->data == -4){
+		if (DEBUG){printf("<<debug: multi_redo(2) finished\n");}
+		return -7;
+	}
 	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
 	location = (x+(y*N))*2;
 	temp = board[location];
