@@ -23,6 +23,8 @@ int* state; /* 0 => init, 1 => solve, 2 => edit */
 float user_threshold[1];
 
 int main(int argc, char* argv[]){
+	board = calloc(9*9*2,sizeof(int));
+	guess_board = calloc(9*9*2,sizeof(int));
 	struct Node* ctrl_z = GetNewNode(-2,0,0);; /*list of player moves, starts and ends with "-2" cells, "-1" states reset board*/
 	struct Node* ctrl_z_current = ctrl_z; //ctrl_z; /*pointer to current place in ctrl_z list*/
 	char user_path[MAXBUFFERSIZE];
@@ -39,6 +41,8 @@ int main(int argc, char* argv[]){
 //		printf("ctrl_z:");Print(ctrl_z);printf("\n");
 //		printf("current:");Print(ctrl_z_current);printf("\n");
 //		printf("mark_errors:%d,mark_errors(addr):%d\n",mark_errors,&mark_errors);
+//		printBoard(board,n,m,state,mark_errors);
+		printf("did_pass:%d\n",did_pass);
 		if (did_pass){
 			if (isFinished(n,m,board) == 1 && state == 1){
 				printBoard(board,n,m,state,mark_errors);

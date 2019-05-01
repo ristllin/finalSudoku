@@ -133,7 +133,7 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 			return rslt;
 			break;
 		case 16:
-			rslt = toEdit(n,m,board,guess_board,mark_errors,ctrl_z, ctrl_z_current,state,user_path);
+			rslt = toEdit(board, guess_board,m, n,mark_errors, state, user_path, ctrl_z, ctrl_z_current);
 			return rslt;
 			break;
 		default:
@@ -662,15 +662,20 @@ void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct
 	 * return: void
 	 */
 	/*n,m to 9, state to 0, boards to empty*/
-	int N; struct Node* temp;
+	int N,i; struct Node* temp;
+	if (DEBUG){printf(">>debug: toInit() called\n");}
+	if (DEBUG){printf("with: board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",board,guess_board,m,n,mark_errors,ctrl_z,ctrl_z_current,state);}
 	free(board);
 	free(guess_board);
 	*n = 3; *m = 3; state = 0; mark_errors = 1;
-	N = (int)(n)*(int)(m);
+	N = (int)(*n)*(int)(*m);
 	board = calloc(N*N*2,sizeof(int));
 	guess_board = calloc(N*N*2,sizeof(int));
+	truncateArray(board,N*N*2);
+	truncateArray(guess_board,N*N*2);
 	RemoveFollowingNodes(ctrl_z);
 	*ctrl_z_current = ctrl_z;
+	if (DEBUG){printf("<<debug: toInit() finished\n");}
 }
 
 int toSolve(int* n, int* m, char* path, int* state, int** board, int* guess_board,struct Node* ctrl_z, struct Node* ctrl_z_current){
@@ -686,35 +691,39 @@ int toSolve(int* n, int* m, char* path, int* state, int** board, int* guess_boar
 	else{ /*reading successful*/
 		*state = 1;
 //		free(board); /*<<<<need to free!!!>>>>*/
-		free(*guess_board);
+//		free(*guess_board);
 		*board = temp_board;
 		*n = tempn;
 		*m = tempm;
-		N = (int)n*(int)m;
-		guess_board = calloc(N*N*2,sizeof(int));
+//		N = (int)n*(int)m;
+//		guess_board = calloc(N*N*2,sizeof(int));
 	}
 	if (DEBUG){printf("<<debug: toSolve(1) finished\n");}
 	return 1;
 }
 
-int toEdit(int* board, int* guess_board,int* m, int* n,int* mark_errors, int* state, char* user_path,struct Node* ctrl_z, struct Node* ctrl_z_current){
+int toEdit(int* board, int* guess_board,int* m, int* n,int* mark_errors, int* state, char* user_path,struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/*function description: change state to 'Edit' mode, and set board from file or to empty board if the file path is empty
 	 * args: x --> file path
 	 * return: void
 	 */
-	int* temp_board, tempn, tempm; const int N = (*n)*(*m);
+	int* temp_board, tempn, tempm; int N = (*n)*(*m);
 	if (DEBUG){printf(">>debug: toEdit() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
+	if (DEBUG){printf("with: path:%s,board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",user_path,board,guess_board,m,n,mark_errors,ctrl_z,ctrl_z_current,state);}
 	*state = 2;
 	if (strlen(user_path) == 0){
-		toInit(board, guess_board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
+		toInit(*board, *guess_board, m, n,*mark_errors, ctrl_z, ctrl_z_current,*state);
 	}
-	if (readBoardFromFile(tempn, tempm, temp_board, user_path) == 1){printf("%s/n",READINGFAILED);}
+	else if (readBoardFromFile(&tempn, &tempm, &temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
 	else{
-		free(board);
-		board = temp_board;
-		n = tempn;
-		m = tempm;
+		*n = tempn;
+		*m = tempm;
+		N = (int)*n*(int)*m;
+		printf("*board:%d,board:%d,&board:%d\n",*board,board,&board);
+		free(*board);
+		*board = calloc(N*N*2,sizeof(int));
+		copyBoard(temp_board,*board,N);
+		free(temp_board);
 	}
 	if (DEBUG){printf("<<debug: toEdit(1) finished\n");}
 	return 1;

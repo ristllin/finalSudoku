@@ -70,12 +70,13 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		 */
 	FILE* file_pointer; int N; int num,c,location = 0;
 	int* new_board;
-//	path = "D:/9board.txt"; //debug!!!! <<<<must remove >>>>>
-//	printf("debug: LoadBoard() called with path:%s \n",path);
+	if (DEBUG){printf(">>debug: readBoardFromFile() called\n");}
+	if (DEBUG){printf("with: n:%d,m:%d,board:%d,path:%d\n",n,m,board,path);}
 	file_pointer = fopen(path, "r");
 	if (file_pointer == NULL){ /*catch errors*/
 		printf("%s: %s \n",INVALIDFILEPATH,path);
 		fclose(file_pointer);
+		if (DEBUG){printf("<<debug: readBoardFromFile(1) finished\n");}
 		return 1;
 	}
 	num = 0;
@@ -120,13 +121,8 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		}
 	}
 	*board = new_board;
-//	printf("\n"); //debug
-//	int i; //debug
-//	for (i = 0;i<N*N*2;i++){printf("%d|",board[i]);} printf("\n"); //debug
 //	fclose(file_pointer); /*<<<need to release file>>>*/
-//	file_pointer = NULL;
-//	printBoard(*board,*n,*m,2,1); //debug
-//	printf("debug: in readfrom() n:%d,m:%d\n",*n,*m);//debug
+	if (DEBUG){printf("<<debug: readBoardFromFile(0) finished\n");}
 	return 0;
 }
 
