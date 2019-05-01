@@ -202,13 +202,13 @@ int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct No
 		for (y=0;y<N;y++){
 			location = (x+y*N)*2;
 			if (temp_board[location] == 0){ /*if cell is empty*/
-				printf("----->x:%d,y:%d is empty\n",x+1,y+1,option+1);
+//				printf("----->x:%d,y:%d is empty\n",x+1,y+1,option+1);
 				if (optionsForLocation(n,m,x,y,temp_board,legal_options) == 1){ //legal value inj position
 					for(i=0;i<N;i++){printf("%d|",legal_options[i]);}printf("\n");
 					option = singleOption(legal_options,N);
-					printf("option:%d\n",option);
+//					printf("option:%d\n",option);
 					if (option != 0){ /*"obvious" solution for cell*/
-						printf("setting: x:%d,y:%d,z:%d\n",x+1,y+1,option+1);
+//						printf("setting: x:%d,y:%d,z:%d\n",x+1,y+1,option+1);
 						set(n,m,x+1,y+1,option,board,ctrl_z,ctrl_z_current);
 					}
 				}
@@ -433,14 +433,14 @@ int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node* c
 	return 1;
 }
 
-void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){
+void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/* function description: Undo all moves, reverting the board to its original loaded state
 	 * state: Solve, Edit
 	 * return: void
 	 */
 	if (DEBUG){printf(">>debug: undo() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
-	while (ctrl_z_current != ctrl_z){
+	while ((*ctrl_z_current)->data != -2){
 		undo(n,m,board ,ctrl_z, ctrl_z_current);
 	}
 	if (DEBUG){printf("<<debug: reset() finished\n");}
@@ -602,9 +602,9 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 		temp = board[location];
 		board[location] = (*ctrl_z_current)->data;
 		(*ctrl_z_current)->data = temp;
-		printf("debug: multi identified\n");
+//		printf("debug: multi identified\n");
 		while((int)(*ctrl_z_current)->data != -4 && flag != -7){
-			printf("not yet, current.data:%d\n",(*ctrl_z_current)->data);
+//			printf("not yet, current.data:%d\n",(*ctrl_z_current)->data);
 			Print(*ctrl_z_current);
 			flag = redo(n,m,board,ctrl_z,ctrl_z_current);
 		}

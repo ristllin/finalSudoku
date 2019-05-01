@@ -17,7 +17,7 @@ int numSolutions(int n, int m, int* board);
 int generate(int x, int y, int* board, int n, int m, struct Node* ctrl_z, struct Node* ctrl_z_current);
 int validate(int n, int m, int* board, int* state);
 int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current);
-void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current);
+void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current);
 int guess_hint(int n, int m, int x,  int y, int* board);
 int hint(int n, int m, int x, int y, int* board);
 int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current);
