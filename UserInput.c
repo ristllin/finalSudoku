@@ -52,7 +52,7 @@ int numberOfParameters(char* buffer){
 			ch = *buffer;
 
 		}
-	printf("debugging: number of params is %d\n", paramsCnt);
+	//printf("debugging: number of params is %d\n", paramsCnt);
 	return paramsCnt;
 	}
 
@@ -115,25 +115,25 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 		        continue;
 		    }
 
-		printf ("debugging [%s]\n", input);
+		//printf ("debugging [%s]\n", input);
 
 		/*split to variables (validate amount)*/
 		/*Get command name*/
 		char* buffer = input;
 //		printf("debugging: name of command:%s\n", command_name);
 		buffer = setTheLocationToStartOfNextString(buffer);
-		printf("debugging: %c\n", *buffer);
+		//printf("debugging: %c\n", *buffer);
 		char command_name[MAXBUFFERSIZE];
 		strcpy(command_name, buffer);
 
 		int locationOfSpcae = locationOfSpace(buffer);
 		command_name[locationOfSpcae]= '\0';
-		printf("debugging: name of command:%s\n", command_name);
+		//printf("debugging: name of command:%s\n", command_name);
 		//increase pointer to end of command name
 		buffer = buffer + locationOfSpcae;
 		// increase pointer to the start of next parameter
 		buffer = setTheLocationToStartOfNextString(buffer);
-		printf("debugging: the rest of command:%s\n", buffer);
+		//printf("debugging: the rest of command:%s\n", buffer);
 		/*Check if the command name is valid from this state value*/
 		int paramCnt = 0; //number of parameters
 		if(strcmp(command_name,COMMANDSOLVE)==0){ //solve command
@@ -253,7 +253,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 2
-			printf("Debugging: rest of buffer is %s \n", buffer);
+//			printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
@@ -267,7 +267,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 3
-			printf("Debugging: rest of buffer is %s \n", buffer);
+			//printf("Debugging: rest of buffer is %s \n", buffer);
 			int value3 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
@@ -364,7 +364,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 2
-			printf("Debugging: rest of buffer is %s \n", buffer);
+			//printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
@@ -466,7 +466,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 2
-			printf("Debugging: rest of buffer is %s \n", buffer);
+			//printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
@@ -515,7 +515,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			buffer = setTheLocationToStartOfNextString(buffer);
 
 			//value 2
-			printf("Debugging: rest of buffer is %s \n", buffer);
+			//printf("Debugging: rest of buffer is %s \n", buffer);
 			int value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);

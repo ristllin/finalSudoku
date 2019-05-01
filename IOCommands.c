@@ -18,11 +18,10 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 	 * args: mark_errors - whether to mark errors or not
 	 * return: void
 	 */
-//	printf("debug: printBoard() called\n");
-//	printf("with: n:%d,m:%d,board:%d\n",n,m,board);
 
 	int row; int col; int value; int fixed;
 	int N = n * m;
+	if (n == 0 || m == 0){return;}
 	seperator(n,m);
 	for (row = 0;row < N;row++){
 		printf("|"); /*starting a new row*/
@@ -47,6 +46,9 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 					if (mark_errors == 1){
 						printf("*");
 					}
+					else {
+						printf(" ");
+					}
 					break;
 			}
 			if ((col+1) % m == 0){ /*creating m blocks*/
@@ -69,12 +71,13 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		 */
 	FILE* file_pointer; int N; int num,c,location = 0;
 	int* new_board;
-//	path = "D:/9board.txt"; //debug!!!! <<<<must remove >>>>>
-//	printf("debug: LoadBoard() called with path:%s \n",path);
+	if (DEBUG){printf(">>debug: readBoardFromFile() called\n");}
+	if (DEBUG){printf("with: n:%d,m:%d,board:%d,path:%d\n",n,m,board,path);}
 	file_pointer = fopen(path, "r");
 	if (file_pointer == NULL){ /*catch errors*/
 		printf("%s: %s \n",INVALIDFILEPATH,path);
 		fclose(file_pointer);
+		if (DEBUG){printf("<<debug: readBoardFromFile(1) finished\n");}
 		return 1;
 	}
 	num = 0;
@@ -94,13 +97,10 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 	}
 	if (*n > 5 || *m > 5){printf("%s \n",CURRUPTFILEFORMAT);return 1;}
 	N = (int)*n * (int)*m;
-//	printf("debug: reallocating with N:%d\n",N);
 	new_board = (int*)calloc(board,N*N*2*sizeof(int)); /* rows X columns X [value,type] */
 //	free(board); //<<<need to happen to avoid memory leak!>>>
-//	printf("debug: reallocation successful\n");
 	while (1) { /*sets board according to n and m*/
 		c = fgetc(file_pointer);
-//		printf("%c|",c);
 		if( feof(file_pointer) ) {
 			break ;
 		}
@@ -119,16 +119,8 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		}
 	}
 	*board = new_board;
-//	int i; //debug
-//	printf("\n"); //debug
-//	for (i = 0;i<N*N*2;i++){ //debug
-//		printf("%d|",board[i]); //debug
-//	} //debug
-//	printf("\ndebug: reading board completed successfully\n");
-//	fclose(file_pointer); /*need to release file*/
-//	file_pointer = NULL;
-//	printBoard(*board,*n,*m,2,1); //debug
-//	printf("debug: in readfrom() n:%d,m:%d\n",*n,*m);//debug
+	fclose(file_pointer); /*<<<need to release file>>>*/
+	if (DEBUG){printf("<<debug: readBoardFromFile(0) finished\n");}
 	return 0;
 }
 
@@ -137,13 +129,15 @@ int writeBoardToFile(int n, int m, int* board,char* path){
 		 * args: n,m - size of board, path - file path
 		 * return: 1 for fail, 0 for success
 		 */
-	/*printf("saveBoard() Called\n");*/
 	FILE* file_pointer; int row,col; int N = n*m;
 	file_pointer = fopen(path, "w+");
 	int value; int fixed; char* sign;
+	if (DEBUG){printf(">>debug: WriteBoardToFile() called\n");}
+	if (DEBUG){printf("with: n:%d,m:%d,board:%d,path:%s\n",n,m,board,path);}
 	if (file_pointer == NULL){
 		printf("%s\n",INVALIDFILEPATH);
 		fclose(file_pointer);
+		if (DEBUG){printf("<<debug: WriteBoardToFile(1) finished\n");}
 		return 1;
 	}
 	fprintf(file_pointer,"%d %d\n",n,m); //	The first line contains the block size m n. These are two integers, separated by a single space.
@@ -151,7 +145,6 @@ int writeBoardToFile(int n, int m, int* board,char* path){
 		for (col = 0; col < N; col++){
 			value = board[(row*N+col)*2]; /*starting a new cell*/
 			fixed = board[(row*N+col)*2 + 1];
-			printf("%d%d|",value,fixed);
 			if (fixed == 1){
 				sign = ".";
 			} else if(fixed == 0){
@@ -159,6 +152,7 @@ int writeBoardToFile(int n, int m, int* board,char* path){
 			} else {
 				printf("%s\n",ILLEGALSAVEERROR);
 				fclose(file_pointer);
+				if (DEBUG){printf("<<debug: WriteBoardToFile(1) finished\n");}
 				return 1;
 			}
 			fprintf(file_pointer,"%d%s",value,sign);
@@ -166,6 +160,7 @@ int writeBoardToFile(int n, int m, int* board,char* path){
 		fprintf(file_pointer,"\n");
 	}
 	fclose(file_pointer);
+	if (DEBUG){printf("<<debug: WriteBoardToFile(0) finished\n");}
 	return 0;
 }
 
