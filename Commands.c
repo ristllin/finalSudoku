@@ -78,7 +78,7 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 			exitSudoku(*board, user_command, m, n,  mark_errors, state, ctrl_z, ctrl_z_current, guess_board);
 			break;
 		case 1:
-			rslt = set((int)*n,(int)*m,x,y,z,*board,ctrl_z,ctrl_z_current);
+			rslt = set((int)*n,(int)*m,x,y,z,*board,ctrl_z,ctrl_z_current,state);
 			return rslt;
 			break;
 		case 2:
@@ -154,7 +154,7 @@ void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,
 	exit(0);
 }
 
-int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
+int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current,int* state){
 	/*function description: sets the value of cell <x,y> to z, user may empty a cell
 	 * state: Edit, Solve (fixed cells are not updated)
 	 * args: cell -> <x,y>
@@ -164,19 +164,20 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	/*check if user entered erroneous value*/
 	/*update ctrl_z, delete the further steps after current one*/
 	if (DEBUG){printf(">>debug: set() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d,x:%d,y:%d,z:%d,board:%d\n",n,m,x,y,z,board);}
+	if (DEBUG){printf("with: n:%d,m:%d,x:%d,y:%d,z:%d,board:%d,state:%d\n",n,m,x,y,z,board,state);}
 	int location; const int N = n*m;
 	if (x > N || x < 1){printf("%s %d\n",FIRSTPARAMETERERROR,N); return 0;}
 	if (y > N || y < 1){printf("%s %d\n",SECONDPARAMETERERROR,N); return 0;}
 	if (z > N || z < 1){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
 	x = x-1; y = y-1; //translate value to location
 	location = (x+(y*N))*2;
-	if (board[location+1] == 1){printf("%s\n",FIXEDCELLERROR);return 0;}
+	if (board[location+1] == 1 && *state == 2){printf("%s\n",FIXEDCELLERROR);if (DEBUG){printf("<<debug: set(0) finished\n");}return 0;}
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	InsertAtTail(board[location],x,y,ctrl_z); /*add former data (board[location] not z)*/
 	board[location] = z;
+	if (!isLegal(n,m,x,y,board)){board[location+1] = 2;}
 	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
-	if (DEBUG){printf("<<debug: set() finished\n");}
+	if (DEBUG){printf("<<debug: set(1) finished\n");}
 	return 1;
 }
 
@@ -210,7 +211,7 @@ int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct No
 //					printf("option:%d\n",option);
 					if (option != 0){ /*"obvious" solution for cell*/
 //						printf("setting: x:%d,y:%d,z:%d\n",x+1,y+1,option+1);
-						set(n,m,x+1,y+1,option,board,ctrl_z,ctrl_z_current);
+						set(n,m,x+1,y+1,option,board,ctrl_z,ctrl_z_current,state);
 					}
 				}
 			}
@@ -358,7 +359,7 @@ running ILP to solve the board, and then clearing all but Y random cells.
 		int z = temp_board[i];
 		int y = yFromLocation(N,i)+1;
 		int x = xFromLocation(N, i)+1;
-		legal =  set(n, m, x, y, z, board, ctrl_z, ctrl_z_current);
+		legal =  set(n, m, x, y, z, board, ctrl_z, ctrl_z_current, 2);
 		if(!legal){
 			printf("EROOR: %s\n", SETFAILED);
 			return 0;

@@ -42,7 +42,7 @@ int main(int argc, char* argv[]){
 //		printf("current:");Print(ctrl_z_current);printf("\n");
 //		printf("mark_errors:%d,mark_errors(addr):%d\n",mark_errors,&mark_errors);
 //		printBoard(board,n,m,state,mark_errors);
-		printf("did_pass:%d\n",did_pass);
+//		printf("did_pass:%d\n",did_pass);
 		if (did_pass){
 			if (isFinished(n,m,board) == 1 && state == 1){
 				printBoard(board,n,m,state,mark_errors);

@@ -48,6 +48,9 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 					if (mark_errors == 1){
 						printf("*");
 					}
+					else {
+						printf(" ");
+					}
 					break;
 			}
 			if ((col+1) % m == 0){ /*creating m blocks*/
