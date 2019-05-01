@@ -106,18 +106,20 @@ int singleOption(int* options,int N){
 	 * return: 0 if more than one cell size is 1 (and not 0) or no cells with value, otherwise, returns index of single cell with value.
 	 */
 	int rslt,i = 0;
-//	printf("debug: singleOptions() called\n");
-//	printf("with: N:%d, options:",N);for(i=0;i<N;i++){printf("%d|",options[i]);}printf("\n");
+	printf("debug: singleOptions() called\n");
+	printf("with: N:%d, options:",N);for(i=0;i<N;i++){printf("%d|",options[i]);}printf("\n");
 	for (i=0;i<N;i++){
 		if (options[i] != 0) { // found 1
 			if (rslt != 0) { /*more than single cell with value*/
+				printf("more than 1 solution for cell\n");
 				return 0;
 			} else { /*first cell with value*/
-				rslt = i;
+				rslt = i+1;
 			}
 		}
 	}
 //	printf("debug: single option is index: %d\n",rslt);
+	printf("1 solution for cell:%d\n",rslt);
 	return rslt;
 }
 

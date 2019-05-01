@@ -16,6 +16,11 @@
 int recursiveEBA(int n, int m, int* board, int starting_point);
 int LP(int n, int m, double* sol, int* board);
 
+/*int LP(int n, int m, double* sol, int* board){return 1;}
+int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current){return 1;}
+int LPSolveCell(int location, int n, int m, int* board, float* legal_options){return 1;}
+int ILP(int n, int m, int* board){return 1;}*/
+
 int EBA(int n,int m,int* board){
 	int rslt = -1;
 	/* EBA - exhaustive backtracking algorithm, runs over every legal value for every empty cell (by index)
@@ -42,9 +47,6 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 	 * */
 	const int N = n*m; int board_state,fixed = -1; int* legal_options; int rslt,i;
 	rslt = 0;
-/*	printf("debug: recursiveEBA() called\n");
-	printf("with: n:%d,m:%d,board:%d,starting point:%d\n",n,m,board,starting_point);
-	printBoard(board,n,m,2,1);*/
 	legal_options = calloc(N,sizeof(int));
 	/*if board is legaly finished return 1*/
 	board_state = isFinished(n,m,board);
@@ -65,14 +67,13 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 		starting_point += 2;
 		fixed = board[starting_point + 1];
 	}
-/*	printf("starting point: x:%d,y:%d\n",xFromLocation(N,starting_point),yFromLocation(N,starting_point));*/
-	if (optionsForLocation(n,m,xFromLocation(N,starting_point),yFromLocation(N,starting_point),board,legal_options) == 0){
-		return 0;
-	}/*check next unfixed cell's options*/
+	if (optionsForLocation(n,m,xFromLocation(N,starting_point),yFromLocation(N,starting_point),board,legal_options) == 0){return 0;}//check next unfixed cell's options
+
 	for (i=0;i<N;i++){/*for each option fill cell with one of the values and call recuresively*/
 		if (legal_options[i] == 1){
 			board[starting_point] = i+1;
 			rslt += recursiveEBA(n, m, board, starting_point+2);/*add to rslt variable all options that returned with value*/
+			deleteUnfixedFromPoint(n,m,board,starting_point-2);
 		}
 	}
 	free(legal_options);

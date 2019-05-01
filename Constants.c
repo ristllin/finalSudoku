@@ -5,6 +5,7 @@
  *      Author: Roy Darnell
  */
 const int MAXBUFFERSIZE = 256;
+const int DEBUG = 0;
 const char* OPENNING = "'-_-=Welcome to SudokuFun=-_-'";
 const char* ENTERCOMMAND = "Please enter a command: ";
 const char* TOOMANYCHARACTERS = " too many characters were entered in a single line \n";
@@ -22,7 +23,7 @@ const char* ILLEGALSAVEERROR = "Can't save erroneous board in edit mode, please 
 const char* FIXEDCELLERROR = "you can't set fixed cells";
 const char* FILLEDCELLERROR = "you can't get hints for cells with values";
 const char* WRONGSTATEERROR = "Function unavailable in current state \n";
-const char* INVALIDBOARDERROR = "Board is invalid for command"; /*e.g. erroneous for auto-fill*/
+const char* INVALIDBOARDERROR = "Board is erroneous, can not complete command"; /*e.g. erroneous for auto-fill*/
 const char* EXECUTIONERROR = "Command finished unsuccessfully"; /*e.g. save command failed to save*/
 const char* COMMANDLENGTHERROR = "Invalid command length, please enter a command under 256 chars";
 const char* UNSOLVEDBOARD = "The board is not solvable";

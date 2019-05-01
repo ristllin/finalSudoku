@@ -8,6 +8,9 @@
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
+extern const int MAXBUFFERSIZE;
+extern const int DEBUG;
+
 extern const char* OPENNING;
 extern const char* ENTERCOMMAND;
 extern const char* TOOMANYCHARACTERS;
@@ -52,7 +55,6 @@ extern const char* FILLEDCELLERROR;
 extern const char* UNSOLVEDBOARD;
 extern const char* XSIZEISTOOLARGE;
 
-extern const int MAXBUFFERSIZE;
 extern const char* WINNING;
 extern const char* CURRUPTFILEFORMAT;
 extern const char* INVALIDFILEPATH;
