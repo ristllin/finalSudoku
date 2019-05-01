@@ -92,7 +92,7 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 			return rslt;
 			break;
 		case 5:
-			rslt = generate(x,y,*board,(int)*n,(int)*m, ctrl_z,ctrl_z_current);
+			rslt = generate(x,y,*board,(int)*n,(int)*m, ctrl_z,ctrl_z_current, state);
 			return rslt;
 			break;
 		case 6:
@@ -100,7 +100,7 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 			return rslt;
 			break;
 		case 7:
-			rslt = guess((int)*n,(int)*m,user_threshold,*board, ctrl_z,ctrl_z_current);
+			rslt = guess((int)*n,(int)*m,user_threshold,*board, ctrl_z,ctrl_z_current, state);
 			return rslt;
 			break;
 		case 8:
@@ -253,7 +253,7 @@ int numSolutions(int n, int m, int* board){
 	return 1;
 }
 
-int generate(int x, int y, int* board, int n, int m, struct Node* ctrl_z, struct Node** ctrl_z_current){
+int generate(int x, int y, int* board, int n, int m, struct Node* ctrl_z, struct Node** ctrl_z_current, int* state){
 	/* function description: Generates a puzzle by randomly filling X empty cells with legal values,
 running ILP to solve the board, and then clearing all but Y random cells.
 	 * state: Edit
@@ -360,7 +360,7 @@ running ILP to solve the board, and then clearing all but Y random cells.
 		zi = temp_board[i];
 		yi = yFromLocation(N,i)+1;
 		xi = xFromLocation(N, i)+1;
-		legal =  set(n, m, xi, yi, zi, board, ctrl_z, ctrl_z_current);
+		legal =  set(n, m, xi, yi, zi, board, ctrl_z, ctrl_z_current, state);
 		if(!legal){
 			printf("EROOR: %s\n", SETFAILED);
 			return 0;
@@ -412,7 +412,7 @@ int validate(int n, int m, int* board, int* state){
 	/*print*/
 }
 
-int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
+int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current, int* state){
 	/*function description: fills all cell values with a score of X or greater using LP. If several
    * values hold for the same cell, randomly choose one according to the score
 	 * state: Solve
@@ -430,7 +430,7 @@ int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node** 
 			}
 	/* call LP_Solver: get board and solve it using LP If several
 	values hold for the same cell, randomly choose one according to the score */
-	legal = LPSolver(n,m,x, board, ctrl_z, ctrl_z_current);
+	legal = LPSolver(n,m,x, board, ctrl_z, ctrl_z_current, state);
 /*	legal = 1; //<<<debug mode>>>*/
 	if(!legal){
 		printf("ERROR: %s \n", LPFAILED);

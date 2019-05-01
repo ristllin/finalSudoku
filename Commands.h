@@ -14,9 +14,9 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct Node** ctrl_z_current);
 void markErrors(int x, int* mark_errors);
 int numSolutions(int n, int m, int* board);
-int generate(int x, int y, int* board, int n, int m, struct Node* ctrl_z, struct Node** ctrl_z_current);
+int generate(int x, int y, int* board, int n, int m, struct Node* ctrl_z, struct Node** ctrl_z_current,int* state);
 int validate(int n, int m, int* board, int* state);
-int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current);
+int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node* ctrl_z_current, int* state);
 void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current);
 
 int guess_hint(int n, int m, int x,  int y, int* board);

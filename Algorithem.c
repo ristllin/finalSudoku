@@ -397,7 +397,7 @@ int LPSolveCell(int location, int n, int m, int* board, float* legal_options){
 }
 
 
-int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
+int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current, int* state){
 	/*Linear programming algorithm, Used by guess  functions. solves using gorubi solver module
 	 *  args: gets board to solve, and threshold
 	 * return: solved board, If several values hold for the same cell, randomly choose one according to the score
@@ -440,7 +440,7 @@ int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, stru
 				  InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
 				  *ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 				  if(sol_value!=-1){  /*there is an option higher than X*/
-						valid =  set(n, m, i+1, j+1, sol_value, board, ctrl_z, ctrl_z_current);
+						valid =  set(n, m, i+1, j+1, sol_value, board, ctrl_z, ctrl_z_current, state);
 						if(!valid){
 							printf("EROOR: %s\n", SETFAILED);
 							return 0;
