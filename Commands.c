@@ -561,8 +561,10 @@ int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
 	if ((*ctrl_z_current)->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
 	if (((*ctrl_z_current)->prev)->data == -4){ /*multi-undo, undo until next -3 in data*/
+		printf("debug: multi identified\n");
 		*ctrl_z_current = (*ctrl_z_current)->prev;
 		while(((*ctrl_z_current)->prev)->data != -3){
+			printf("not yet\n");
 			undo(n,m,board,ctrl_z,ctrl_z_current);
 		}
 	}
