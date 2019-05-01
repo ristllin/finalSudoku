@@ -179,36 +179,42 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	return 1;
 }
 
-int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct Node* ctrl_z_current){
+int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/*function description: Automatically fill "obvious" values � cells which contain a single legal value.
 	 * state: solve
 	 * args: board - changes current board
 	 * return:
 	 */
 	/*<<<<add special mark in redo\undo and refer in redo/undo and use set!>>>>*/
-	int* temp_board; int* legal_options; int x,y,location,option = 0;
+	int* temp_board; int* legal_options; int i,x,y,location,option = 0;
 	const int N = (n)*(m);
 	const int board_size = (N*N)*2;
 	if (DEBUG){printf(">>debug: autoFill() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
+	if (DEBUG){printf("with: n:%d,m:%d,board:%d,ctrl_z:%d,current:%d\n",n,m,board,ctrl_z,ctrl_z_current);}
 	temp_board = calloc(board_size,sizeof(int));
 	legal_options = calloc(N,sizeof(int));
-	board = *board;
 	copyBoard(board,temp_board,N);
+//	RemoveFollowingNodes(ctrl_z_current); /*delete following moves if existing*/
+//	InsertAtTail(-3,x,y,ctrl_z); /*add former data (board[location] not z)*/
+//	ctrl_z_current = (ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 	for (x=0;x<N;x++){
 		for (y=0;y<N;y++){
 			location = (x+y*N)*2;
 			if (temp_board[location] == 0){ /*if cell is empty*/
+//				printf("setting: x:%d,y:%d is empty\n",x+1,y+1,option+1);
 				if (optionsForLocation(n,m,x,y,temp_board,legal_options) == 1){ //legal value inj position
+					for(i=0;i<N;i++){printf("",legal_options[i]);}
 					option = singleOption(legal_options,N);
 					if (option != 0){ /*"obvious" solution for cell*/
-						set(n,m,x+1,y+1,option+1,&board,ctrl_z,ctrl_z_current);
+//						printf("setting: x:%d,y:%d,z:%d\n",x+1,y+1,option+1);
+						set(n,m,x+1,y+1,option+1,board,ctrl_z,ctrl_z_current);
 					}
 				}
 			}
 		}
 	}
-	//if cell has 1 option, change origin cell to
+//	InsertAtTail(-4,x,y,ctrl_z); /*add former data (board[location] not z)*/
+//	ctrl_z_current = (ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 	free(legal_options);
 	free(temp_board);
 	if (DEBUG){printf("<<debug: autoFill() finished\n");}
@@ -548,11 +554,16 @@ int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 	/* set pointer in the list */
 	/* no moves to undo --> error */
 	/* print change */
-	/*if -1 run until -1*/
 	int x,y,temp,location = 0; const int N = n*m;
 	if (DEBUG){printf(">>debug: undo() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
 	if ((*ctrl_z_current)->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
+	if (((*ctrl_z_current)->prev)->data == -4){ /*multi-undo, undo until next -3 in data*/
+		*ctrl_z_current = (*ctrl_z_current)->prev;
+		while(((*ctrl_z_current)->prev)->data != -3){
+			undo(n,m,board,ctrl_z,ctrl_z_current);
+		}
+	}
 	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
 	location = (x+(y*N))*2;
 	temp = board[location];
@@ -573,11 +584,16 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 	/* set pointer in the list */
 	/* no moves to redo --> error */
 	/* print change */
-	/*<<<<if has -1 run until next -1>>>>*/
 	int x,y,temp,location = 0; const int N = n*m;
 	if (DEBUG){printf(">>debug: redo() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
 	if (((*ctrl_z_current)->next) == NULL){printf("%s\n",NOMOREMOVES);return 0;}
+	if (((*ctrl_z_current)->next)->data == -3){ /*multi-redo, redo until next -4 in data*/
+		*ctrl_z_current = (*ctrl_z_current)->next;
+		while(((*ctrl_z_current)->next)->data != -4){
+			redo(n,m,board,ctrl_z,ctrl_z_current);
+		}
+	}
 	*ctrl_z_current = (*ctrl_z_current)->next;
 	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
 	location = (x+(y*N))*2;
