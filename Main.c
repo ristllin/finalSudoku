@@ -36,16 +36,19 @@ int main(int argc, char* argv[]){
 	while(1){
 		userInput(board,m,n,state, user_command, user_path, user_threshold);
 		did_pass = execute(&board, user_command, user_path, &m, &n, &mark_errors, &state, ctrl_z, &ctrl_z_current, &guess_board, user_threshold[0]);
-		printf("ctrl_z:");Print(ctrl_z);printf("\n");
-		printf("current:");Print(ctrl_z_current);printf("\n");
+//		printf("ctrl_z:");Print(ctrl_z);printf("\n");
+//		printf("current:");Print(ctrl_z_current);printf("\n");
+//		printf("mark_errors:%d,mark_errors(addr):%d\n",mark_errors,&mark_errors);
 		if (did_pass){
 			if (isFinished(n,m,board) == 1 && state == 1){
 				printBoard(board,n,m,state,mark_errors);
 				printf("%s\n",WINNING);
-				toInit(&board, &guess_board, &m, &n, &mark_errors, ctrl_z, ctrl_z_current, &state);
+				toInit(board,guess_board,&m,&n,mark_errors,ctrl_z,&ctrl_z_current,state);
 			}else{
 				printBoard(board,n,m,state,mark_errors);
 			}
+		} else if (state == 1){
+			printBoard(board,n,m,state,mark_errors);
 		}
 	}
 

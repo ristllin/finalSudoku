@@ -19,7 +19,7 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 	 * return: void
 	 */
 //	printf("debug: printBoard() called\n");
-//	printf("with: n:%d,m:%d,board:%d\n",n,m,board);
+//	printf("with: n:%d,m:%d,board:%d,mark:%d\n",n,m,board,mark_errors);
 
 	int row; int col; int value; int fixed;
 	int N = n * m;

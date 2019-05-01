@@ -171,6 +171,7 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	if (z > N || z < 1){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
 	x = x-1; y = y-1; //translate value to location
 	location = (x+(y*N))*2;
+	if (board[location+1] == 1){printf("%s\n",FIXEDCELLERROR);return 0;}
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	InsertAtTail(board[location],x,y,ctrl_z); /*add former data (board[location] not z)*/
 	board[location] = z;
@@ -385,7 +386,7 @@ int validate(int n, int m, int* board, int* state){
 	//check if board is erroneous
 	legal = isFinished(n,m,board);
 	if(!legal){
-		printf("ERROR: %s",INVALIDBOARDERROR);
+		printf("ERROR: %s\n",INVALIDBOARDERROR);
 		return 0;
 			}
 	//check if board is found to be solvable, or not using ILP
