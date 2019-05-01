@@ -18,8 +18,6 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 	 * args: mark_errors - whether to mark errors or not
 	 * return: void
 	 */
-//	printf("debug: printBoard() called\n");
-//	printf("with: n:%d,m:%d,board:%d,mark:%d\n",n,m,board,mark_errors);
 
 	int row; int col; int value; int fixed;
 	int N = n * m;
@@ -99,13 +97,10 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 	}
 	if (*n > 5 || *m > 5){printf("%s \n",CURRUPTFILEFORMAT);return 1;}
 	N = (int)*n * (int)*m;
-//	printf("debug: reallocating with N:%d\n",N);
 	new_board = (int*)calloc(board,N*N*2*sizeof(int)); /* rows X columns X [value,type] */
 //	free(board); //<<<need to happen to avoid memory leak!>>>
-//	printf("debug: reallocation successful\n");
 	while (1) { /*sets board according to n and m*/
 		c = fgetc(file_pointer);
-//		printf("%c|",c);
 		if( feof(file_pointer) ) {
 			break ;
 		}
@@ -124,7 +119,7 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		}
 	}
 	*board = new_board;
-//	fclose(file_pointer); /*<<<need to release file>>>*/
+	fclose(file_pointer); /*<<<need to release file>>>*/
 	if (DEBUG){printf("<<debug: readBoardFromFile(0) finished\n");}
 	return 0;
 }

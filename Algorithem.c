@@ -67,7 +67,6 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 		starting_point += 2;
 		fixed = board[starting_point + 1];
 	}
-//	printf("starting point: x:%d,y:%d\n",xFromLocation(N,starting_point),yFromLocation(N,starting_point));
 	if (optionsForLocation(n,m,xFromLocation(N,starting_point),yFromLocation(N,starting_point),board,legal_options) == 0){return 0;}//check next unfixed cell's options
 	for (i=0;i<N;i++){/*for each option fill cell with one of the values and call recuresively*/
 		if (legal_options[i] == 1){
@@ -77,7 +76,6 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 		}
 	}
 	free(legal_options);
-//	printf("debug: EBA rslt: %d\n",rslt);
 	return rslt;
 }
 //

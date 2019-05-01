@@ -67,7 +67,6 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 	 * args: all variables that require memory release
 	 * return: 1 - completed successful, 0 command completed unsuccessfully
 	 */
-	/*<<<>>>catch errors from functions*/
 	int rslt = 1; int command = user_command[0]; int x = user_command[1]; int y = user_command[2]; int z = user_command[3];
 	struct Node* temp;
 	if (DEBUG){printf(">>debug: execute() called\n");}
@@ -187,7 +186,6 @@ int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct No
 	 * args: board - changes current board
 	 * return:
 	 */
-	/*<<<<add special mark in redo\undo and refer in redo/undo and use set!>>>>*/
 	int* temp_board; int* legal_options; int i,x,y,location,option = 0;
 	const int N = (n)*(m);
 	const int board_size = (N*N)*2;
@@ -246,7 +244,6 @@ int numSolutions(int n, int m, int* board){
 	 * args:
 	 * return:
 	 */
-
 	int rslt = 0;
 	if (DEBUG){printf(">>debug: numSolutions() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
@@ -291,7 +288,6 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	temp_board = (int*)calloc(N*N*2,sizeof(int));
 	list = (int*)calloc(empty_cells_cnt,sizeof(int));
 	random_empty_x_cells = (int*)calloc(x,sizeof(int));
-
 	/* for (1000), break once the ILP is valid */
 	for(int i=0; i<1000; i++){
 	//truncate copied board
@@ -563,13 +559,10 @@ int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
 	if ((*ctrl_z_current)->prev == NULL){printf("%s\n",NOMOREMOVES);return 0;}
 	if ((*ctrl_z_current)->data == -4){ /*multi-undo, undo until next -3 in data*/
-//		printf("debug: multi identified\n");
 		*ctrl_z_current = (*ctrl_z_current)->prev; //avoid infi loop
 		while((*ctrl_z_current)->data != -3){
-//			printf("not yet\n");
 			undo(n,m,board,ctrl_z,ctrl_z_current);
 		}
-//		*ctrl_z_current = (*ctrl_z_current)->prev; //skipping marker
 		if (DEBUG){printf("<<debug: multi_undo(1) finished\n");} return 1;
 	}
 	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
@@ -604,9 +597,7 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 		temp = board[location];
 		board[location] = (*ctrl_z_current)->data;
 		(*ctrl_z_current)->data = temp;
-//		printf("debug: multi identified\n");
 		while((int)(*ctrl_z_current)->data != -4 && flag != -7){
-//			printf("not yet, current.data:%d\n",(*ctrl_z_current)->data);
 			Print(*ctrl_z_current);
 			flag = redo(n,m,board,ctrl_z,ctrl_z_current);
 		}
@@ -691,13 +682,9 @@ int toSolve(int* n, int* m, char* path, int* state, int** board, int* guess_boar
 	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/
 		*state = 1;
-//		free(board); /*<<<<need to free!!!>>>>*/
-//		free(*guess_board);
 		*board = temp_board;
 		*n = tempn;
 		*m = tempm;
-//		N = (int)n*(int)m;
-//		guess_board = calloc(N*N*2,sizeof(int));
 	}
 	if (DEBUG){printf("<<debug: toSolve(1) finished\n");}
 	return 1;
@@ -720,7 +707,6 @@ int toEdit(int* board, int* guess_board,int* m, int* n,int* mark_errors, int* st
 		*n = tempn;
 		*m = tempm;
 		N = (int)*n*(int)*m;
-		printf("*board:%d,board:%d,&board:%d\n",*board,board,&board);
 		free(*board);
 		*board = calloc(N*N*2,sizeof(int));
 		copyBoard(temp_board,*board,N);

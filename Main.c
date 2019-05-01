@@ -18,7 +18,7 @@ int* board; /* pseudo triple array -> single array, n*m*2 = rows * columns * [va
 int* guess_board; /*  single array, n*m*2 = rows * columns * [value,fixed- 1\0] playing board - used temporarily for guesses and hints*/
 int* m; /*board's width*/
 int* n; /* board's length*/
-int* mark_errors; /*1 show errors (default), 0 don't show*/
+int* mark_errors = 1; /*1 show errors (default), 0 don't show*/
 int* state; /* 0 => init, 1 => solve, 2 => edit */
 float user_threshold[1];
 
@@ -38,11 +38,6 @@ int main(int argc, char* argv[]){
 	while(1){
 		userInput(board,m,n,state, user_command, user_path, user_threshold);
 		did_pass = execute(&board, user_command, user_path, &m, &n, &mark_errors, &state, ctrl_z, &ctrl_z_current, &guess_board, user_threshold[0]);
-//		printf("ctrl_z:");Print(ctrl_z);printf("\n");
-//		printf("current:");Print(ctrl_z_current);printf("\n");
-//		printf("mark_errors:%d,mark_errors(addr):%d\n",mark_errors,&mark_errors);
-//		printBoard(board,n,m,state,mark_errors);
-//		printf("did_pass:%d\n",did_pass);
 		if (did_pass){
 			if (isFinished(n,m,board) == 1 && state == 1){
 				printBoard(board,n,m,state,mark_errors);
