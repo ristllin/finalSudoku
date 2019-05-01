@@ -191,30 +191,32 @@ int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct No
 	const int board_size = (N*N)*2;
 	if (DEBUG){printf(">>debug: autoFill() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d,board:%d,ctrl_z:%d,current:%d\n",n,m,board,ctrl_z,ctrl_z_current);}
+	if (EBA(n,m,board) < 1){printf("%s\n",INVALIDBOARDERROR);if (DEBUG){printf("<<debug: autoFill() finished\n");}return 0;}
 	temp_board = calloc(board_size,sizeof(int));
 	legal_options = calloc(N,sizeof(int));
 	copyBoard(board,temp_board,N);
-//	RemoveFollowingNodes(ctrl_z_current); /*delete following moves if existing*/
-//	InsertAtTail(-3,x,y,ctrl_z); /*add former data (board[location] not z)*/
-//	ctrl_z_current = (ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
+	InsertAtTail(-3,x,y,ctrl_z); /*add former data (board[location] not z)*/
+	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 	for (x=0;x<N;x++){
 		for (y=0;y<N;y++){
 			location = (x+y*N)*2;
 			if (temp_board[location] == 0){ /*if cell is empty*/
-//				printf("setting: x:%d,y:%d is empty\n",x+1,y+1,option+1);
+				printf("----->x:%d,y:%d is empty\n",x+1,y+1,option+1);
 				if (optionsForLocation(n,m,x,y,temp_board,legal_options) == 1){ //legal value inj position
-					for(i=0;i<N;i++){printf("",legal_options[i]);}
+					for(i=0;i<N;i++){printf("%d|",legal_options[i]);}printf("\n");
 					option = singleOption(legal_options,N);
+					printf("option:%d\n",option);
 					if (option != 0){ /*"obvious" solution for cell*/
-//						printf("setting: x:%d,y:%d,z:%d\n",x+1,y+1,option+1);
-						set(n,m,x+1,y+1,option+1,board,ctrl_z,ctrl_z_current);
+						printf("setting: x:%d,y:%d,z:%d\n",x+1,y+1,option+1);
+						set(n,m,x+1,y+1,option,board,ctrl_z,ctrl_z_current);
 					}
 				}
 			}
 		}
 	}
-//	InsertAtTail(-4,x,y,ctrl_z); /*add former data (board[location] not z)*/
-//	ctrl_z_current = (ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+	InsertAtTail(-4,x,y,ctrl_z); /*add former data (board[location] not z)*/
+	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 	free(legal_options);
 	free(temp_board);
 	if (DEBUG){printf("<<debug: autoFill() finished\n");}
