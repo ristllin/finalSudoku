@@ -7,10 +7,12 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include "List.h"
 #include "AuxFunctions.h"
 #include "Constants.h"
 #include "Commands.h"
+#include "IOCommands.h"
 #include "Algorithem.h"
 
 /*AuxFunctions */
@@ -628,11 +630,11 @@ int save(int n, int m, char* path, int* board, int* state){
 	 * return: void
 	 */
 	int i = 0; const int N = n*m; int* temp_board;
-	if (DEBUG){printf(">>debug: save() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d,state:%d,path:%s\n",n,m,state,path);}
+	/*if (DEBUG){printf(">>debug: save() called\n");}
+	if (DEBUG){printf("with: n:%d,m:%d,state:%d,path:%s\n",n,m,state,path);}*/
 	temp_board = calloc(N*N*2,sizeof(int));
 	copyBoard(board,temp_board,N);
-	if (state == 2){ /* edit - mark cells containing values as fixed */
+	if ((int)state == 2){ /* edit - mark cells containing values as fixed */
 		for (i=0;i<N*N;i++){ /*each existing value in board, fix in temp_board*/
 			if (temp_board[i*2] != 0){
 				temp_board[i*2+1] = 1;
@@ -657,15 +659,13 @@ void toInit(int* board, int* guess_board,int* m, int* n,int* mark_errors, struct
 	 * return: void
 	 */
 	/*n,m to 9, state to 0, boards to empty*/
-	int N,i; struct Node* temp;
-	if (DEBUG){printf(">>debug: toInit() called\n");}
-	if (DEBUG){printf("with: board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",board,guess_board,m,n,mark_errors,ctrl_z,ctrl_z_current,state);}
+	int N;
+	/*if (DEBUG){printf(">>debug: toInit() called\n");}
+	if (DEBUG){printf("with: board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)guess_board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}*/
 	free(board);
-	free(guess_board);
 	*n = 3; *m = 3; state = 0; mark_errors = 1;
 	N = (int)(*n)*(int)(*m);
 	board = calloc(N*N*2,sizeof(int));
-	guess_board = calloc(N*N*2,sizeof(int));
 	truncateArray(board,N*N*2);
 	truncateArray(guess_board,N*N*2);
 	RemoveFollowingNodes(ctrl_z);
@@ -679,8 +679,8 @@ int toSolve(int* n, int* m, char* path, int* state, int** board, int* guess_boar
 	 * return: 1 - successful, 0 unsuccessful
 	 */
 	int* temp_board, tempn, tempm; int fail = 0; int N;
-	if (DEBUG){printf(">>debug: toSolve() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
+	/*if (DEBUG){printf(">>debug: toSolve() called\n");}
+	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}*/
 	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
 	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/
@@ -699,20 +699,20 @@ int toEdit(int* board, int* guess_board,int* m, int* n,int* mark_errors, int* st
 	 * return: void
 	 */
 	int* temp_board, tempn, tempm; int N = (*n)*(*m);
-	if (DEBUG){printf(">>debug: toEdit() called\n");}
-	if (DEBUG){printf("with: path:%s,board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",user_path,board,guess_board,m,n,mark_errors,ctrl_z,ctrl_z_current,state);}
+	/*if (DEBUG){printf(">>debug: toEdit() called\n");}
+    if (DEBUG){printf("with: path:%s,board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)user_path,(int)board,(int)guess_board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,(int)state);}*/
 	*state = 2;
 	if (strlen(user_path) == 0){
-		toInit(*board, *guess_board, m, n,*mark_errors, ctrl_z, ctrl_z_current,*state);
+		toInit(board, guess_board, m, n,*mark_errors, ctrl_z, ctrl_z_current,*state);
 	}
 	else if (readBoardFromFile(&tempn, &tempm, &temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
 	else{
 		*n = tempn;
 		*m = tempm;
 		N = (int)*n*(int)*m;
-		free(*board);
-		*board = calloc(N*N*2,sizeof(int));
-		copyBoard(temp_board,*board,N);
+		free(board);
+		board = calloc(N*N*2,sizeof(int));
+		copyBoard(temp_board,board,N);
 		free(temp_board);
 	}
 	if (DEBUG){printf("<<debug: toEdit(1) finished\n");}
