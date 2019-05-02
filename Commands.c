@@ -636,14 +636,14 @@ void toInit(int** board,int* m, int* n,int* mark_errors, struct Node* ctrl_z, st
 	/*n,m to 9, state to 0, boards to empty*/
 
 	int N; 
-  int* temp;
+	int* temp;
 	/*if (DEBUG){printf(">>debug: toInit() called\n");}
 	if (DEBUG){printf("with: board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}*/
 	free(*board);
-	n = 3; m = 3;
-	state = 0;
-	mark_errors = 1;
-	N = (int)(n)*(int)(m);
+	*n = 3; *m = 3;
+	*state = 0;
+	*mark_errors = 1;
+	N = (int)(*n)*(int)(*m);
 	temp = calloc(N*N*2,sizeof(int));
 	board = &temp;
 	truncateArray(*board,N*N*2);
@@ -657,18 +657,33 @@ int toSolve(int* n, int* m, char* path, int* state, int** board){
 	 * args: x --> file path
 	 * return: 1 - successful, 0 unsuccessful
 	 */
-	int* temp_board, tempn, tempm; int fail = 0;
+	int* temp_board;
+	int* tempn;
+	int* tempm;
+	int tempn_init;
+	int tempm_init;
+	int temp_board_init;
+	int fail;
+	temp_board_init = 0;
+	tempn_init = 0;
+	tempm_init = 0;
+	temp_board_init = 0;
+	fail = 0;
+	tempm = &tempm_init;
+	tempn = &tempn_init;
+	temp_board = &temp_board_init;
 	/*if (DEBUG){printf(">>debug: toSolve() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}*/
-	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
+	fail = readBoardFromFile(tempn, tempm, &temp_board, path);
 	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
 	else{ /*reading successful*/
 		*state = 1;
 		*board = temp_board;
-		*n = tempn;
-		*m = tempm;
+		*n = *tempn;
+		*m = *tempm;
 	}
 	if (DEBUG){printf("<<debug: toSolve(1) finished\n");}
+	/*if (DEBUG){printf("with: n:%d,m:%d\n",*n,*m);}*/
 	return 1;
 }
 
@@ -677,28 +692,40 @@ int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_p
 	 * args: x --> file path
 	 * return: void
 	 */
-	int** temp_board;
+	int* temp_board;
 	int* tempn;
 	int* tempm;
+	int* alloc_board;
+	int tempn_init;
+	int tempm_init;
+	int temp_board_init;
+	temp_board_init = 0;
+	tempn_init = 0;
+	tempm_init = 0;
+	temp_board_init = 0;
+	tempm = &tempm_init;
+	tempn = &tempn_init;
+	temp_board = &temp_board_init;
 	int N = (*n)*(*m);
 	/*if (DEBUG){printf(">>debug: toEdit() called\n");}
     if (DEBUG){printf("with: path:%s,board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)user_path,(int)board,(int)guess_board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,(int)state);}*/
 	*state = 2;
-	tempn = 0;
-	tempm = 0;
-	temp_board = 0;
-	if (strlen(user_path) == 0){
+	if (strlen(user_path) == 0){ /*edit a new board*/
 		toInit(board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
 	}
-	else if (readBoardFromFile(tempn, tempm, temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
-	else{
-		n = tempn;
-		m = tempm;
-		N = (int)*n*(int)*m;
-		free(board);
-		board = calloc(N*N*2,sizeof(int));
-		copyBoard(*temp_board,*board,N);
-		free(*temp_board);
+	else if (readBoardFromFile(tempn, tempm, &temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
+	else{ /*edit with path*/
+
+		*n = *tempn;
+		*m = *tempm;
+		N = (int)(*n)*(int)(*m);
+		printBoard(temp_board,*n,*m,1);
+		free(*board);
+		alloc_board = (int*)calloc(N*N*2,sizeof(int));
+		*board = alloc_board;
+		copyBoard(temp_board,*board,N);
+		printBoard(*board,*n,*m,1);
+		free(temp_board);
 	}
 	if (DEBUG){printf("<<debug: toEdit(1) finished\n");}
 	return 1;
