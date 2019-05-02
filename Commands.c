@@ -16,7 +16,7 @@
 #include "Algorithem.h"
 
 
-int execute(int** board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node** ctrl_z_current, float user_threshold){
+int execute(int** board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, Node* ctrl_z, Node** ctrl_z_current, float user_threshold){
 	/*function description: activate correct command according to user command and pass relevant parameters (router).
 	 * args: all variables that require memory release
 	 * return: 1 - completed successful, 0 command completed unsuccessfully
@@ -47,7 +47,7 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 			return rslt;
 			break;
 		case 5:
-			rslt = generate(x,y,*board,(int)*n,(int)*m, ctrl_z,ctrl_z_current, state);
+			rslt = generate(x,y,*board,(int)*n,(int)*m, ctrl_z,ctrl_z_current);
 			return rslt;
 			break;
 		case 6:
@@ -97,22 +97,22 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 	return 1;
 }
 
-void exitSudoku(int** board, struct Node* ctrl_z){
+void exitSudoku(int** board, Node* ctrl_z){
 	/*function description: Terminates the program.
 	 * args: all variables that require memory release
 	 * return: void
 	 */
 	/*free all variables that require memory release!*/
-	if (DEBUG){
+	/*if (DEBUG){
 		printf(">>debug: exit() called\n");}
 	if (DEBUG){
-		printf("with: board:%d,ctrl_z:%d\n",board,ctrl_z->data);}
+		printf("with: board:%d,ctrl_z:%d\n",board,ctrl_z->data);}*/
 	free(*board); RemoveFollowingNodes(ctrl_z);
 	printf("Thank you for playing. bye bye.\n");
 	exit(0);
 }
 
-int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current,int* state){
+int set(int n, int m, int x, int y, int z, int* board, Node* ctrl_z, Node** ctrl_z_current,int* state){
 	/*function description: sets the value of cell <x,y> to z, user may empty a cell
 	 * state: Edit, Solve (fixed cells are not updated)
 	 * args: cell -> <x,y>
@@ -150,7 +150,7 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	return 1;
 }
 
-int autoFill(int n, int m, int* board, int* state,struct Node* ctrl_z, struct Node** ctrl_z_current){
+int autoFill(int n, int m, int* board, int* state,Node* ctrl_z, Node** ctrl_z_current){
 	/*function description: Automatically fill "obvious" values � cells which contain a single legal value.
 	 * state: solve
 	 * args: board - changes current board
@@ -223,7 +223,7 @@ int numSolutions(int n, int m, int* board){
 	return 1;
 }
 
-int generate(int x, int y, int* board, int n, int m, struct Node* ctrl_z, struct Node** ctrl_z_current, int* state){
+int generate(int x, int y, int* board, int n, int m, Node* ctrl_z, Node** ctrl_z_current){
 	/* function description: Generates a puzzle by randomly filling X empty cells with legal values,
 running ILP to solve the board, and then clearing all but Y random cells.
 	 * state: Edit
@@ -389,7 +389,7 @@ int validate(int n, int m, int* board){
 	/*print*/
 }
 
-int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current, int* state){
+int guess(int n, int m, float x, int* board, Node* ctrl_z, Node** ctrl_z_current, int* state){
 	/*function description: fills all cell values with a score of X or greater using LP. If several
    * values hold for the same cell, randomly choose one according to the score
 	 * state: Solve
@@ -415,7 +415,7 @@ int guess(int n, int m, float x, int* board, struct Node* ctrl_z, struct Node** 
 	return 1;
 }
 
-void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
+void reset(int n, int m, int* board, Node* ctrl_z, Node** ctrl_z_current){
 	/* function description: Undo all moves, reverting the board to its original loaded state
 	 * state: Solve, Edit
 	 * return: void
@@ -424,7 +424,6 @@ void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_c
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
 	while (((*ctrl_z_current)->prev)->data != -2){
 		undo(n,m,board ,ctrl_z, ctrl_z_current);
-		Print(ctrl_z);
 	}
 	if (DEBUG){printf("<<debug: reset() finished\n");}
 }
@@ -527,7 +526,7 @@ int hint(int n, int m, int x, int y, int* board){
 			/* print the value of specific location in board */
 			/* free copied board */
 }
-int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
+int undo(int n, int m, int* board, Node* ctrl_z, Node** ctrl_z_current){
 	/*function description: Undo previous moves done by the user
 	 * states: Edit, Solve
 	 * args:
@@ -558,7 +557,7 @@ int undo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 	return 1;
 }
 
-int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current){
+int redo(int n, int m, int* board, Node* ctrl_z, Node** ctrl_z_current){
 	/*function description: Redo a move previously undone by the user.
 	 * states: Edit, Solve
 	 * args:
@@ -581,7 +580,6 @@ int redo(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_cur
 		board[location] = (*ctrl_z_current)->data;
 		(*ctrl_z_current)->data = temp;
 		while((int)(*ctrl_z_current)->data != -4 && flag != -7){
-			Print(*ctrl_z_current);
 			flag = redo(n,m,board,ctrl_z,ctrl_z_current);
 		}
 		if (DEBUG){printf("<<debug: multi_redo(2) finished\n");}
@@ -632,7 +630,7 @@ int save(int n, int m, char* path, int* board, int state){
 	return 1;
 }
 
-void toInit(int** board,int* m, int* n,int* mark_errors, struct Node* ctrl_z, struct Node** ctrl_z_current,int* state){
+void toInit(int** board,int* m, int* n,int* mark_errors, Node* ctrl_z, Node** ctrl_z_current,int* state){
 	/*function description: change state to 'init' mode, sets all global parameters to default.
 	 * args: all global parameters
 	 * return: void
@@ -691,7 +689,7 @@ int toSolve(int* n, int* m, char* path, int* state, int** board){
 	return 1;
 }
 
-int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_path,struct Node* ctrl_z, struct Node** ctrl_z_current){
+int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_path,Node* ctrl_z, Node** ctrl_z_current){
 	/*function description: change state to 'Edit' mode, and set board from file or to empty board if the file path is empty
 	 * args: x --> file path
 	 * return: void
@@ -717,12 +715,14 @@ int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_p
 	if (strlen(user_path) == 0){ /*edit a new board*/
 		toInit(board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
 		*state = 2;
+		*mark_errors = 0;
 	}
 	else if (readBoardFromFile(tempn, tempm, &temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
 	else{ /*edit with path*/
 
 		*n = *tempn;
 		*m = *tempm;
+		*mark_errors = 0;
 		N = (int)(*n)*(int)(*m);
 		free(*board);
 		alloc_board = (int*)calloc(N*N*2,sizeof(int));

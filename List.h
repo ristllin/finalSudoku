@@ -7,13 +7,13 @@
 
 #ifndef LIST_H_
 #define LIST_H_
-struct Node  {
+typedef struct Node  {
 	int x;
 	int y;
 	int data;
 	struct Node* next;
 	struct Node* prev;
-};
+} Node;
 struct Node* GetNewNode(int data,int xdata, int ydata);
 void InsertAtHead(int data,int xdata,int ydata,struct Node* head);
 void InsertAtTail(int data,int xdata,int ydata,struct Node* head);

@@ -7,7 +7,7 @@
 #include "AuxFunctions.h"
 #include <stdlib.h>
 #include <stdio.h>
-//#include "gurobi_c.h"
+#include "gurobi_c.h"
 #include <string.h>
 #include "Constants.h"
 #include "List.h"
@@ -218,17 +218,17 @@ int ILP(int n, int m, int* board){
 	  val = (double*)calloc(N,sizeof(int)); /*Variable's Coefficients*/
 	  lb = (double*)calloc(N*N*N,sizeof(double)); /* lb = lowerbound*/
 	  vtype = (char*)calloc(N*N*N,sizeof(char)); /* variables types*/
-	  /*char**	names = (char**)calloc(N*N*N,sizeof(char*));  pointer to the name of variable
-	  char*		namestorage= (char*)calloc(10*N*N*N,sizeof(char));  names storage
-	  char*		cursor;*/
+	  char**	names = (char**)calloc(N*N*N,sizeof(char*));
+	  char*		namestorage= (char*)calloc(10*N*N*N,sizeof(char));
+	  char*		cursor;
 
 	  error = 0;
 
-	  /* Create an empty model
-	  cursor = namestorage;*/
+	  cursor = namestorage;
 	      for (i = 0; i < N; i++) {
 	          for (j = 0; j < N; j++) {
 	        	  location = (i + j*N)*2;
+	        	  board[location] = board[location]-1;
 	              for (v = 0; v < N; v++) {
 	                  if (board[location] == v) {
 	                      lb[i*N*N+j*N+v] = 1; /*LB = lowerbound*/
@@ -236,10 +236,10 @@ int ILP(int n, int m, int* board){
 	                  else {
 	                      lb[i*N*N+j*N+v] = 0;
 	                  }
-	                  /*names[i*N*N+j*N+v] = cursor;*/
+	                  names[i*N*N+j*N+v] = cursor;
 	                  vtype[i*N*N+j*N+v] = GRB_BINARY;
-	                 /* sprintf(names[i*N*N+j*N+v], "x[%d,%d,%d]", i, j, v+1);
-	                  cursor += strlen(names[i*N*N+j*N+v]) + 1;*/
+	                  sprintf(names[i*N*N+j*N+v], "x[%d,%d,%d]", i, j, v+1);
+	                  cursor += strlen(names[i*N*N+j*N+v]) + 1;
 	              }
 	          }
 	      }
@@ -351,8 +351,8 @@ int ILP(int n, int m, int* board){
 	  free(ind);
 	  free(lb);
 	  free(vtype);
-/*	  free(names);
-	  free(namestorage);*/
+	  free(names);
+	  free(namestorage);
 	  free(sol);
 	  free(val);
 

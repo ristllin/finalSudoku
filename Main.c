@@ -31,17 +31,21 @@ int state_init; /* 0 => init, 1 => solve, 2 => edit */
 
 
 int main(int argc, char* argv[]){
+	Node* ctrl_z; /*list of player moves, starts and ends with "-2" cells, "-1" states reset board*/
+	Node** ctrl_z_current; /*ctrl_z; pointer to current place in ctrl_z list */
+	char user_path[MAXBUFFERSIZE];
+	int user_command[4]; /*[command,x,y,z]*/
+	int did_pass;
+	int come_on;
 	m = &m_init;
 	n = &n_init;
 	mark_errors = &mark_errors_init;
 	state = &state_init;
-	struct Node* ctrl_z; /*list of player moves, starts and ends with "-2" cells, "-1" states reset board*/
-	struct Node** ctrl_z_current; /*ctrl_z; pointer to current place in ctrl_z list */
 	ctrl_z = GetNewNode(-2,0,0);
 	ctrl_z_current = &ctrl_z;
-	char user_path[MAXBUFFERSIZE];
-	int user_command[4]; /*[command,x,y,z]*/
-	int did_pass=1;
+	did_pass=1;
+	come_on = argc; argc = come_on;
+	argv[0] = NULL;
 	if(PRODUCTION==0){setvbuf(stdout, NULL, _IONBF, 0);} /*debug mode*/
 	temp = (int*)calloc(9*9*2,sizeof(int));
 	board = &temp;

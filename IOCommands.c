@@ -98,7 +98,7 @@ int readBoardFromFile(int* n, int* m, int** board,char* path){
 			num = 0;
 		}
 	}
-	if (*n > 5 || *m > 5){printf("%s \n",CURRUPTFILEFORMAT);return 1;}
+	if (*n > 5 || *m > 5 || *m == 0 || *n == 0){printf("%s \n",CURRUPTFILEFORMAT);return 1;}
 	N = (int)*n * (int)*m;
 	new_board = (int*)calloc(N*N*2,sizeof(int)); /* rows X columns X [value,type] */
 /*	free(board); <<<need to happen to avoid memory leak!>>> */
