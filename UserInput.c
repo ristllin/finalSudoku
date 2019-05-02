@@ -87,7 +87,7 @@ int getLine (const char *prmpt, char *buff, size_t sz) {
 
 
 
-void userInput(int* board, int m,int n,int state, int* user_command, char* user_path, float* user_threshold){
+void userInput(int m,int n,int state, int* user_command, char* user_path, float* user_threshold){
 	/*Implementation limitations:
 	 * 	- Max 256 chars
 	 * - Max 1 line
@@ -98,10 +98,17 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 	 * Otherwise returns relevant error*/
 	/*initiate variables*/
 
-	char    input[MAXBUFFERSIZE]; /* sufficient to handle one line */
-	int     invalid_command = 1; /* the command was valid */
-	int     command_flag = 0;
+	char    input[256]; /* sufficient to handle one line */
+	char command_name[256];
+	char* buffer;
+	char *rest;
+	int     invalid_command,command_flag, locationOfSpcae, paramCnt, value1, value2, value3;
+	float valuef1;
 	const int N = m*n;
+
+	invalid_command = 1; /* the command was valid */
+	command_flag = 0;
+
 	/*get user input*/
 	while(invalid_command){ /* run until the command is valid */
 		command_flag = getLine (ENTERCOMMAND, input, sizeof(input));
@@ -119,14 +126,14 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 		/*split to variables (validate amount)*/
 		/*Get command name*/
-		char* buffer = input;
+		buffer = input;
 /*		printf("debugging: name of command:%s\n", command_name); */
 		buffer = setTheLocationToStartOfNextString(buffer);
 		/*printf("debugging: %c\n", *buffer); */
-		char command_name[MAXBUFFERSIZE];
+
 		strcpy(command_name, buffer);
 
-		int locationOfSpcae = locationOfSpace(buffer);
+		locationOfSpcae = locationOfSpace(buffer);
 		command_name[locationOfSpcae]= '\0';
 		/*printf("debugging: name of command:%s\n", command_name); */
 		/*increase pointer to end of command name */
@@ -135,7 +142,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 		buffer = setTheLocationToStartOfNextString(buffer);
 		/*printf("debugging: the rest of command:%s\n", buffer); */
 		/*Check if the command name is valid from this state value*/
-		int paramCnt = 0; /*number of parameters */
+		paramCnt = 0; /*number of parameters */
 		if(strcmp(command_name,COMMANDSOLVE)==0){ /*solve command */
 			/*valid in all states */
 			paramCnt = numberOfParameters(buffer);
@@ -187,8 +194,8 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			}
 			locationOfSpcae = locationOfSpace(buffer); /*find the next location of space */
 			buffer[locationOfSpcae] = '\0'; /*end of word */
-			char *rest;
-			int value1 = strtol(buffer,&rest,10);
+
+			value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
@@ -238,8 +245,8 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			}
 
 			/*value 1 */
-			char *rest;
-			int value1 = strtol(buffer,&rest,10);
+
+			value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
@@ -254,7 +261,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 			/*value 2 */
 /*			printf("Debugging: rest of buffer is %s \n", buffer); */
-			int value2 = strtol(buffer,&rest,10);
+			value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
@@ -268,7 +275,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 			/*value 3 */
 			/*printf("Debugging: rest of buffer is %s \n", buffer); */
-			int value3 = strtol(buffer,&rest,10);
+			value3 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
@@ -316,20 +323,20 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 				continue;
 			}
 			/*value 1 */
-			char *rest;
-			float value1 = strtof(buffer,&rest);
+
+			valuef1 = strtof(buffer,&rest);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
 
 			}
-			if(value1<0.0 || value1>1.0){ /* m = lines */
+			if(valuef1<0.0 || valuef1>1.0){ /* m = lines */
 				printf("Error: %s\n", FIRSTPARAMETERERRORGUESS);
 				continue;
 			}
 
 			user_command[0]= 7;
-			*user_threshold = value1;
+			*user_threshold = valuef1;
 			invalid_command = 0;
 			break;
 		}
@@ -349,8 +356,8 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			}
 
 			/*value 1 */
-			char *rest;
-			int value1 = strtol(buffer,&rest,10);
+
+			value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
@@ -365,7 +372,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 			/*value 2 */
 			/*printf("Debugging: rest of buffer is %s \n", buffer); */
-			int value2 = strtol(buffer,&rest,10);
+			value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
@@ -451,8 +458,8 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			}
 
 			/*value 1 */
-			char *rest;
-			int value1 = strtol(buffer,&rest,10);
+
+			value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
@@ -467,7 +474,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 			/*value 2 */
 			/*printf("Debugging: rest of buffer is %s \n", buffer); */
-			int value2 = strtol(buffer,&rest,10);
+			value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
@@ -500,8 +507,8 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 			}
 
 			/*value 1 */
-			char *rest;
-			int value1 = strtol(buffer,&rest,10);
+
+			value1 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;
@@ -516,7 +523,7 @@ void userInput(int* board, int m,int n,int state, int* user_command, char* user_
 
 			/*value 2 */
 			/*printf("Debugging: rest of buffer is %s \n", buffer); */
-			int value2 = strtol(buffer,&rest,10);
+			value2 = strtol(buffer,&rest,10);
 			if (strcmp(rest,buffer)==0){
 				printf("Error: %s", NOTINT);
 				continue;

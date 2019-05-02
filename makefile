@@ -13,16 +13,16 @@ clean:
 	rm -f *.o $(EXEC)
 
 CC = gcc
-OBJS	= Main.o Algorithem.o AuxFunctions.o Commands.o Constants.o DebugTools.o IOCommands.o List.o UserInput.o
+OBJS	= Main.o Algorithem.o AuxFunctions.o Commands.o Constants.o IOCommands.o List.o UserInput.o
 EXEC = sudoku
-COMP_FLAG = -ansi -Wall -Wextra \-Werror -pedantic-errors -g
+COMP_FLAG = -ansi -Wall -Wextra \-Werror -pedantic-errors -g -std=c99
 GUROBI_COMP = -I/usr/local/lib/gurobi563/include
 GUROBI_LIB = -L/usr/local/lib/gurobi563/lib -lgurobi56
 
 $(EXEC): $(OBJS)
 	$(CC) $(OBJS) $(GUROBI_LIB) -o $@ -lm
 
-Main.o: Main.o Algorithem.o AuxFunctions.o Commands.o Constants.o DebugTools.o IOCommands.o List.o UserInput.o
+Main.o: Main.o Algorithem.o AuxFunctions.o Commands.o Constants.o IOCommands.o List.o UserInput.o
 	$(CC) $(COMP_FLAG) $(GUROBI_COMP) -c $*.c
 
 Algorithem.o: Algorithem.c  Algorithem.h 
@@ -35,9 +35,6 @@ Commands.o: Commands.c Commands.h
 	$(CC) $(COMP_FLAG) $(GUROBI_COMP) -c $*.c
 
 Constants.o: Constants.c Constants.h
-	$(CC) $(COMP_FLAG) $(GUROBI_COMP) -c $*.c
-
-DebugTools.o: DebugTools.c DebugTools.h
 	$(CC) $(COMP_FLAG) $(GUROBI_COMP) -c $*.c
 
 IOCommands.o: IOCommands.c IOCommands.h
