@@ -98,7 +98,7 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 			return rslt;
 			break;
 		case 6:
-			rslt = validate((int)*n,(int)*m,*board,state);
+			rslt = validate((int)*n,(int)*m,*board);
 			return rslt;
 			break;
 		case 7:
@@ -377,7 +377,7 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	return 1;
 }
 
-int validate(int n, int m, int* board, int* state){
+int validate(int n, int m, int* board){
 	/*function description:The command prints whether the board is found to be solvable, or not using ILP
 	 * states: Solve, Edit - for sure the right state
 	 * args:
@@ -663,22 +663,24 @@ void toInit(int** board, int* guess_board,int* m, int* n,int* mark_errors, struc
 	/*if (DEBUG){printf(">>debug: toInit() called\n");}
 	if (DEBUG){printf("with: board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)guess_board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}*/
 	free(board);
-	*n = 3; *m = 3; state = 0; mark_errors = 1;
+	*n = 3; *m = 3;
+	state = 0;
+	*mark_errors = 1;
 	N = (int)(*n)*(int)(*m);
 	board = calloc(N*N*2,sizeof(int));
-	truncateArray(board,N*N*2);
+	truncateArray(*board,N*N*2);
 	truncateArray(guess_board,N*N*2);
 	RemoveFollowingNodes(ctrl_z);
 	*ctrl_z_current = ctrl_z;
 	if (DEBUG){printf("<<debug: toInit() finished\n");}
 }
 
-int toSolve(int* n, int* m, char* path, int* state, int** board, int* guess_board,struct Node* ctrl_z, struct Node* ctrl_z_current){
+int toSolve(int* n, int* m, char* path, int* state, int** board){
 	/*function description: change state to 'Solve' mode, and set board from file
 	 * args: x --> file path
 	 * return: 1 - successful, 0 unsuccessful
 	 */
-	int* temp_board, tempn, tempm; int fail = 0; int N;
+	int* temp_board, tempn, tempm; int fail = 0;
 	/*if (DEBUG){printf(">>debug: toSolve() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}*/
 	fail = readBoardFromFile(&tempn, &tempm, &temp_board, path);
@@ -698,22 +700,24 @@ int toEdit(int** board, int* guess_board,int* m, int* n,int* mark_errors, int* s
 	 * args: x --> file path
 	 * return: void
 	 */
-	int* temp_board, tempn, tempm; int N = (*n)*(*m);
+	int** temp_board;
+	int* tempn, tempm;
+	int N = (*n)*(*m);
 	/*if (DEBUG){printf(">>debug: toEdit() called\n");}
     if (DEBUG){printf("with: path:%s,board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)user_path,(int)board,(int)guess_board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,(int)state);}*/
 	*state = 2;
 	if (strlen(user_path) == 0){
-		toInit(board, guess_board, m, n,*mark_errors, ctrl_z, ctrl_z_current,*state);
+		toInit(board, guess_board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
 	}
-	else if (readBoardFromFile(&tempn, &tempm, &temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
+	else if (readBoardFromFile(&tempn, &tempm, temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
 	else{
 		*n = tempn;
 		*m = tempm;
 		N = (int)*n*(int)*m;
 		free(board);
 		board = calloc(N*N*2,sizeof(int));
-		copyBoard(temp_board,board,N);
-		free(temp_board);
+		copyBoard(*temp_board,*board,N);
+		free(*temp_board);
 	}
 	if (DEBUG){printf("<<debug: toEdit(1) finished\n");}
 	return 1;
