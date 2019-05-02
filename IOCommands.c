@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void printBoard(int* board,int n, int m, int* state, int mark_errors){
+void printBoard(int* board,int n, int m, int mark_errors){
 	/*function description: print the board
 	 * state: Solve, Edit
 	 * args: mark_errors - whether to mark errors or not
@@ -64,15 +64,17 @@ void printBoard(int* board,int n, int m, int* state, int mark_errors){
 	printf("\n"); /*end of print*/
 }
 
-int readBoardFromFile(int* n, int* m, int* board,char* path){
+int readBoardFromFile(int* n, int* m, int** board,char* path){
 	/*function description: loads file in correct format to a given soduko board variable
 		 * args: n,m - size of board, path - file path
 		 * return: 1 for fail, 0 for success
 		 */
-	FILE* file_pointer; int N; int num,c,location = 0;
+	FILE* file_pointer;
+	int N;
+	int num,c,location;
 	int* new_board;
 	if (DEBUG){printf(">>debug: readBoardFromFile() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d,board:%d,path:%d\n",n,m,board,path);}
+	/*if (DEBUG){printf("with: n:%d,m:%d,board:%d,path:%d\n",n,m,board,path);}*/
 	file_pointer = fopen(path, "r");
 	if (file_pointer == NULL){ /*catch errors*/
 		printf("%s: %s \n",INVALIDFILEPATH,path);
@@ -80,6 +82,7 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 		if (DEBUG){printf("<<debug: readBoardFromFile(1) finished\n");}
 		return 1;
 	}
+	location = 0;
 	num = 0;
 	while(c != '\n' && !(feof(file_pointer))){ /*get n,m*/
 		c = fgetc(file_pointer);
@@ -97,7 +100,7 @@ int readBoardFromFile(int* n, int* m, int* board,char* path){
 	}
 	if (*n > 5 || *m > 5){printf("%s \n",CURRUPTFILEFORMAT);return 1;}
 	N = (int)*n * (int)*m;
-	new_board = (int*)calloc(board,N*N*2*sizeof(int)); /* rows X columns X [value,type] */
+	new_board = (int*)calloc(N*N*2,sizeof(int)); /* rows X columns X [value,type] */
 /*	free(board); <<<need to happen to avoid memory leak!>>> */
 	while (1) { /*sets board according to n and m*/
 		c = fgetc(file_pointer);
@@ -129,11 +132,15 @@ int writeBoardToFile(int n, int m, int* board,char* path){
 		 * args: n,m - size of board, path - file path
 		 * return: 1 for fail, 0 for success
 		 */
-	FILE* file_pointer; int row,col; int N = n*m;
+	FILE* file_pointer;
+	int row,col;
+	int N = n*m;
+	int value;
+	int fixed;
+	char* sign;
 	file_pointer = fopen(path, "w+");
-	int value; int fixed; char* sign;
 	if (DEBUG){printf(">>debug: WriteBoardToFile() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d,board:%d,path:%s\n",n,m,board,path);}
+	/*if (DEBUG){printf("with: n:%d,m:%d,board:%d,path:%s\n",n,m,board,path);}*/
 	if (file_pointer == NULL){
 		printf("%s\n",INVALIDFILEPATH);
 		fclose(file_pointer);

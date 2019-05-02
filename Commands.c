@@ -121,18 +121,26 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	/*set*/
 	/*check if user entered erroneous value*/
 	/*update ctrl_z, delete the further steps after current one*/
-	if (DEBUG){
-		printf(">>debug: set() called\n");}
-	if (DEBUG){
-		printf("with: n:%d,m:%d,x:%d,y:%d,z:%d\n",n,m,x,y,z);}
 	int location;
 	const int N = n*m;
+	if (DEBUG){
+		printf(">>debug: set() called\n");
+	}
+	if (DEBUG){
+		printf("with: n:%d,m:%d,x:%d,y:%d,z:%d\n",n,m,x,y,z);}
+
+
 	if (x > N || x < 1){printf("%s %d\n",FIRSTPARAMETERERROR,N); return 0;}
 	if (y > N || y < 1){printf("%s %d\n",SECONDPARAMETERERROR,N); return 0;}
 	if (z > N || z < 1){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
-	x = x-1; y = y-1; /*translate value to location */
+	x = x-1;
+	y = y-1; /*translate value to location */
 	location = (x+(y*N))*2;
-	if (board[location+1] == 1 && *state == 1){printf("%s\n",FIXEDCELLERROR);if (DEBUG){printf("<<debug: set(0) finished\n");}return 0;}
+	if (board[location+1] == 1 && *state == 1){
+		printf("%s\n",FIXEDCELLERROR);
+		if (DEBUG){
+			printf("<<debug: set(0) finished\n");}
+		return 0;}
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	InsertAtTail(board[location],x,y,ctrl_z); /*add former data (board[location] not z)*/
 	board[location] = z;
@@ -626,9 +634,11 @@ void toInit(int** board,int* m, int* n,int* mark_errors, struct Node* ctrl_z, st
 	 * return: void
 	 */
 	/*n,m to 9, state to 0, boards to empty*/
-	int N; int* temp;
-	if (DEBUG){printf(">>debug: toInit() called\n");}
-	if (DEBUG){printf("with: board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}
+
+	int N; 
+  int* temp;
+	/*if (DEBUG){printf(">>debug: toInit() called\n");}
+	if (DEBUG){printf("with: board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}*/
 	free(*board);
 	n = 3; m = 3;
 	state = 0;
@@ -668,18 +678,22 @@ int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_p
 	 * return: void
 	 */
 	int** temp_board;
-	int* tempn, tempm;
+	int* tempn;
+	int* tempm;
 	int N = (*n)*(*m);
 	/*if (DEBUG){printf(">>debug: toEdit() called\n");}
     if (DEBUG){printf("with: path:%s,board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)user_path,(int)board,(int)guess_board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,(int)state);}*/
 	*state = 2;
+	tempn = 0;
+	tempm = 0;
+	temp_board = 0;
 	if (strlen(user_path) == 0){
 		toInit(board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
 	}
-	else if (readBoardFromFile(&tempn, &tempm, temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
+	else if (readBoardFromFile(tempn, tempm, temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
 	else{
-		*n = tempn;
-		*m = tempm;
+		n = tempn;
+		m = tempm;
 		N = (int)*n*(int)*m;
 		free(board);
 		board = calloc(N*N*2,sizeof(int));

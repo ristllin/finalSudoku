@@ -40,9 +40,8 @@ int main(int argc, char* argv[]){
 	toInit(board,m,n,mark_errors,ctrl_z,ctrl_z_current,state);
 	/*Game Main Loop*/
 	while(1){
-		userInput(board,m,n,state, user_command, user_path, user_threshold);
+		userInput(m,n,state, user_command, user_path, user_threshold);
 		did_pass = execute(board, user_command, user_path, m, n, mark_errors, state, ctrl_z, ctrl_z_current, user_threshold[0]);
-		printf("here 1\n");
 		if (did_pass){
 			if (isFinished(*n,*m,*board) == 1 && *state == 1){
 				printBoard(*board,*n,*m,state,*mark_errors);
@@ -55,7 +54,5 @@ int main(int argc, char* argv[]){
 			printBoard(*board,*n,*m,state,*mark_errors);
 		}
 	}
-
-
 	return 0;
 }
