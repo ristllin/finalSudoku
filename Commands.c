@@ -150,7 +150,7 @@ void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,
 	 * return: void
 	 */
 	/*free all variables that require memory release!*/
-	free(board); free(user_command); free(m); free(n);
+	free(board); free(user_command); free(m); free(n); free(guess_board);
 	free(mark_errors); free(state); free(ctrl_z); free(ctrl_z_current);
 	exit(0);
 }
@@ -164,9 +164,12 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	/*set*/
 	/*check if user entered erroneous value*/
 	/*update ctrl_z, delete the further steps after current one*/
-	if (DEBUG){printf(">>debug: set() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d,x:%d,y:%d,z:%d\n",n,m,x,y,z);}
-	int location; const int N = n*m;
+	if (DEBUG){
+		printf(">>debug: set() called\n");}
+	if (DEBUG){
+		printf("with: n:%d,m:%d,x:%d,y:%d,z:%d\n",n,m,x,y,z);}
+	int location;
+	const int N = n*m;
 	if (x > N || x < 1){printf("%s %d\n",FIRSTPARAMETERERROR,N); return 0;}
 	if (y > N || y < 1){printf("%s %d\n",SECONDPARAMETERERROR,N); return 0;}
 	if (z > N || z < 1){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
@@ -270,9 +273,12 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	int empty_cells_cnt, i, j, yi, xi, sumA, random_location, zi;
 	int x_temp,y_temp,location, legal;
 	const int N = n*m;
-	int locations_empty_cells[N*N];
-	int list_of_all_cells[N*N];
-	int legal_options[N];
+	int* locations_empty_cells;
+	int* list_of_all_cells;
+	int* legal_options;
+	locations_empty_cells = (int*)calloc(N*N,sizeof(int));
+	list_of_all_cells = (int*)calloc(N*N*2,sizeof(int));
+	legal_options = (int*)calloc(N*N*2,sizeof(int));
 	empty_cells_cnt = 0;
 	/* check number of empty cells, if X< print an error */
 	for (x_temp=0;x_temp<N;x_temp++){
@@ -293,7 +299,7 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	list = (int*)calloc(empty_cells_cnt,sizeof(int));
 	random_empty_x_cells = (int*)calloc(x,sizeof(int));
 	/* for (1000), break once the ILP is valid */
-	for(int i=0; i<1000; i++){
+	for(i=0; i<1000; i++){
 	/*truncate copied board */
 		deleteUnfixedFromPoint(n,m,temp_board,0);
 	/*copy board from original */
@@ -373,7 +379,10 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	free(temp_board);
 	free(random_empty_x_cells);
 	free(list);
+	free(legal_options);
 	free(random_y_cells);
+	free(locations_empty_cells);
+	free(locations_empty_cells);
 	return 1;
 }
 
@@ -647,7 +656,8 @@ int save(int n, int m, char* path, int* board, int state){
 			return 0;
 		}
 	}
-	if (writeBoardToFile(n,m,temp_board,path) == 1){printf("%s\n",SAVINGFAILED);}
+	if (writeBoardToFile(n,m,temp_board,path) == 1){
+		printf("%s\n",SAVINGFAILED);}
 	free(temp_board);
 	if (DEBUG){printf("<<debug: save(1) finished\n");}
 	return 1;
