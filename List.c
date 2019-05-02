@@ -92,6 +92,7 @@ void RemoveNode(struct Node* node){
 	node->y = -1;
 	node->next = NULL;
 	node->prev = NULL;
+	free(node);
 }
 
 void RemoveFollowingNodes(struct Node* head){

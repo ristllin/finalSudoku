@@ -15,56 +15,8 @@
 #include "IOCommands.h"
 #include "Algorithem.h"
 
-/*AuxFunctions */
 
-int chooseRandomOption(int* options,int length){
-	/*length gets the size of options, e.g. {0,1,2} -> length = 3/ */
-	/*if no options are available returns -1, otherwise return the value of Sudoko board; */
-	int i = 0;
-	int random_option = -1;
-	if (sumArray(options,length) > 0){
-		random_option = (rand()%sumArray(options,length))+1;
-		for (i=0;i<length;i++){ /*go over options */
-			if (options[i] == 1){ /*count valid option */
-				random_option -= 1;
-			}
-			if (options[i] == 1 && random_option <= 0){ /*reached randomly chosen index */
-				return i+1;
-			}
-		}
-	}
-	return -1;
-}
-
-/* truncate all values of array */
-void truncateArray(int* array, int length){
-	int i;
-	for (i=0;i<length;i++){array[i]=0;}
-}
-
-/*Select shuffeled_list_length random unique numbers out of [0,range_list_length) range */
-/*return 0 if shuffeled_list_length>range_list_length */
-int selectUniqueRandomValues(int* shuffeled_list, int shuffeled_list_length, int* range_list, int range_list_length){
-	int i=0;
-	if(shuffeled_list_length>range_list_length){
-		return 0;
-	}
-	for (i = 0; i < range_list_length; i++) {
-		range_list[i] = i;
-	}
-	for (i = 0; i < shuffeled_list_length; i++) {
-			    int j = i + rand() % (range_list_length - i);
-			    int temp = range_list[i];
-			    range_list[i] = range_list[j];
-			    range_list[j] = temp;
-			    shuffeled_list[i] = range_list[i];
-			}
-	return 1;
-}
-
-/*end of AuxFunctions */
-
-int execute(int** board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node** ctrl_z_current, int* guess_board, float user_threshold){
+int execute(int** board, int* user_command, char* user_path, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node** ctrl_z_current, float user_threshold){
 	/*function description: activate correct command according to user command and pass relevant parameters (router).
 	 * args: all variables that require memory release
 	 * return: 1 - completed successful, 0 command completed unsuccessfully
@@ -73,10 +25,11 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 
 	if (DEBUG){printf(">>debug: execute() called\n");}
 	if (DEBUG){printf("With:user_command[0]:%d\n",user_command[0]);}
-/*	if (DEBUG){printf("path:%s,m:%d,n:%d,mark_errors:%d.\n",user_path,m,n,mark_errors);}*/
+	/*if (DEBUG){printf("path:%s,m:%u,n:%u,mark_errors:%u.\n",user_path,(unsigned int)m,(unsigned int)n,(unsigned int)mark_errors);}*/
 	switch(command){
 		case 0:
-			exitSudoku(*board, user_command, m, n,  mark_errors, state, ctrl_z, *ctrl_z_current, guess_board);
+			printf("here 3\n");
+			exitSudoku(board,ctrl_z);
 			break;
 		case 1:
 			rslt = set((int)*n,(int)*m,x,y,z,*board,ctrl_z,ctrl_z_current,state);
@@ -127,14 +80,14 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 			return rslt;
 			break;
 		case 14: /*There is no user init command, for debug purposes*/
-			toInit(board,guess_board,m,n,mark_errors,ctrl_z, ctrl_z_current,state);
+			toInit(board,m,n,mark_errors,ctrl_z, ctrl_z_current,state);
 			break;
 		case 15:
-			rslt = toSolve(n,m,user_path,state,board,guess_board,ctrl_z, *ctrl_z_current);
+			rslt = toSolve(n,m,user_path,state,board);
 			return rslt;
 			break;
 		case 16:
-			rslt = toEdit(board, guess_board,m, n,mark_errors, state, user_path, ctrl_z, ctrl_z_current);
+			rslt = toEdit(board,m, n,mark_errors, state, user_path, ctrl_z, ctrl_z_current);
 			return rslt;
 			break;
 		default:
@@ -144,14 +97,18 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 	return 1;
 }
 
-void exitSudoku(int* board, int* user_command, int* m, int* n, int* mark_errors,int* state, struct Node* ctrl_z, struct Node* ctrl_z_current, int* guess_board){
+void exitSudoku(int** board, struct Node* ctrl_z){
 	/*function description: Terminates the program.
 	 * args: all variables that require memory release
 	 * return: void
 	 */
 	/*free all variables that require memory release!*/
-	free(board); free(user_command); free(m); free(n); free(guess_board);
-	free(mark_errors); free(state); free(ctrl_z); free(ctrl_z_current);
+	if (DEBUG){
+		printf(">>debug: exit() called\n");}
+	if (DEBUG){
+		printf("with: board:%d,ctrl_z:%d\n",board,ctrl_z->data);}
+	free(*board); RemoveFollowingNodes(ctrl_z);
+	printf("Thank you for playing. bye bye.\n");
 	exit(0);
 }
 
@@ -663,23 +620,23 @@ int save(int n, int m, char* path, int* board, int state){
 	return 1;
 }
 
-void toInit(int** board, int* guess_board,int* m, int* n,int* mark_errors, struct Node* ctrl_z, struct Node** ctrl_z_current,int* state){
+void toInit(int** board,int* m, int* n,int* mark_errors, struct Node* ctrl_z, struct Node** ctrl_z_current,int* state){
 	/*function description: change state to 'init' mode, sets all global parameters to default.
 	 * args: all global parameters
 	 * return: void
 	 */
 	/*n,m to 9, state to 0, boards to empty*/
-	int N;
-	/*if (DEBUG){printf(">>debug: toInit() called\n");}
-	if (DEBUG){printf("with: board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)guess_board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}*/
-	free(board);
-	*n = 3; *m = 3;
+	int N; int* temp;
+	if (DEBUG){printf(">>debug: toInit() called\n");}
+	if (DEBUG){printf("with: board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}
+	free(*board);
+	n = 3; m = 3;
 	state = 0;
-	*mark_errors = 1;
-	N = (int)(*n)*(int)(*m);
-	board = calloc(N*N*2,sizeof(int));
+	mark_errors = 1;
+	N = (int)(n)*(int)(m);
+	temp = calloc(N*N*2,sizeof(int));
+	board = &temp;
 	truncateArray(*board,N*N*2);
-	truncateArray(guess_board,N*N*2);
 	RemoveFollowingNodes(ctrl_z);
 	*ctrl_z_current = ctrl_z;
 	if (DEBUG){printf("<<debug: toInit() finished\n");}
@@ -705,7 +662,7 @@ int toSolve(int* n, int* m, char* path, int* state, int** board){
 	return 1;
 }
 
-int toEdit(int** board, int* guess_board,int* m, int* n,int* mark_errors, int* state, char* user_path,struct Node* ctrl_z, struct Node** ctrl_z_current){
+int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_path,struct Node* ctrl_z, struct Node** ctrl_z_current){
 	/*function description: change state to 'Edit' mode, and set board from file or to empty board if the file path is empty
 	 * args: x --> file path
 	 * return: void
@@ -714,10 +671,10 @@ int toEdit(int** board, int* guess_board,int* m, int* n,int* mark_errors, int* s
 	int* tempn, tempm;
 	int N = (*n)*(*m);
 	/*if (DEBUG){printf(">>debug: toEdit() called\n");}
-    if (DEBUG){printf("with: path:%s,board:%d,guess_board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)user_path,(int)board,(int)guess_board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,(int)state);}*/
+    if (DEBUG){printf("with: path:%s,board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)user_path,(int)board,(int)guess_board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,(int)state);}*/
 	*state = 2;
 	if (strlen(user_path) == 0){
-		toInit(board, guess_board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
+		toInit(board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
 	}
 	else if (readBoardFromFile(&tempn, &tempm, temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
 	else{
@@ -732,4 +689,54 @@ int toEdit(int** board, int* guess_board,int* m, int* n,int* mark_errors, int* s
 	if (DEBUG){printf("<<debug: toEdit(1) finished\n");}
 	return 1;
 }
+
+/*AuxFunctions */
+
+int chooseRandomOption(int* options,int length){
+	/*length gets the size of options, e.g. {0,1,2} -> length = 3/ */
+	/*if no options are available returns -1, otherwise return the value of Sudoko board; */
+	int i = 0;
+	int random_option = -1;
+	if (sumArray(options,length) > 0){
+		random_option = (rand()%sumArray(options,length))+1;
+		for (i=0;i<length;i++){ /*go over options */
+			if (options[i] == 1){ /*count valid option */
+				random_option -= 1;
+			}
+			if (options[i] == 1 && random_option <= 0){ /*reached randomly chosen index */
+				return i+1;
+			}
+		}
+	}
+	return -1;
+}
+
+/* truncate all values of array */
+void truncateArray(int* array, int length){
+	int i;
+	for (i=0;i<length;i++){array[i]=0;}
+}
+
+/*Select shuffeled_list_length random unique numbers out of [0,range_list_length) range */
+/*return 0 if shuffeled_list_length>range_list_length */
+int selectUniqueRandomValues(int* shuffeled_list, int shuffeled_list_length, int* range_list, int range_list_length){
+	int i=0;
+	if(shuffeled_list_length>range_list_length){
+		return 0;
+	}
+	for (i = 0; i < range_list_length; i++) {
+		range_list[i] = i;
+	}
+	for (i = 0; i < shuffeled_list_length; i++) {
+			    int j = i + rand() % (range_list_length - i);
+			    int temp = range_list[i];
+			    range_list[i] = range_list[j];
+			    range_list[j] = temp;
+			    shuffeled_list[i] = range_list[i];
+			}
+	return 1;
+}
+
+/*end of AuxFunctions */
+
 
