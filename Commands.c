@@ -417,10 +417,11 @@ void reset(int n, int m, int* board, struct Node* ctrl_z, struct Node** ctrl_z_c
 	 * state: Solve, Edit
 	 * return: void
 	 */
-	if (DEBUG){printf(">>debug: undo() called\n");}
+	if (DEBUG){printf(">>debug: reset() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
-	while ((*ctrl_z_current)->data != -2){
+	while (((*ctrl_z_current)->prev)->data != -2){
 		undo(n,m,board ,ctrl_z, ctrl_z_current);
+		Print(ctrl_z);
 	}
 	if (DEBUG){printf("<<debug: reset() finished\n");}
 }
@@ -719,12 +720,10 @@ int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_p
 		*n = *tempn;
 		*m = *tempm;
 		N = (int)(*n)*(int)(*m);
-		printBoard(temp_board,*n,*m,1);
 		free(*board);
 		alloc_board = (int*)calloc(N*N*2,sizeof(int));
 		*board = alloc_board;
 		copyBoard(temp_board,*board,N);
-		printBoard(*board,*n,*m,1);
 		free(temp_board);
 	}
 	if (DEBUG){printf("<<debug: toEdit(1) finished\n");}
