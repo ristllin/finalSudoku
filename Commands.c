@@ -129,10 +129,9 @@ int set(int n, int m, int x, int y, int z, int* board, struct Node* ctrl_z, stru
 	if (DEBUG){
 		printf("with: n:%d,m:%d,x:%d,y:%d,z:%d\n",n,m,x,y,z);}
 
-
 	if (x > N || x < 1){printf("%s %d\n",FIRSTPARAMETERERROR,N); return 0;}
 	if (y > N || y < 1){printf("%s %d\n",SECONDPARAMETERERROR,N); return 0;}
-	if (z > N || z < 1){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
+	if ((z > N || z < 1)&&(*state != 999)){printf("%s %d\n",THIRDPARAMETERERROR,N); return 0;}
 	x = x-1;
 	y = y-1; /*translate value to location */
 	location = (x+(y*N))*2;
@@ -232,15 +231,19 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	 * return: 0 -> an error occurred, 1 -> board was generated successfully
 	 */
 	int* temp_board;
+	int* master_state;
 	int* random_empty_x_cells;
 	int* list;
 	int* random_y_cells;
-	int empty_cells_cnt, i, j, yi, xi, sumA, random_location, zi;
-	int x_temp,y_temp,location, legal;
-	const int N = n*m;
 	int* locations_empty_cells;
 	int* list_of_all_cells;
 	int* legal_options;
+	int master_state_init;
+	int empty_cells_cnt, i, j, yi, xi, sumA, random_location, zi;
+	int x_temp,y_temp,location,legal;
+	const int N = n*m;
+	master_state_init = 999;
+	master_state = &master_state_init;
 	locations_empty_cells = (int*)calloc(N*N,sizeof(int));
 	list_of_all_cells = (int*)calloc(N*N*2,sizeof(int));
 	legal_options = (int*)calloc(N*N*2,sizeof(int));
@@ -328,11 +331,11 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
 	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
-	for (i=0;i<(N*N*2);i++){
+	for (i=0;i<(N*N);i+=2){
 		zi = temp_board[i];
 		yi = yFromLocation(N,i)+1;
 		xi = xFromLocation(N, i)+1;
-		legal =  set(n, m, xi, yi, zi, board, ctrl_z, ctrl_z_current, state);
+		legal =  set(n, m, xi, yi, zi, board, ctrl_z, ctrl_z_current, master_state);
 		if(!legal){
 			printf("EROOR: %s\n", SETFAILED);
 			return 0;
@@ -347,7 +350,7 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	free(legal_options);
 	free(random_y_cells);
 	free(locations_empty_cells);
-	free(locations_empty_cells);
+	free(list_of_all_cells);
 	return 1;
 }
 
@@ -713,6 +716,7 @@ int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_p
 	*state = 2;
 	if (strlen(user_path) == 0){ /*edit a new board*/
 		toInit(board, m, n,mark_errors, ctrl_z, ctrl_z_current,state);
+		*state = 2;
 	}
 	else if (readBoardFromFile(tempn, tempm, &temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
 	else{ /*edit with path*/

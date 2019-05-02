@@ -353,8 +353,8 @@ void userInput(int m,int n,int state, int* user_command, char* user_path, float*
 				continue;
 
 			}
-			if(value1<0 || value1>(m*n)){ /* m = lines */
-				printf("Error: %s %d \n", FIRSTPARAMETERERROR, m*n);
+			if(value1<0 || value1>(N*N)){ /* m = lines */
+				printf("Error: %s %d \n", FIRSTPARAMETERERROR, N*N);
 				continue;
 			}
 			buffer = rest;
@@ -367,8 +367,8 @@ void userInput(int m,int n,int state, int* user_command, char* user_path, float*
 				printf("Error: %s", NOTINT);
 				continue;
 			}
-			if(value2<0 || value2>(m*n)){ /* n = rows */
-				printf("Error: %s %d", SECONDPARAMETERERROR, (m*n));
+			if(value2<0 || value2>(N*N)){ /* n = rows */
+				printf("Error: %s %d", SECONDPARAMETERERROR, (N*N));
 				continue;
 			}
 
