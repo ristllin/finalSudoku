@@ -10,6 +10,7 @@
 
 extern const int MAXBUFFERSIZE;
 extern const int DEBUG;
+extern const int PRODUCTION;
 
 extern const char* OPENNING;
 extern const char* ENTERCOMMAND;

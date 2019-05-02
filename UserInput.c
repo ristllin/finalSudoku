@@ -112,19 +112,9 @@ void userInput(int m,int n,int state, int* user_command, char* user_path, float*
 	/*get user input*/
 	while(invalid_command){ /* run until the command is valid */
 		command_flag = getLine (ENTERCOMMAND, input, sizeof(input));
-		 if (command_flag == NO_INPUT) {
-		        /* Extra NL since my system doesn't output that on EOF. */
-		        continue;
-		    }
-
-		    if (command_flag == TOO_LONG) {
-		        printf ("Error: %s\n", TOOMANYCHARACTERS);
-		        continue;
-		    }
-
+		if (command_flag == NO_INPUT) {continue;}/* Extra NL since my system doesn't output that on EOF. */
+		if (command_flag == TOO_LONG) {printf ("Error: %s\n", TOOMANYCHARACTERS);continue;}
 		/*printf ("debugging [%s]\n", input); */
-
-		/*split to variables (validate amount)*/
 		/*Get command name*/
 		buffer = input;
 /*		printf("debugging: name of command:%s\n", command_name); */
