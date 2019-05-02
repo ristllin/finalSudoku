@@ -1,10 +1,11 @@
 /*
- * AuxFunctions.h
- *
  *  Created on: Mar 16, 2019
  *      Author: Roy Darnell
  */
-
+int isLegal(int n, int m, int x, int y, int* board);
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 
 int isFinished(int n, int m, int* board){
@@ -17,8 +18,10 @@ int isFinished(int n, int m, int* board){
 	for (x=0;x<N;x++){
 		for (y=0;y<N;y++){
 			location = (x + y*N)*2;
-			if (!isLegal(n,m,x,y,board)){return 0;} /*not legal*/
-			else if(board[location] == 0){return 2;} /*not full*/
+			if (!isLegal(n,m,x,y,board)){
+				return 0;} /*not legal*/
+			else if(board[location] == 0){
+				return 2;} /*not full*/
 		}
 	}
 	return 1;
@@ -30,7 +33,9 @@ int optionsForLocation(int n, int m, int x, int y, int* board, int* legal_option
 	 * args: legal options, an N long array, "calloced" in advance!
 	 * return: 1 current value in position is legal, 0 if illegal (and legal options is not valid). returns legal if empty.
 	 */
-	int i,j,location,tmpx,tmpy; int N = n*m; int* temp_legal;
+	int i,location,tmpx,tmpy;
+	int N = n*m;
+	int* temp_legal;
 	temp_legal = (int*)calloc(N,sizeof(int));
 	for (i=0;i<N;i++){ /*zero out N variables in options list*/
 		legal_options[i] = 1;
@@ -164,7 +169,7 @@ int isLegalLocal(int n, int m, int x, int y, int* board){
 	 * args:
 	 * return: 1 if current value in cell is legal; 0 if not. returns legal (1) for empty cell.
 	 */
-	int* legal_options; int rslt,location; const int N = n*m;
+	int* legal_options; int location; const int N = n*m;
 	legal_options = calloc(N,sizeof(int));
 	location = (x+y*N)*2;
 	if (board[location] == 0){return 1;} /*empty cell*/
