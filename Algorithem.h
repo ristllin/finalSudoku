@@ -5,7 +5,7 @@
  *      Author: shahare
  */
 
-//#include "gurobi_c.h"
+#include "gurobi_c.h"
 
 #ifndef ALGORITHEM_H_
 #define ALGORITHEM_H_
