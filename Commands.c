@@ -156,7 +156,6 @@ int autoFill(int n, int m, int* board, int* state,Node* ctrl_z, Node** ctrl_z_cu
 	 * return:
 	 */
 	int* temp_board; int* legal_options; int x,y,location,option;
-	int i = 0;
 	option = 0;
 	x = 0;
 	y = 0;

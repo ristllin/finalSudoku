@@ -115,7 +115,6 @@ int singleOption(int* options,int N){
 	rslt = 0;
 	for (i=0;i<N;i++){
 		if (options[i] != 0) { /* found 1 */
-			printf("%d/",i);
 			if (rslt != 0) { /*more than single cell with value*/
 				return 0;
 			} else { /*first cell with value*/
