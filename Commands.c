@@ -652,15 +652,10 @@ void toInit(int** board,int* m, int* n,int* mark_errors, Node* ctrl_z, Node** ct
 	*state = 0;
 	*mark_errors = 1;
 	N = (int)(*n)*(int)(*m);
-	printf("1");
 	temp = (int*)calloc(N*N*2,sizeof(int));
-	printf("2");
 	*board = temp;
-	printf("3");
 	truncateArray(*board,N*N*2);
-	printf("4");
 	RemoveFollowingNodes(ctrl_z);
-	printf("5\n");
 	*ctrl_z_current = ctrl_z;
 	if (DEBUG){printf("<<debug: toInit() finished\n");}
 }
@@ -708,7 +703,6 @@ int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_p
 	int* temp_board;
 	int* tempn;
 	int* tempm;
-	int* alloc_board;
 	int tempn_init;
 	int tempm_init;
 	int temp_board_init;
@@ -730,16 +724,13 @@ int toEdit(int** board,int* m, int* n,int* mark_errors, int* state, char* user_p
 	}
 	else if (readBoardFromFile(tempn, tempm, &temp_board, user_path) == 1){printf("%s\n",READINGFAILED);}
 	else{ /*edit with path*/
-
 		*n = *tempn;
 		*m = *tempm;
 		*mark_errors = 0;
 		N = (int)(*n)*(int)(*m);
-		free(*board);
-		alloc_board = (int*)calloc(N*N*2,sizeof(int));
-		*board = alloc_board;
+		/*free(*board); memory leak*/
+		*board = temp_board;
 		copyBoard(temp_board,*board,N);
-		free(temp_board);
 	}
 	if (DEBUG){printf("<<debug: toEdit(1) finished\n");}
 	return 1;
