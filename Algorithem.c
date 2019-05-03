@@ -57,6 +57,7 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 			break;
 		case(1):
 			free(legal_options);
+			if (DEBUG){printBoard(board,n,m,1);}
 			return 1; /*if board is finished - return 1*/
 			break;
 	}
@@ -333,7 +334,7 @@ int ILP(int n, int m, int* board){
 	  	          for (j = 0; j < N; j++) {
 	  	        	  location = (i + j*N)*2;
 	  	              for (v = 0; v < N; v++) {
-	  	                  if (sol[i*N*N+j*N+v] == 1) {
+	  	                  if ((int)sol[i*N*N+j*N+v] == 1) {
 	  	                      board[location] = v+1;
 	  	                  }
 	  	                  else {

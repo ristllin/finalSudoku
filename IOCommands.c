@@ -78,7 +78,6 @@ int readBoardFromFile(int* n, int* m, int** board,char* path){
 	file_pointer = fopen(path, "r");
 	if (file_pointer == NULL){ /*catch errors*/
 		printf("%s: %s \n",INVALIDFILEPATH,path);
-		fclose(file_pointer);
 		if (DEBUG){printf("<<debug: readBoardFromFile(1) finished\n");}
 		return 1;
 	}
@@ -86,8 +85,9 @@ int readBoardFromFile(int* n, int* m, int** board,char* path){
 	num = 0;
 	while(c != '\n' && !(feof(file_pointer))){ /*get n,m*/
 		c = fgetc(file_pointer);
+		if (DEBUG){printf("%c|",c);}
 		if (c != ' ' && c != '\n'){
-			num = num * 10 + (c - 48); /*Accumulating number*/
+			num = (num * 10) + (c - 48); /*Accumulating number*/
 		}
 		if (c == ' '){
 			*n = num;
@@ -98,7 +98,8 @@ int readBoardFromFile(int* n, int* m, int** board,char* path){
 			num = 0;
 		}
 	}
-	if (*n > 5 || *m > 5 || *m == 0 || *n == 0){printf("%s \n",CURRUPTFILEFORMAT);return 1;}
+	if (DEBUG){printf("\n");}
+	if (*n > 5 || *m > 5 || *m <= 0 || *n <= 0){printf("%s \n",CURRUPTFILEFORMAT);return 1;}
 	N = (int)*n * (int)*m;
 	new_board = (int*)calloc(N*N*2,sizeof(int)); /* rows X columns X [value,type] */
 /*	free(board); <<<need to happen to avoid memory leak!>>> */
@@ -123,6 +124,8 @@ int readBoardFromFile(int* n, int* m, int** board,char* path){
 	}
 	*board = new_board;
 	fclose(file_pointer); /*<<<need to release file>>>*/
+	if (DEBUG){printf("n:%d,m:%d\n",*n,*m);}
+	if (DEBUG){printBoard(*board,*n,*m,1);}
 	if (DEBUG){printf("<<debug: readBoardFromFile(0) finished\n");}
 	return 0;
 }
