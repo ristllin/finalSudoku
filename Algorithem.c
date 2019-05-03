@@ -426,17 +426,24 @@ int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, stru
 			return 0;
 		}
 /*	go over empty cells and fill them*/
+
 	  RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	  InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
 	  *ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+
+	/*increse all values of board in 1 */
+	for (i = 0; i < N; i++) {
+				 for (j = 0; j < N; j++) {
+					  location = (i*N + j)*2;
+					  board[location] = board[location] +1;
+				 }
+	}
 
 	  valid_cnt = 0;
 	  location = 0;
 		for (i = 0; i < N; i++) {
 			 for (j = 0; j < N; j++) {
 				  location = (i*N + j)*2;
-				  if (DEBUG){printf("Debuging location value is %d \n",location);}
-				  board[location] = board[location] +1;
 				  valid_cnt = 0;
 				  for (v = 0; v < N; v++) {
 /*						check if score is higher than x  and*/
@@ -445,10 +452,11 @@ int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, stru
 
 					  if (sol[sol_index] > threshold && board[location]==0) {
 						  board[location] = v+1;
-						  if (DEBUG){printf("Debuging score is %f, v is %d \n",sol[sol_index], v);}
+						  if (DEBUG){printf("Debuging score is %f, v is %d \n",sol[sol_index], v+1);}
 						  valid = isLegal(n,m,xFromLocation(N, location),yFromLocation(N, location),board);
+						  if (DEBUG){printf("valid is %d \n",valid);}
 						  if(valid){
-							  if (DEBUG){printf("Debuging valid, v is %d \n",v);}
+							  if (DEBUG){printf("Debuging valid, v is %d \n",v+1);}
 							  legal_options[valid_cnt*2]= (double)v+1.0; /*optional value*/
 							  legal_options[valid_cnt*2+1]= sol[sol_index]; /*score*/
 							  valid_cnt++;
@@ -469,8 +477,10 @@ int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, stru
 				  	  }
 				 }
 		}
+
 		InsertAtTail(-4,0,0,ctrl_z); /*add end marker*/
 		*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+
 
 		free(sol);
 		free(legal_options);
