@@ -268,7 +268,7 @@ running ILP to solve the board, and then clearing all but Y random cells.
 	/* for (1000), break once the ILP is valid */
 	for(i=0; i<1000; i++){
 	/*truncate copied board */
-		deleteUnfixedFromPoint(n,m,temp_board,0);
+		truncateArray(temp_board,N*N*2);
 	/*copy board from original */
 		copyBoard(board,temp_board,N);
 	/* fill x randomly selected cells with legal values */
@@ -295,6 +295,7 @@ running ILP to solve the board, and then clearing all but Y random cells.
 				}
 			/*select random option*/
 			random_location = chooseRandomOption(legal_options,N);
+			if(DEBUG){printf("the value of random location is %d\n", random_location);}
 			if(random_location == -1){
 				legal = 0;
 				break;
@@ -307,6 +308,8 @@ running ILP to solve the board, and then clearing all but Y random cells.
 			continue;
 			}
 	/*run ILP -> return 1= success, 0 = failure */
+	if(DEBUG){printf("Call ILP with random X cells \n");}
+	if(DEBUG){printBoard(temp_board,n,m,1);}
 	legal = ILP(n,m,temp_board); /*debug temp cancelled*/
 	/* if there is no solution for board --> start another iteration */
 	if(!legal){
@@ -326,11 +329,13 @@ running ILP to solve the board, and then clearing all but Y random cells.
 		temp_board[location] = 0;
 	}
 	/* copy to original board using set for undo */
+	if(DEBUG){printf("Board with y cells \n");}
+	if(DEBUG){printBoard(temp_board,n,m,1);}
 
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
 	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
-	for (i=0;i<(N*N);i+=2){
+	for (i=0;i<(N*N*2);i+=2){
 		zi = temp_board[i];
 		yi = yFromLocation(N,i)+1;
 		xi = xFromLocation(N, i)+1;
@@ -395,7 +400,7 @@ int guess(int n, int m, float x, int* board, Node* ctrl_z, Node** ctrl_z_current
 	 * args: x --> lower boundary of score
 	 * return: 0 --> there is no solution to the board / an error occurred, 1 --> board has a solution
 	 */
-	/*printf("Debugging: inside guess \n");*/
+	if (DEBUG){printf("Debugging: inside guess \n");}
 	int legal;
 	/*check if board is erroneous*/
 	legal = isFinished(n,m,board);
