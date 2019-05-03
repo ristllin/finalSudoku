@@ -6,6 +6,8 @@ int isLegal(int n, int m, int x, int y, int* board);
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "IOCommands.h"
+#include "Constants.h"
 
 
 int isFinished(int n, int m, int* board){
@@ -76,6 +78,7 @@ int isLegal(int n, int m, int x, int y, int* board){
 	 * args:
 	 * return: 1 if current value in cell is legal; 0 if not or if illegal state found in row\column\box of the cell. returns legal (1) for empty cell.
 	 */
+	if(DEBUG){printBoard(board,n,m,1);}
 	int* legal_options; int rslt,location; const int N = n*m;
 	legal_options = calloc(N,sizeof(int));
 	location = (x+y*N)*2;
