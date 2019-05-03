@@ -28,7 +28,6 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 	/*if (DEBUG){printf("path:%s,m:%u,n:%u,mark_errors:%u.\n",user_path,(unsigned int)m,(unsigned int)n,(unsigned int)mark_errors);}*/
 	switch(command){
 		case 0:
-			printf("here 3\n");
 			exitSudoku(board,ctrl_z);
 			break;
 		case 1:
@@ -443,7 +442,7 @@ int guess_hint(int n, int m, int x,  int y, int* board){
 	legal = isFinished(n,m,board);
 	/*printf("Debugging: inside guess hint, isFinished is = %d \n", legal);*/
 	if(!legal){
-		printf("ERROR: %s \n",INVALIDBOARDERROR);
+		printf("ERROR: %s\n",INVALIDBOARDERROR);
 		return 0;
 			}
 	/* check if cell <X,Y> is fixed or cell <X,Y> already contains a value*/
@@ -455,7 +454,7 @@ int guess_hint(int n, int m, int x,  int y, int* board){
 		return 0;
 		}
 	if (board[value_location] != 0){ /*cell has value */
-		printf("ERROR: %s \n",FILLEDCELLERROR);
+		printf("ERROR: %s\n",FILLEDCELLERROR);
 		return 0;
 		}
 	/* run LP (copy board) */
@@ -464,7 +463,7 @@ int guess_hint(int n, int m, int x,  int y, int* board){
 	legal_options = (float*)calloc(N*2,sizeof(float)); /* 0->optional values, 1->score */
 	legal = LPSolveCell(value_location, n, m, temp_board, legal_options);
 	if(!legal){
-		printf("ERROR: %s", UNSOLVEDBOARD);
+		printf("ERROR: %s\n", UNSOLVEDBOARD);
 		return 0;
 		}
 	for(i = 0; i<N; i++){
@@ -516,7 +515,7 @@ int hint(int n, int m, int x, int y, int* board){
 			legal = ILP(n,m,temp_board);
 					/* if there is no solution for board --> start another iteration */
 			if(!legal){
-				printf("ERROR: %s", UNSOLVEDBOARD);
+				printf("ERROR: %s\n", UNSOLVEDBOARD);
 				return 0;
 				}
 			result = temp_board[value_location];
@@ -605,9 +604,10 @@ int save(int n, int m, char* path, int* board, int state){
 	 * args: X --> file's path
 	 * return: void
 	 */
-	int i = 0; const int N = n*m; int* temp_board;
-	/*if (DEBUG){printf(">>debug: save() called\n");}
-	if (DEBUG){printf("with: n:%d,m:%d,state:%d,path:%s\n",n,m,state,path);}*/
+	int i,illegal; const int N = n*m; int* temp_board;
+	i = 0; illegal = 0;
+	if (DEBUG){printf(">>debug: save() called\n");}
+	/*if (DEBUG){printf("with: n:%d,m:%d,state:%d,path:%s\n",n,m,state,path);}*/
 	temp_board = calloc(N*N*2,sizeof(int));
 	copyBoard(board,temp_board,N);
 	if ((int)state == 2){ /* edit - mark cells containing values as fixed */
@@ -616,7 +616,13 @@ int save(int n, int m, char* path, int* board, int state){
 				temp_board[i*2+1] = 1;
 			}
 		}
-		if (EBA(n,m,board)<1){/* edit - do not save erroneous files and boards without solution*/
+		for(i=0;i<N*N*2;i++){
+			if (!isLegalLocal(n,m,xFromLocation(N,i),yFromLocation(N,i),board)){
+				illegal = 1;
+				break;
+			}
+		}
+		if (illegal){/* edit - do not save erroneous files and boards without solution*/
 			printf("%s\n",ILLEGALSAVEERROR);
 			free(temp_board);
 			if (DEBUG){printf("<<debug: save(0) finished\n");}

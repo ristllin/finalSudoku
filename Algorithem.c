@@ -12,6 +12,7 @@
 #include "Constants.h"
 #include "List.h"
 #include "Commands.h"
+#include "IOCommands.h"
 
 int recursiveEBA(int n, int m, int* board, int starting_point);
 int LP(int n, int m, double* sol, int* board);
@@ -212,10 +213,15 @@ int ILP(int n, int m, int* board){
 	  double 	objval;
 	  int       i, j, v, location, error;
 	  int       optimstatus;
+		if (DEBUG){
+			printf(">>debug: ILP() called\n");
+		}
+		if (DEBUG){
+			printf("with: n:%d,m:%d\n",n,m);}
 
 	  sol = (double*)calloc(N*N*N,sizeof(double)); /*save sol values*/
 	  ind = (int*)calloc(N,sizeof(int)); /*Variable's index*/
-	  val = (double*)calloc(N,sizeof(int)); /*Variable's Coefficients*/
+	  val = (double*)calloc(N,sizeof(double)); /*Variable's Coefficients*/
 	  lb = (double*)calloc(N*N*N,sizeof(double)); /* lb = lowerbound*/
 	  vtype = (char*)calloc(N*N*N,sizeof(char)); /* variables types*/
 	  char**	names = (char**)calloc(N*N*N,sizeof(char*));
@@ -259,7 +265,7 @@ int ILP(int n, int m, int* board){
 	  }
 
 	/*   Create new model named "sudoku"*/
-	  error = GRBnewmodel(env, &model, "sudoku", N*N*N, NULL, lb, NULL, vtype, NULL);
+	  error = GRBnewmodel(env, &model, "sudoku", N*N*N, NULL, lb, NULL, vtype, names);
 	  if (error) {
 		  printf("ERROR %d GRBnewmodel(): %s\n", error, GRBgeterrormsg(env));
 		  return 0;
@@ -338,10 +344,12 @@ int ILP(int n, int m, int* board){
 	  	      }
 
 	 /*  make sure board is finished*/
+	  if(DEBUG){printf("here\n");}
+	  if(DEBUG){printBoard(board,n,m,1);}
 	  error = isFinished(n,m,board);
 	  if(error!=1) /*1==win*/
 	  {
-		  printf("ERROR: %d, Finish optimization, but board is unsolved.\n", error);
+		  printf("ERROR: %d, Finished optimization, but board is unsolved.\n", error);
 		  return 0;
 	  }
 

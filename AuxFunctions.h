@@ -20,5 +20,6 @@ int yFromLocation(int N, int location);
 int xFromLocation(int N, int location);
 int locationFromXY(int N, int x, int y);
 void updateErrors(int n, int m, int* board);
+int isLegalLocal(int n, int m, int x, int y, int* board);
 
 #endif /* AUXFUNCTIONS_H_ */
