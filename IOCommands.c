@@ -104,7 +104,7 @@ int readBoardFromFile(int* n, int* m, int** board,char* path){
 	new_board = (int*)calloc(N*N*2,sizeof(int)); /* rows X columns X [value,type] */
 	while (1) { /*sets board according to n and m*/
 		c = fgetc(file_pointer);
-		/*if (DEBUG){printf("%c|",c);}*/
+		if (DEBUG){printf("%c|",c);}
 		if( feof(file_pointer) ) {
 			break ;
 		}
@@ -128,7 +128,7 @@ int readBoardFromFile(int* n, int* m, int** board,char* path){
 	fclose(file_pointer); /*<<<need to release file>>>*/
 	/*if (DEBUG){printBoard(*board,*n,*m,1);}*/
 	if (DEBUG){printf("<<debug: readBoardFromFile(0) finished\n");}
-	free(new_board);
+//	free(new_board); <<memory leak!>>
 	return 0;
 }
 

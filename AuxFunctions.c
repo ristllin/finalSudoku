@@ -134,6 +134,7 @@ void deleteUnfixedFromPoint(int n, int m, int* board,int location){
 	 * return: 0 if more than one cell size is 1 (and not 0) or no cells with value, otherwise, returns index of single cell with value.
 	 */
 	int i,value_location,fixed_location = 0; const int N = n*m;
+	location = location/2;
 	for (i=location;i<N*N;i++){
 		value_location = i*2;
 		fixed_location = i*2+1;
@@ -141,6 +142,8 @@ void deleteUnfixedFromPoint(int n, int m, int* board,int location){
 			board[value_location] = 0; /*delete value*/
 		}
 	}
+//	printf("after clean from:%d\n",location);
+//	printBoard(board,n,m,1);
 }
 
 int sumArray(int* array, int length){

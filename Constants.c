@@ -6,7 +6,7 @@
  */
 const int MAXBUFFERSIZE = 256;
 const int DEBUG = 1;
-const int PRODUCTION = 1;
+const int PRODUCTION = 0;
 const char* OPENNING = "'-_-=Welcome to SudokuFun=-_-'";
 const char* ENTERCOMMAND = "Please enter a command: ";
 const char* TOOMANYCHARACTERS = " too many characters were entered in a single line \n";
