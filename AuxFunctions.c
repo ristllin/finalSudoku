@@ -110,13 +110,13 @@ int singleOption(int* options,int N){
 	 * args: N size of array
 	 * return: 0 if more than one cell size is 1 (and not 0) or no cells with value, otherwise, returns index of single cell with value.
 	 */
-	int rslt,i = 0;
-	printf("debug: singleOptions() called\n");
-	printf("with: N:%d, options:",N);for(i=0;i<N;i++){printf("%d|",options[i]);}printf("\n");
+	int rslt,i;
+	i = 0;
+	rslt = 0;
 	for (i=0;i<N;i++){
 		if (options[i] != 0) { /* found 1 */
+			printf("%d/",i);
 			if (rslt != 0) { /*more than single cell with value*/
-				printf("more than 1 solution for cell\n");
 				return 0;
 			} else { /*first cell with value*/
 				rslt = i+1;
@@ -124,7 +124,6 @@ int singleOption(int* options,int N){
 		}
 	}
 /*	printf("debug: single option is index: %d\n",rslt); */
-	printf("1 solution for cell:%d\n",rslt);
 	return rslt;
 }
 
@@ -134,6 +133,7 @@ void deleteUnfixedFromPoint(int n, int m, int* board,int location){
 	 * return: 0 if more than one cell size is 1 (and not 0) or no cells with value, otherwise, returns index of single cell with value.
 	 */
 	int i,value_location,fixed_location = 0; const int N = n*m;
+	location = location/2;
 	for (i=location;i<N*N;i++){
 		value_location = i*2;
 		fixed_location = i*2+1;

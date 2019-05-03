@@ -16,6 +16,12 @@
 
 int recursiveEBA(int n, int m, int* board, int starting_point);
 int LP(int n, int m, double* sol, int* board);
+/*int ConstraintsSudoku(int n, int m, int* ind, double* val, GRBmodel *model){return 1;}
+int ILP(int n, int m, int* board){return 1;}
+int LPSolveCell(int location, int n, int m, int* board, float* legal_options){return 1;};
+int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, struct Node** ctrl_z_current, int* state){return 1;};
+int LP(int n, int m, double* sol, int* board){return 1;}*/
+
 
 int EBA(int n,int m,int* board){
 	int rslt = -1;
@@ -23,16 +29,16 @@ int EBA(int n,int m,int* board){
 	 *  args: current board
 	 *  return: number of correct solutions from current state (doesn't change given board)
 	 * */
-	int *temp_board; const int N = n*m; int i;
-	temp_board = calloc(N*N*2,sizeof(int));
-	copyBoard(board,temp_board,N); /*copy board to temp_board*/
+	int *fixed_board; const int N = n*m; int i;
+	fixed_board = calloc(N*N*2,sizeof(int));
+	copyBoard(board,fixed_board,N); /*copy board to temp_board*/
 	for (i=0;i<N*N;i++){ /*each existing value in board, fix in temp_board*/
 		if (board[i*2] != 0){
-			temp_board[i*2+1] = 1;
+			fixed_board[i*2+1] = 1;
 		}
 	}
-	rslt = recursiveEBA(n,m,temp_board,0); /*send to recursive EBA starting from 0*/
-	free(temp_board);
+	rslt = recursiveEBA(n,m,fixed_board,0); /*send to recursive EBA starting from 0*/
+	free(fixed_board);
 	return rslt;
 }
 
@@ -48,7 +54,6 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 	rslt = 0;
 	fixed = -1;
 	legal_options = calloc(N,sizeof(int));
-	/*if board is legaly finished return 1*/
 	board_state = isFinished(n,m,board);
 	switch(board_state){
 		case(0):
@@ -68,19 +73,17 @@ int recursiveEBA(int n, int m, int* board, int starting_point){
 		fixed = board[starting_point + 1];
 	}
 	if (optionsForLocation(n,m,xFromLocation(N,starting_point),yFromLocation(N,starting_point),board,legal_options) == 0){
-		return 0;
+		return 0; /*no legal options for location - mistake was made*/
 	}
 /*	check next unfixed cell's options*/
-
 	for (i=0;i<N;i++){/*for each option fill cell with one of the values and call recuresively*/
 		if (legal_options[i] == 1){
+			deleteUnfixedFromPoint(n,m,board,starting_point);
 			board[starting_point] = i+1;
 			rslt += recursiveEBA(n, m, board, starting_point+2);/*add to rslt variable all options that returned with value*/
-			deleteUnfixedFromPoint(n,m,board,starting_point-2);
 		}
 	}
 	free(legal_options);
-/*	printf("debug: EBA rslt: %d\n",rslt);*/
 	return rslt;
 }
 
