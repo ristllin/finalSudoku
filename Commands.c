@@ -155,7 +155,11 @@ int autoFill(int n, int m, int* board, int* state,Node* ctrl_z, Node** ctrl_z_cu
 	 * args: board - changes current board
 	 * return:
 	 */
-	int* temp_board; int* legal_options; int i,x,y,location,option = 0;
+	int* temp_board; int* legal_options; int x,y,location,option;
+	int i = 0;
+	option = 0;
+	x = 0;
+	y = 0;
 	const int N = (n)*(m);
 	const int board_size = (N*N)*2;
 	if (DEBUG){printf(">>debug: autoFill() called\n");}
@@ -171,13 +175,9 @@ int autoFill(int n, int m, int* board, int* state,Node* ctrl_z, Node** ctrl_z_cu
 		for (y=0;y<N;y++){
 			location = (x+y*N)*2;
 			if (temp_board[location] == 0){ /*if cell is empty*/
-/*				printf("----->x:%d,y:%d is empty\n",x+1,y+1,option+1); */
 				if (optionsForLocation(n,m,x,y,temp_board,legal_options) == 1){ /*legal value inj position */
-					for(i=0;i<N;i++){printf("%d|",legal_options[i]);}printf("\n");
 					option = singleOption(legal_options,N);
-/*					printf("option:%d\n",option); */
 					if (option != 0){ /*"obvious" solution for cell*/
-/*						printf("setting: x:%d,y:%d,z:%d\n",x+1,y+1,option+1); */
 						set(n,m,x+1,y+1,option,board,ctrl_z,ctrl_z_current,state);
 					}
 				}
