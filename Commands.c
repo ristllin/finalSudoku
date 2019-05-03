@@ -645,17 +645,22 @@ void toInit(int** board,int* m, int* n,int* mark_errors, Node* ctrl_z, Node** ct
 
 	int N; 
 	int* temp;
-	/*if (DEBUG){printf(">>debug: toInit() called\n");}
-	if (DEBUG){printf("with: board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}*/
-	free(*board);
+	if (DEBUG){printf(">>debug: toInit() called\n");}
+	/*if (DEBUG){printf("with: board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}*/
+	/*free(*board); causeing segmentation problems*/
 	*n = 3; *m = 3;
 	*state = 0;
 	*mark_errors = 1;
 	N = (int)(*n)*(int)(*m);
-	temp = calloc(N*N*2,sizeof(int));
-	board = &temp;
+	printf("1");
+	temp = (int*)calloc(N*N*2,sizeof(int));
+	printf("2");
+	*board = temp;
+	printf("3");
 	truncateArray(*board,N*N*2);
+	printf("4");
 	RemoveFollowingNodes(ctrl_z);
+	printf("5\n");
 	*ctrl_z_current = ctrl_z;
 	if (DEBUG){printf("<<debug: toInit() finished\n");}
 }

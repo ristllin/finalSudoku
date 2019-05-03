@@ -8,6 +8,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "List.h"
+#include "Constants.h"
 /* */
 /*struct Node  { */
 /*	int x; */
@@ -99,6 +100,7 @@ void RemoveFollowingNodes(struct Node* head){
 	/*removes all nodes from given node forward, not including given node*/
 	struct Node* temp = NULL;
 	struct Node* next_node;
+	if (DEBUG){printf(">>debug: RemoveFollowingNodes() called\n");}
 	if (head->next == NULL){return;} /*list is already empty*/
 	next_node = head->next;
 	head->next = NULL;
@@ -119,4 +121,5 @@ void RemoveFollowingNodes(struct Node* head){
 	temp->next = NULL;
 	temp->prev = NULL;
 	free(temp);
+	if (DEBUG){printf("<<debug: RemoveFollowingNodes() finished\n");}
 }
