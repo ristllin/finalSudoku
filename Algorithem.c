@@ -211,7 +211,7 @@ int ILP(int n, int m, int* board){
 	  int* ind;
 	  char* vtype;
 	  double 	objval;
-	  int       i, j, v, location, error;
+	  int       i, j, v, location, error, solval;
 	  int       optimstatus;
 		if (DEBUG){
 			printf(">>debug: ILP() called\n");
@@ -233,7 +233,7 @@ int ILP(int n, int m, int* board){
 	  cursor = namestorage;
 	      for (i = 0; i < N; i++) {
 	          for (j = 0; j < N; j++) {
-	        	  location = (i + j*N)*2;
+	        	  location = (i*N + j)*2;
 	        	  board[location] = board[location]-1;
 	              for (v = 0; v < N; v++) {
 	                  if (board[location] == v) {
@@ -331,17 +331,17 @@ int ILP(int n, int m, int* board){
 /*	   update board*/
 	  for (i = 0; i < N; i++) {
 	  	          for (j = 0; j < N; j++) {
-	  	        	  location = (i + j*N)*2;
+	  	        	  location = (i*N + j)*2;
 	  	              for (v = 0; v < N; v++) {
-	  	                  if (sol[i*N*N+j*N+v] == 1) {
+	  	            	solval = (int)sol[i*N*N+j*N+v];
+	  	                  if (solval == 1) {
+/*	  	                	  printf("the value of sol is %d and location is %d \n", v, location);*/
 	  	                      board[location] = v+1;
-	  	                  }
-	  	                  else {
-	  	                	  board[location] = 0;
+/*	  	                      printf("the value of board  is %d and location is %d \n", board[location], location);*/
 	  	                  }
 	  	              }
 	  	          }
-	  	      }
+	  }
 
 	 /*  make sure board is finished*/
 	  if(DEBUG){printf("here\n");}
@@ -423,19 +423,31 @@ int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, stru
 			return 0;
 		}
 /*	go over empty cells and fill them*/
-	valid_cnt = 0;
+	  RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
+	  InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
+	  *ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+
+	  valid_cnt = 0;
+	  location = 0;
 		for (i = 0; i < N; i++) {
 			 for (j = 0; j < N; j++) {
-				  location = (i + j*N)*2;
+				  location = (i*N + j)*2;
+				  if (DEBUG){printf("Debuging location value is %d \n",location);}
+				  board[location] = board[location] +1;
+				  valid_cnt = 0;
 				  for (v = 0; v < N; v++) {
 /*						check if score is higher than x  and*/
 					  sol_index = i*N*N+j*N+v;
+					  /*if (DEBUG){printf("Debuging score is %f, sol val \n",sol[sol_index]);}*/
+
 					  if (sol[sol_index] > threshold && board[location]==0) {
 						  board[location] = v+1;
+						  if (DEBUG){printf("Debuging score is %f, v is %d \n",sol[sol_index], v);}
 						  valid = isLegal(n,m,xFromLocation(N, location),yFromLocation(N, location),board);
 						  if(valid){
-							  legal_options[valid_cnt*2]= (float)v+1.0; /*optional value*/
-							  legal_options[valid_cnt*2+1]= sol[sol_index+v]; /*score*/
+							  if (DEBUG){printf("Debuging valid, v is %d \n",v);}
+							  legal_options[valid_cnt*2]= (double)v+1.0; /*optional value*/
+							  legal_options[valid_cnt*2+1]= sol[sol_index]; /*score*/
 							  valid_cnt++;
 						  }
 						  board[location]= 0;
@@ -443,24 +455,23 @@ int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, stru
 				  	  }
 /*				  choose one item randomly using weighted random*/
 				  sol_value = randomWeightedNumber(legal_options, valid_cnt);
+				  if (DEBUG){printf("Debuging sol value value is %d \n",sol_value);}
 /*				   place it on board using location;*/
-				  RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
-				  InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
-				  *ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 				  if(sol_value!=-1){  /*there is an option higher than X*/
-						valid =  set(n, m, i+1, j+1, sol_value, board, ctrl_z, ctrl_z_current, state);
+						valid =  set(n, m, xFromLocation(N, location)+1, yFromLocation(N, location)+1, sol_value, board, ctrl_z, ctrl_z_current, state);
 						if(!valid){
 							printf("EROOR: %s\n", SETFAILED);
 							return 0;
 							}
 				  	  }
-				  InsertAtTail(-4,0,0,ctrl_z); /*add end marker*/
-				  *ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
-			 }
+				 }
 		}
-	free(sol);
-	free(legal_options);
-	return 1;
+		InsertAtTail(-4,0,0,ctrl_z); /*add end marker*/
+		*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+
+		free(sol);
+		free(legal_options);
+		return 1;
 
 }
 
@@ -485,22 +496,24 @@ int LP(int n, int m, double* sol, int* board){
 		double 	objval;
 		int       i, j, v, location, error;
 		int       optimstatus;
+		 char*		cursor;
 		ind = (int*)calloc(N,sizeof(int)); /*Variable's index*/
-		val = (double*)calloc(N,sizeof(int)); /* Variable's Coefficients*/
+		val = (double*)calloc(N,sizeof(double)); /* Variable's Coefficients*/
 		obj = (double*)calloc(N*N*N,sizeof(double)); /* Coefficients for objective's variables */
 		lb = (double*)calloc(N*N*N,sizeof(double)); /* lb = lowerbound */
 		ub = (double*)calloc(N*N*N,sizeof(double)); /* ub = upperbound */
 		vtype = (char*)calloc(N*N*N,sizeof(char)); /* variables types */
-		  /*char**	names = (char**)calloc(N*N*N,sizeof(char*)); // pointer to the name of variable
-		  //char*		namestorage= (char*)calloc(10*N*N*N,sizeof(char)); // names storage
-		  //char*		cursor; */
+		  char**	names = (char**)calloc(N*N*N,sizeof(char*));
+		  char*		namestorage= (char*)calloc(10*N*N*N,sizeof(char));
+
 		  error = 0;
 
-		  /* Create an empty model
-		  //cursor = namestorage;*/
+		  /* Create an empty model */
+		  cursor = namestorage;
 		      for (i = 0; i < N; i++) {
 		          for (j = 0; j < N; j++) {
-		        	  location = (i + j*N)*2;
+		        	  location = (i*N + j)*2;
+		        	  board[location] = board[location]-1;
 		              for (v = 0; v < N; v++) {
 		                  if (board[location] == v) {
 		                      lb[i*N*N+j*N+v] = 1.0;
@@ -512,10 +525,10 @@ int LP(int n, int m, double* sol, int* board){
 		                      ub[i*N*N+j*N+v] = 1.0;
 		                      obj[i*N*N+j*N+v] = 1.0/rand();
 		                  }
-		                  /*names[i*N*N+j*N+v] = cursor;*/
+		                  names[i*N*N+j*N+v] = cursor;
 		                  vtype[i*N*N+j*N+v] = GRB_CONTINUOUS;
-		                  /*sprintf(names[i*N*N+j*N+v], "x[%d,%d,%d]", i, j, v+1);
-		                  //cursor += strlen(names[i*N*N+j*N+v]) + 1;*/
+		                  sprintf(names[i*N*N+j*N+v], "x[%d,%d,%d]", i, j, v+1);
+		                  cursor += strlen(names[i*N*N+j*N+v]) + 1;
 		              }
 		          }
 		      }
@@ -535,7 +548,7 @@ int LP(int n, int m, double* sol, int* board){
 		  }
 
 		   /*Create new model named "sudokuLP", optional -> add names*/
-		  error = GRBnewmodel(env, &model, "sudokuLP", N*N*N, obj, lb, ub, vtype, NULL);
+		  error = GRBnewmodel(env, &model, "sudokuLP", N*N*N, obj, lb, ub, vtype, names);
 		  if (error) {
 			  printf("ERROR %d GRBnewmodel(): %s\n", error, GRBgeterrormsg(env));
 			  return 0;
@@ -607,6 +620,8 @@ int LP(int n, int m, double* sol, int* board){
 		  free(vtype);
 		  free(obj);
 		  free(val);
+		  free(names);
+		  free(namestorage);
 
 		  return 1;
 
