@@ -101,16 +101,18 @@ void RemoveFollowingNodes(struct Node* head){
 	struct Node* temp = NULL;
 	struct Node* next_node;
 	if (DEBUG){printf(">>debug: RemoveFollowingNodes() called\n");}
+	if (DEBUG){Print(head);}
 	if (head->next == NULL){return;} /*list is already empty*/
-	next_node = head->next;
-	head->next = NULL;
-	temp = next_node;
+	next_node = head->next->next;
+	/*head->next = NULL;*/
+	temp = head->next;
 	while (next_node != NULL) {
-		temp->data = -1; /*zeroing all fields is not obligatory, but helps in debug*/
+		/*temp->data = -1;*/ /*zeroing all fields is not obligatory, but helps in debug*/
 		temp->x = -1;
 		temp->y = -1;
-		temp->next = NULL;
-		temp->prev = NULL;
+		/*temp->next = NULL;
+		temp->prev = NULL;*/
+		if (DEBUG){printf(">>debug: inside while loop, %d removed\n", temp->data);}
 		free(temp);
 		temp = next_node;
 		next_node = temp->next;
@@ -118,8 +120,8 @@ void RemoveFollowingNodes(struct Node* head){
 	temp->data = -1; /*zeroing all fields is not obligatory, but helps in debug*/
 	temp->x = -1;
 	temp->y = -1;
-	temp->next = NULL;
-	temp->prev = NULL;
+	/*temp->next = NULL;
+	temp->prev = NULL;*/
 	free(temp);
 	if (DEBUG){printf("<<debug: RemoveFollowingNodes() finished\n");}
 }

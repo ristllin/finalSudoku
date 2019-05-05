@@ -82,10 +82,16 @@ int isLegal(int n, int m, int x, int y, int* board){
 	int* legal_options; int rslt,location; const int N = n*m;
 	legal_options = calloc(N,sizeof(int));
 	location = (x+y*N)*2;
-	if (board[location] == 0){return 1;} /*empty cell*/
+	if (board[location] == 0){
+		free(legal_options);
+		return 1;} /*empty cell*/
 	rslt = optionsForLocation(n,m,x,y,board,legal_options);
-	if (rslt == 0){return 0;}
-	if (legal_options[board[location]-1] == 0){return 0;} /*illegal option for cell*/
+	if (rslt == 0){
+		free(legal_options);
+		return 0;}
+	if (legal_options[board[location]-1] == 0){
+		free(legal_options);
+		return 0;} /*illegal option for cell*/
 	free(legal_options);
 	return 1; /*valid option*/
 }

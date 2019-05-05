@@ -124,6 +124,7 @@ int readBoardFromFile(int* n, int* m, int** board,char* path){
 			location += 1;
 		}
 	}
+	free(*board);
 	*board = new_board;
 	fclose(file_pointer); /*<<<need to release file>>>*/
 	/*if (DEBUG){printBoard(*board,*n,*m,1);}*/

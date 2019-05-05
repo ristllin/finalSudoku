@@ -25,6 +25,8 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 
 	if (DEBUG){printf(">>debug: execute() called\n");}
 	if (DEBUG){printf("With:user_command[0]:%d\n",user_command[0]);}
+	if (DEBUG){
+			Print(ctrl_z);}
 	/*if (DEBUG){printf("path:%s,m:%u,n:%u,mark_errors:%u.\n",user_path,(unsigned int)m,(unsigned int)n,(unsigned int)mark_errors);}*/
 	switch(command){
 		case 0:
@@ -106,7 +108,8 @@ void exitSudoku(int** board, Node* ctrl_z){
 		printf(">>debug: exit() called\n");}
 	if (DEBUG){
 		printf("with: board:%d,ctrl_z:%d\n",board,ctrl_z->data);}*/
-	free(*board); RemoveFollowingNodes(ctrl_z);
+	if (DEBUG){Print(ctrl_z);}
+	free(*board); RemoveFollowingNodes(ctrl_z), free(ctrl_z);
 	printf("Thank you for playing. bye bye.\n");
 	exit(0);
 }
@@ -141,9 +144,12 @@ int set(int n, int m, int x, int y, int z, int* board, Node* ctrl_z, Node** ctrl
 		return 0;}
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	InsertAtTail(board[location],x,y,ctrl_z); /*add former data (board[location] not z)*/
+
 	board[location] = z;
 	if (!isLegal(n,m,x,y,board)){board[location+1] = 2;}
 	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+	if (DEBUG){
+			Print(ctrl_z);}
 	updateErrors(n,m,board);
 	if (DEBUG){printf("<<debug: set(1) finished\n");}
 	return 1;
@@ -648,7 +654,7 @@ void toInit(int** board,int* m, int* n,int* mark_errors, Node* ctrl_z, Node** ct
 	/*n,m to 9, state to 0, boards to empty*/
 
 	int N; 
-	int* temp;
+	/*int* temp;*/
 	if (DEBUG){printf(">>debug: toInit() called\n");}
 	/*if (DEBUG){printf("with: board:%d,m:%d,n:%d,mark_errors:%d,ctrl_z:%d,ctrl_z_current:%d,state:%d\n",(int)board,(int)m,(int)n,(int)mark_errors,(int)ctrl_z,(int)ctrl_z_current,state);}*/
 	/*free(*board); causeing segmentation problems*/
@@ -656,9 +662,9 @@ void toInit(int** board,int* m, int* n,int* mark_errors, Node* ctrl_z, Node** ct
 	*state = 0;
 	*mark_errors = 1;
 	N = (int)(*n)*(int)(*m);
-	temp = (int*)calloc(N*N*2,sizeof(int));
+	/*temp = (int*)calloc(N*N*2,sizeof(int));
 	*board = temp;
-	truncateArray(*board,N*N*2);
+*/	truncateArray(*board,N*N*2);
 	RemoveFollowingNodes(ctrl_z);
 	*ctrl_z_current = ctrl_z;
 	if (DEBUG){printf("<<debug: toInit() finished\n");}
