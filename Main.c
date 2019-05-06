@@ -28,11 +28,13 @@ int m_init; /*board's width*/
 int n_init; /* board's length*/
 int mark_errors_init; /*1 show errors (default), 0 don't show*/
 int state_init; /* 0 => init, 1 => solve, 2 => edit */
+Node* ctrl_z; /*list of player moves, starts and ends with "-2" cells, "-1" states reset board*/
+Node** ctrl_z_current; /*ctrl_z; pointer to current place in ctrl_z list */
+Node* ctrl_z_NCurrent;
+
 
 
 int main(int argc, char* argv[]){
-	Node* ctrl_z; /*list of player moves, starts and ends with "-2" cells, "-1" states reset board*/
-	Node** ctrl_z_current; /*ctrl_z; pointer to current place in ctrl_z list */
 	char user_path[MAXBUFFERSIZE];
 	int user_command[4]; /*[command,x,y,z]*/
 	int did_pass;
@@ -42,7 +44,8 @@ int main(int argc, char* argv[]){
 	mark_errors = &mark_errors_init;
 	state = &state_init;
 	ctrl_z = GetNewNode(-2,0,0);
-	ctrl_z_current = &ctrl_z;
+	ctrl_z_NCurrent = ctrl_z;
+	ctrl_z_current = &ctrl_z_NCurrent;
 	did_pass=1;
 	come_on = argc; argc = come_on;
 	argv[0] = NULL;
@@ -56,6 +59,9 @@ int main(int argc, char* argv[]){
 	while(1){
 		userInput(*m,*n,*state, user_command, user_path, user_threshold);
 		did_pass = execute(board, user_command, user_path, m, n, mark_errors, state, ctrl_z, ctrl_z_current, user_threshold[0]);
+		if (DEBUG){printf("main list after execute: \n");}
+
+		if (DEBUG){Print(ctrl_z);}
 //		if (DEBUG){printf("debug: n:%d,m:%d\n",*n,*m);}
 		if (did_pass){
 			if (isFinished(*n,*m,*board) == 1 && *state == 1){

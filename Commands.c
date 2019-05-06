@@ -25,8 +25,8 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 
 	if (DEBUG){printf(">>debug: execute() called\n");}
 	if (DEBUG){printf("With:user_command[0]:%d\n",user_command[0]);}
-	if (DEBUG){
-			Print(ctrl_z);}
+	if (DEBUG){printf("execute before switch");}
+	if (DEBUG){Print(ctrl_z);}
 	/*if (DEBUG){printf("path:%s,m:%u,n:%u,mark_errors:%u.\n",user_path,(unsigned int)m,(unsigned int)n,(unsigned int)mark_errors);}*/
 	switch(command){
 		case 0:
@@ -34,6 +34,7 @@ int execute(int** board, int* user_command, char* user_path, int* m, int* n, int
 			break;
 		case 1:
 			rslt = set((int)*n,(int)*m,x,y,z,*board,ctrl_z,ctrl_z_current,state);
+			if (DEBUG){printf("value of current x: %d\n", (*ctrl_z_current)->x);}
 			return rslt;
 			break;
 		case 2:
@@ -143,14 +144,17 @@ int set(int n, int m, int x, int y, int z, int* board, Node* ctrl_z, Node** ctrl
 			printf("<<debug: set(0) finished\n");}
 		return 0;}
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
+	if (DEBUG){printf("Address of ctrl_z: %p\n", (void*)ctrl_z);}
 	InsertAtTail(board[location],x,y,ctrl_z); /*add former data (board[location] not z)*/
 
 	board[location] = z;
 	if (!isLegal(n,m,x,y,board)){board[location+1] = 2;}
+	if (DEBUG){printf("Value of x in next ctrl_z: %d\n", (*ctrl_z_current)->next->x);}
 	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 	if (DEBUG){
 			Print(ctrl_z);}
 	updateErrors(n,m,board);
+	if (DEBUG){printf("value of ctrl_z after set: %d\n", (*ctrl_z_current)->y);}
 	if (DEBUG){printf("<<debug: set(1) finished\n");}
 	return 1;
 }
@@ -175,7 +179,7 @@ int autoFill(int n, int m, int* board, int* state,Node* ctrl_z, Node** ctrl_z_cu
 	copyBoard(board,temp_board,N);
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
 	InsertAtTail(-3,0,0,ctrl_z); /*add starting marker*/
-	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+	ctrl_z_current = &((*ctrl_z_current)->next); /*advance current ctrl-z to new node*/
 	for (x=0;x<N;x++){
 		for (y=0;y<N;y++){
 			location = (x+y*N)*2;
@@ -190,7 +194,7 @@ int autoFill(int n, int m, int* board, int* state,Node* ctrl_z, Node** ctrl_z_cu
 		}
 	}
 	InsertAtTail(-4,0,0,ctrl_z); /*add end marker*/
-	*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+	ctrl_z_current = &((*ctrl_z_current)->next); /*advance current ctrl-z to new node*/
 	free(legal_options);
 	free(temp_board);
 	if (DEBUG){printf("<<debug: autoFill() finished\n");}
@@ -264,6 +268,9 @@ running ILP to solve the board, and then clearing all but Y random cells.
 		}
 	if(empty_cells_cnt<x){
 		printf("EROOR: %s",XSIZEISTOOLARGE);
+		free(locations_empty_cells);
+		free(list_of_all_cells);
+		free(legal_options);
 		return 0;
 	}
 	/* malloc space for temp board, list of empty cells and list of x cells */
@@ -347,6 +354,13 @@ running ILP to solve the board, and then clearing all but Y random cells.
 		legal =  set(n, m, xi, yi, zi, board, ctrl_z, ctrl_z_current, master_state);
 		if(!legal){
 			printf("EROOR: %s\n", SETFAILED);
+			free(temp_board);
+			free(random_empty_x_cells);
+			free(list);
+			free(legal_options);
+			free(random_y_cells);
+			free(locations_empty_cells);
+			free(list_of_all_cells);
 			return 0;
 		}
 	}
@@ -416,7 +430,7 @@ int guess(int n, int m, float x, int* board, Node* ctrl_z, Node** ctrl_z_current
 			}
 	/* call LP_Solver: get board and solve it using LP If several
 	values hold for the same cell, randomly choose one according to the score */
-	legal = LPSolver(n,m,x, board, ctrl_z, ctrl_z_current, state);
+	legal = LPSo	lver(n,m,x, board, ctrl_z, ctrl_z_current, state);
 	if(!legal){
 		printf("ERROR: %s \n", LPFAILED);
 		return 0;
@@ -693,9 +707,13 @@ int toSolve(int* n, int* m, char* path, int* state, int** board){
 	/*if (DEBUG){printf(">>debug: toSolve() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}*/
 	fail = readBoardFromFile(tempn, tempm, &temp_board, path);
-	if (fail == 1){printf("%s\n",READINGFAILED); return 0;}
+	if (fail == 1){
+		printf("%s\n",READINGFAILED);
+		free(temp_board);
+		return 0;}
 	else{ /*reading successful*/
 		*state = 1;
+		free(*board);
 		*board = temp_board;
 		*n = *tempn;
 		*m = *tempm;

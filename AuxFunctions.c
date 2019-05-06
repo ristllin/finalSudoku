@@ -51,7 +51,7 @@ int optionsForLocation(int n, int m, int x, int y, int* board, int* legal_option
 		temp_legal[board[location]-1] = 0;
 		legal_options[board[location]-1] = 0;
 	}
-	for (i=0;i<=N;i++){temp_legal[i] = 1;} /*zero temp board*/
+	for (i=0;i<N;i++){temp_legal[i] = 1;} /*zero temp board*/
 	for (i=0;i<N;i++){ /*check column*/
 		location = ((i*N)+x)*2; /*i*N*2+x - starting row location on board*/
 		if (i == y || board[location] == 0){continue;} /*skip x,y cell and 0s*/
