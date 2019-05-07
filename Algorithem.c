@@ -258,12 +258,30 @@ int ILP(int n, int m, int* board){
 	  error = GRBloadenv(&env, "sudokuILP.log");
 	  if (error) {
 		  printf("ERROR %d GRBloadenv(): %s\n", error, GRBgeterrormsg(env));
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 
 	  error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
 	  if (error) {
 		  printf("ERROR %d GRBsetintattr(): %s\n", error, GRBgeterrormsg(env));
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 
@@ -271,6 +289,15 @@ int ILP(int n, int m, int* board){
 	  error = GRBnewmodel(env, &model, "sudoku", N*N*N, NULL, lb, NULL, vtype, names);
 	  if (error) {
 		  printf("ERROR %d GRBnewmodel(): %s\n", error, GRBgeterrormsg(env));
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 
@@ -278,6 +305,15 @@ int ILP(int n, int m, int* board){
 	 /*  ADD constraint*/
 	  error = ConstraintsSudoku(n,m,ind,val,model);
 	  if(error){
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 
@@ -286,6 +322,15 @@ int ILP(int n, int m, int* board){
 	  error = GRBoptimize(model);
 	  if (error) {
 		  printf("ERROR %d GRBoptimize(): %s\n", error, GRBgeterrormsg(env));
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 
@@ -293,6 +338,15 @@ int ILP(int n, int m, int* board){
 	  error = GRBwrite(model, "sudokuILP.lp");
 	  if (error) {
 		  printf("ERROR %d GRBwrite(): %s\n", error, GRBgeterrormsg(env));
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 
@@ -301,6 +355,15 @@ int ILP(int n, int m, int* board){
 	  error = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
 	  if (error) {
 		  printf("ERROR %d GRBgetintattr(): %s\n", error, GRBgeterrormsg(env));
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 
@@ -308,6 +371,15 @@ int ILP(int n, int m, int* board){
 	  error = GRBgetdblattr(model, GRB_DBL_ATTR_OBJVAL, &objval);
 	  if (error) {
 		  printf("ERROR %d GRBgettdblattr(): %s\n", error, GRBgeterrormsg(env));
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 	/*   solution found*/
@@ -316,11 +388,29 @@ int ILP(int n, int m, int* board){
 	   /*no solution found*/
 	     else if (optimstatus == GRB_INF_OR_UNBD) {
 	    	 printf("ERROR: Model is infeasible or unbounded\n");
+	   	  GRBfreemodel(model);
+	   	  GRBfreeenv(env);
+	   	  free(ind);
+	   	  free(lb);
+	   	  free(vtype);
+	   	  free(names);
+	   	  free(namestorage);
+	   	  free(sol);
+	   	  free(val);
 	    	 return 0;
 	     }
 	   /*error or calculation stopped*/
 	     else {
 	    	 printf("ERROR: Optimization was stopped early\n");
+	   	  GRBfreemodel(model);
+	   	  GRBfreeenv(env);
+	   	  free(ind);
+	   	  free(lb);
+	   	  free(vtype);
+	   	  free(names);
+	   	  free(namestorage);
+	   	  free(sol);
+	   	  free(val);
 	    	 return 0;
 	     }
 
@@ -328,6 +418,15 @@ int ILP(int n, int m, int* board){
 	  error = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, N*N*N, sol);
 	  if (error) {
 		  printf("ERROR %d GRBgetdblattrarray(): %s\n", error, GRBgeterrormsg(env));
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 
@@ -353,6 +452,15 @@ int ILP(int n, int m, int* board){
 	  if(error!=1) /*1==win*/
 	  {
 		  printf("ERROR: %d, Finished optimization, but board is unsolved.\n", error);
+		  GRBfreemodel(model);
+		  GRBfreeenv(env);
+		  free(ind);
+		  free(lb);
+		  free(vtype);
+		  free(names);
+		  free(namestorage);
+		  free(sol);
+		  free(val);
 		  return 0;
 	  }
 
@@ -385,6 +493,7 @@ int LPSolveCell(int location, int n, int m, int* board, float* legal_options){
 	success = LP(n,m,sol,board);
 /*	success = 1;*/
 	if(!success){
+		free(sol);
 		return 0;
 	}
 	x = xFromLocation(N, location);
@@ -423,7 +532,9 @@ int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, stru
 /*	run LP and get sol matrix */
 	success = LP(n,m,sol,board);
 	if(!success){
-			return 0;
+		free(sol);
+		free(legal_options);
+		return 0;
 		}
 /*	go over empty cells and fill them*/
 
@@ -472,12 +583,16 @@ int LPSolver(int n, int m,float threshold, int* board, struct Node* ctrl_z, stru
 						valid =  set(n, m, xFromLocation(N, location)+1, yFromLocation(N, location)+1, sol_value, board, ctrl_z, ctrl_z_current, state);
 						if(!valid){
 							printf("EROOR: %s\n", SETFAILED);
+							free(sol);
+							free(legal_options);
+							InsertAtTail(-4,0,0,ctrl_z); /*add end marker*/
+							*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
+							undo(n, m, board, ctrl_z, ctrl_z_current);
 							return 0;
 							}
 				  	  }
 				 }
 		}
-
 		InsertAtTail(-4,0,0,ctrl_z); /*add end marker*/
 		*ctrl_z_current = (*ctrl_z_current)->next; /*advance current ctrl-z to new node*/
 
@@ -551,12 +666,32 @@ int LP(int n, int m, double* sol, int* board){
 		  error = GRBloadenv(&env, "sudokuLP.log");
 		  if (error) {
 			  printf("ERROR %d GRBloadenv(): %s\n", error, GRBgeterrormsg(env));
+			  GRBfreemodel(model);
+			  GRBfreeenv(env);
+			  free(ind);
+			  free(lb);
+			  free(ub);
+			  free(vtype);
+			  free(obj);
+			  free(val);
+			  free(names);
+			  free(namestorage);
 			  return 0;
 		  }
 
 		  error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
 		  if (error) {
 			  printf("ERROR %d GRBsetintattr(): %s\n", error, GRBgeterrormsg(env));
+			  GRBfreemodel(model);
+			  GRBfreeenv(env);
+			  free(ind);
+			  free(lb);
+			  free(ub);
+			  free(vtype);
+			  free(obj);
+			  free(val);
+			  free(names);
+			  free(namestorage);
 			  return 0;
 		  }
 
@@ -564,6 +699,16 @@ int LP(int n, int m, double* sol, int* board){
 		  error = GRBnewmodel(env, &model, "sudokuLP", N*N*N, obj, lb, ub, vtype, names);
 		  if (error) {
 			  printf("ERROR %d GRBnewmodel(): %s\n", error, GRBgeterrormsg(env));
+			  GRBfreemodel(model);
+			  GRBfreeenv(env);
+			  free(ind);
+			  free(lb);
+			  free(ub);
+			  free(vtype);
+			  free(obj);
+			  free(val);
+			  free(names);
+			  free(namestorage);
 			  return 0;
 		  }
 
@@ -571,6 +716,16 @@ int LP(int n, int m, double* sol, int* board){
 		   /*ADD constraint*/
 		  	  error = ConstraintsSudoku(n,m,ind,val,model);
 		  	  if(error){
+		  		GRBfreemodel(model);
+				  GRBfreeenv(env);
+				  free(ind);
+				  free(lb);
+				  free(ub);
+				  free(vtype);
+				  free(obj);
+				  free(val);
+				  free(names);
+				  free(namestorage);
 		  		  return 0;
 		  	  }
 
@@ -578,6 +733,16 @@ int LP(int n, int m, double* sol, int* board){
 		  error = GRBoptimize(model);
 		  if (error) {
 			  printf("ERROR %d GRBoptimize(): %s\n", error, GRBgeterrormsg(env));
+			  GRBfreemodel(model);
+			  GRBfreeenv(env);
+			  free(ind);
+			  free(lb);
+			  free(ub);
+			  free(vtype);
+			  free(obj);
+			  free(val);
+			  free(names);
+			  free(namestorage);
 			  return 0;
 		  }
 
@@ -585,6 +750,16 @@ int LP(int n, int m, double* sol, int* board){
 		  error = GRBwrite(model, "sudokuLP.lp");
 		  if (error) {
 			  printf("ERROR %d GRBwrite(): %s\n", error, GRBgeterrormsg(env));
+			  GRBfreemodel(model);
+			  GRBfreeenv(env);
+			  free(ind);
+			  free(lb);
+			  free(ub);
+			  free(vtype);
+			  free(obj);
+			  free(val);
+			  free(names);
+			  free(namestorage);
 			  return 0;
 		  }
 
@@ -593,6 +768,16 @@ int LP(int n, int m, double* sol, int* board){
 		  error = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
 		  if (error) {
 			  printf("ERROR %d GRBgetintattr(): %s\n", error, GRBgeterrormsg(env));
+			  GRBfreemodel(model);
+			  GRBfreeenv(env);
+			  free(ind);
+			  free(lb);
+			  free(ub);
+			  free(vtype);
+			  free(obj);
+			  free(val);
+			  free(names);
+			  free(namestorage);
 			  return 0;
 		  }
 
@@ -600,6 +785,16 @@ int LP(int n, int m, double* sol, int* board){
 		  error = GRBgetdblattr(model, GRB_DBL_ATTR_OBJVAL, &objval);
 		  if (error) {
 			  printf("ERROR %d GRBgettdblattr(): %s\n", error, GRBgeterrormsg(env));
+			  GRBfreemodel(model);
+			  GRBfreeenv(env);
+			  free(ind);
+			  free(lb);
+			  free(ub);
+			  free(vtype);
+			  free(obj);
+			  free(val);
+			  free(names);
+			  free(namestorage);
 			  return 0;
 		  }
 		   /*solution found*/
@@ -608,11 +803,31 @@ int LP(int n, int m, double* sol, int* board){
 		  		/*   no solution found*/
 		     else if (optimstatus == GRB_INF_OR_UNBD) {
 		    	 printf("ERROR: Model is infeasible or unbounded\n");
+		    	 GRBfreemodel(model);
+				  GRBfreeenv(env);
+				  free(ind);
+				  free(lb);
+				  free(ub);
+				  free(vtype);
+				  free(obj);
+				  free(val);
+				  free(names);
+				  free(namestorage);
 		    	 return 0;
 		     }
 		  /* error or calculation stopped*/
 		     else {
 		    	 printf("ERROR: Optimization was stopped early\n");
+		    	 GRBfreemodel(model);
+		    	 		  GRBfreeenv(env);
+		    	 		  free(ind);
+		    	 		  free(lb);
+		    	 		  free(ub);
+		    	 		  free(vtype);
+		    	 		  free(obj);
+		    	 		  free(val);
+		    	 		  free(names);
+		    	 		  free(namestorage);
 		    	 return 0;
 		     }
 
@@ -620,6 +835,16 @@ int LP(int n, int m, double* sol, int* board){
 		  error = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, N*N*N, sol);
 		  if (error) {
 			  printf("ERROR %d GRBgetdblattrarray(): %s\n", error, GRBgeterrormsg(env));
+			  GRBfreemodel(model);
+			  GRBfreeenv(env);
+			  free(ind);
+			  free(lb);
+			  free(ub);
+			  free(vtype);
+			  free(obj);
+			  free(val);
+			  free(names);
+			  free(namestorage);
 			  return 0;
 		  }
 

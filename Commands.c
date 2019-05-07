@@ -144,7 +144,7 @@ int set(int n, int m, int x, int y, int z, int* board, Node* ctrl_z, Node** ctrl
 			printf("<<debug: set(0) finished\n");}
 		return 0;}
 	RemoveFollowingNodes(*ctrl_z_current); /*delete following moves if existing*/
-	if (DEBUG){printf("Address of ctrl_z: %p\n", (void*)ctrl_z);}
+	if (DEBUG){printf("Value of x in  ctrl_z: %d\n\n", (*ctrl_z_current)->x);}
 	InsertAtTail(board[location],x,y,ctrl_z); /*add former data (board[location] not z)*/
 
 	board[location] = z;
@@ -430,9 +430,10 @@ int guess(int n, int m, float x, int* board, Node* ctrl_z, Node** ctrl_z_current
 			}
 	/* call LP_Solver: get board and solve it using LP If several
 	values hold for the same cell, randomly choose one according to the score */
-	legal = LPSo	lver(n,m,x, board, ctrl_z, ctrl_z_current, state);
+	legal = LPSolver(n,m,x, board, ctrl_z, ctrl_z_current, state);
 	if(!legal){
 		printf("ERROR: %s \n", LPFAILED);
+		/*if board is invalid, new values are not set*/
 		return 0;
 			}
 	return 1;
@@ -445,7 +446,7 @@ void reset(int n, int m, int* board, Node* ctrl_z, Node** ctrl_z_current){
 	 */
 	if (DEBUG){printf(">>debug: reset() called\n");}
 	if (DEBUG){printf("with: n:%d,m:%d\n",n,m);}
-	while (((*ctrl_z_current)->prev)->data != -2){
+	while (((*ctrl_z_current)->data) != -2){
 		undo(n,m,board ,ctrl_z, ctrl_z_current);
 	}
 	if (DEBUG){printf("<<debug: reset() finished\n");}
@@ -568,8 +569,12 @@ int undo(int n, int m, int* board, Node* ctrl_z, Node** ctrl_z_current){
 		while((*ctrl_z_current)->data != -3){
 			undo(n,m,board,ctrl_z,ctrl_z_current);
 		}
-		if (DEBUG){printf("<<debug: multi_undo(1) finished\n");} return 1;
+		if (DEBUG){printf("<<debug: multi_undo(1) finished\n");}
+		return 1;
 	}
+	if ((*ctrl_z_current)->data == -3){
+		*ctrl_z_current = (*ctrl_z_current)->prev;
+		return 1;}
 	y = (*ctrl_z_current)->y; x = (*ctrl_z_current)->x;
 	location = (x+(y*N))*2;
 	temp = board[location];

@@ -104,8 +104,8 @@ void RemoveFollowingNodes(struct Node* head){
 	if (DEBUG){Print(head);}
 	if (head->next == NULL){return;} /*list is already empty*/
 	next_node = head->next->next;
-	/*head->next = NULL;*/
 	temp = head->next;
+	head->next = NULL;
 	while (next_node != NULL) {
 		/*temp->data = -1;*/ /*zeroing all fields is not obligatory, but helps in debug*/
 		temp->x = -1;

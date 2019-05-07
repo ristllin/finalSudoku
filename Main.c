@@ -61,7 +61,7 @@ int main(int argc, char* argv[]){
 		did_pass = execute(board, user_command, user_path, m, n, mark_errors, state, ctrl_z, ctrl_z_current, user_threshold[0]);
 		if (DEBUG){printf("main list after execute: \n");}
 
-		if (DEBUG){Print(ctrl_z);}
+		if (DEBUG){Print(*ctrl_z_current);}
 //		if (DEBUG){printf("debug: n:%d,m:%d\n",*n,*m);}
 		if (did_pass){
 			if (isFinished(*n,*m,*board) == 1 && *state == 1){
